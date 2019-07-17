@@ -112,7 +112,6 @@ function get_service_details($dets)
 		<tr><td class='{$dets['FlapDetection']}'>".gettext('Flap Detection').": {$dets['FlapDetection']}</td>
 		<td><a href='{$dets['CmdFlapDetection']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Flap Detection')."' class='iconLink' alt='Toggle' /></a></td></tr>
 		</table>
-		<p class='note'>".gettext('Commands will not appear until after page reload')."</p>
 		</fieldset>
 
 		<!-- Nagios Core Command Table -->

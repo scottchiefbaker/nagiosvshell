@@ -121,10 +121,12 @@ function get_service_details($dets)
 		<legend>".gettext('Core Commands')."</legend>
 		<table>
 
-		<tr><td><a href='{$dets['CmdCustomNotification']}' title='".gettext('Send Custom Notification')."'><img src='views/images/notification.gif' class='iconLink' alt='Notification' /></a></td><td>".gettext('Send custom notification')."</td></tr>
-		<tr><td><a href='{$dets['CmdScheduleDowntime']}' title='".gettext('Schedule Downtime')."'><img src='views/images/downtime.png' class='iconLink' alt='Downtime' /></a></td><td>".gettext('Schedule downtime')."</td></tr>
-		<tr><td><a href='{$dets['CmdScheduleChecks']}' title='".gettext('Schedule Check')."'><img src='views/images/schedulecheck.png' class='iconLink' alt='Schedule' /></a></td><td>".gettext('Reschedule Next Check')."</td></tr>
-		<tr><td><a href='{$dets['CmdAcknowledge']}' title='{$dets['AckTitle']}'><img src='views/images/ack.png' class='iconLink' alt='Acknowledge' /></a></td><td>{$dets['AckTitle']}</td></tr>
+		<tr><td>".gettext('Send custom notification')."</td><td><a href='{$dets['CmdCustomNotification']}' title='".gettext('Send Custom Notification')."'><img src='views/images/notification.gif' class='iconLink' alt='Notification' /></a></td></tr>
+		<tr><td>".gettext('Schedule downtime')."</td><td><a href='{$dets['CmdScheduleDowntime']}' title='".gettext('Schedule Downtime')."'><img src='views/images/downtime.png' class='iconLink' alt='Downtime' /></a></td></tr>
+		<tr><td>".gettext('Reschedule Next Check')."</td><td><a href='{$dets['CmdScheduleChecks']}' title='".gettext('Schedule Check')."'><img src='views/images/schedulecheck.png' class='iconLink' alt='Schedule' /></a></td></tr>
+
+		<tr><td>{$dets['AckTitle']}</td><td><a href='{$dets['CmdAcknowledge']}' title='{$dets['AckTitle']}'><img src='views/images/ack.png' class='iconLink' alt='Acknowledge' /></a></td></tr>
+
 		<tr><td colspan='2'><a class='label' href='{$dets['CoreLink']}' title='".gettext('See This Service In Nagios Core')."'>".gettext('See This Service In Nagios Core')."</a></td></tr>
 		</table>
 		</fieldset>"; //end if authorized for commands

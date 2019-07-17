@@ -330,3 +330,7 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 .servicedetail_key, .hostdetail_key {
 	font-weight: bold;
 }
+
+.margin-bottom {
+	margin-bottom: 1em;
+}

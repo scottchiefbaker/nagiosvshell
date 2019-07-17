@@ -61,7 +61,7 @@ function get_service_details($dets)
 
 	<h4>".gettext('Service').": {$dets['Service']}</h4>
 	<h4>".gettext('Host').": <a href='index.php?type=hostdetail&name_filter={$dets['Host']}' title='".gettext('Host Details')."'>{$dets['Host']}</a></h4>
-	<h5 style=\"margin-bottom: 1em;\">".gettext('Member of').": {$dets['MemberOf']}</h5>
+	<h5 class=\"margin-bottom\">".gettext('Member of').": {$dets['MemberOf']}</h5>
 	<h6><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h6>
 
 	<div class='detailcontainer'>

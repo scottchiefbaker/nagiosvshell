@@ -12,9 +12,9 @@ function get_host_details($dets)
 
 	<h3>".gettext('Host Status Detail')."</h3>
 	<div class='detailWrapper'>
-	<h4><em>".gettext('Host').": </em>{$dets['Host']}</h4>
-	<h5><em>".gettext('Member of').": </em>{$dets['MemberOf']}</h5>
-	<h5><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h5>
+	<h4>".gettext('Host').": {$dets['Host']}</h4>
+	<h5 class=\"margin-bottom\">".gettext('Member of').": {$dets['MemberOf']}</h5>
+	<h6><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h6>
 	<div class='detailcontainer'>
 	<fieldset class='hostdetails'>
 	<legend>".gettext('Advanced Details')."</legend>
@@ -66,16 +66,33 @@ function get_host_details($dets)
 
 		<!-- Nagios Core Command Table -->
 		<fieldset class='corecommands'>
-		<legend>".gettext('Core Commands')."</legend>
-		<table>
-		<tr><td><a href='{$dets['MapHost']}' title='".gettext('Map Host')."'><img src='views/images/statusmapballoon.png' class='iconLink' height='12' width='12' alt='Map' /></a></td><td>".gettext('Locate host on map')."</td></tr>
-		<tr><td><a href='{$dets['CmdCustomNotification']}' title='".gettext('Send Custom Notification')."'><img src='views/images/notification.gif' class='iconLink' height='12' width='12' alt='Notification' /></a></td><td>".gettext('Send custom notification')."</td></tr>
-		<tr><td><a href='{$dets['CmdScheduleDowntime']}' title='".gettext('Schedule Downtime')."'><img src='views/images/downtime.png' class='iconLink' height='12' width='12' alt='Downtime' /></a></td><td>".gettext('Schedule downtime')."</td></tr>
-		<tr><td><a href='{$dets['CmdScheduleDowntimeAll']}' title='".gettext('Schedule Recursive Downtime')."'><img src='views/images/downtime.png' class='iconLink' height='12' width='12' alt='Downtime' /></a></td><td>".gettext('Schedule downtime for this host and all services')."</td></tr>
-		<tr><td><a href='{$dets['CmdScheduleChecks']}' title='".gettext('Schedule Check')."'><img src='views/images/schedulecheck.png' class='iconLink' height='12' width='12' alt='Schedule' /></a></td><td>".gettext('Schedule a check for all services of this host')."</td></tr>
-		<tr><td><a href='{$dets['CmdAcknowledge']}' title='{$dets['AckTitle']}'><img src='views/images/ack.png' class='iconLink' height='12' width='12' alt='Acknowledge' /></a></td><td>{$dets['AckTitle']}</td></tr><!-- make into variable -->
-		<tr><td colspan='2'><a class='label' href='{$dets['CoreLink']}' title='".gettext('See This Host In Nagios Core')."'>".gettext('See This Host In Nagios Core')."</a></td></tr>
-		</table>
+			<legend>".gettext('Core Commands')."</legend>
+			<table>
+				<tr>
+					<td>".gettext('Locate host on map')."</td>
+					<td><a href='{$dets['MapHost']}' title='".gettext('Map Host')."'><img src='views/images/statusmapballoon.png' class='iconLink' height='12' width='12' alt='Map' /></a></td>
+				</tr>
+				<tr>
+					<td>".gettext('Send custom notification')."</td>
+					<td><a href='{$dets['CmdCustomNotification']}' title='".gettext('Send Custom Notification')."'><img src='views/images/notification.gif' class='iconLink' height='12' width='12' alt='Notification' /></a></td></tr>
+				<tr>
+					<td>".gettext('Schedule downtime')."</td>
+					<td><a href='{$dets['CmdScheduleDowntime']}' title='".gettext('Schedule Downtime')."'><img src='views/images/downtime.png' class='iconLink' height='12' width='12' alt='Downtime' /></a></td></tr>
+				<tr>
+					<td>".gettext('Schedule downtime for this host and all services')."</td>
+					<td><a href='{$dets['CmdScheduleDowntimeAll']}' title='".gettext('Schedule Recursive Downtime')."'><img src='views/images/downtime.png' class='iconLink' height='12' width='12' alt='Downtime' /></a></td></tr>
+				<tr>
+					<td>".gettext('Schedule a check for all services of this host')."</td>
+					<td><a href='{$dets['CmdScheduleChecks']}' title='".gettext('Schedule Check')."'><img src='views/images/schedulecheck.png' class='iconLink' height='12' width='12' alt='Schedule' /></a></td></tr>
+				<tr>
+					<td>{$dets['AckTitle']}</td>
+					<td><a href='{$dets['CmdAcknowledge']}' title='{$dets['AckTitle']}'><img src='views/images/ack.png' class='iconLink' height='12' width='12' alt='Acknowledge' /></a></td>
+				</tr>
+			</table>
+
+			<div class=\"\" style=\"margin-top: 0.5em;\">
+				<a class='label' href='{$dets['CoreLink']}' title='".gettext('See This Host In Nagios Core')."'>".gettext('See This Host In Nagios Core')."</a>
+			</div>
 		</fieldset>
 		"; //end if authorized for object
 

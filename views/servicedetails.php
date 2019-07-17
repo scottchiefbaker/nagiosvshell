@@ -75,14 +75,13 @@ function get_service_details($dets)
 
 	$page.="
 		<tr><td>".gettext('Plugin Output')."</td><td><div class='td_maxwidth'>{$dets['Output']}</div></td></tr>
-		<tr><td>".gettext('Duration')."</td><td>{$dets['DurationFmt']}</td></tr>
 		<tr><td>".gettext('State Type')."</td><td>{$dets['StateType']}</td></tr>
 		<tr><td>".gettext('Current Check')."</td><td>{$dets['CurrentCheck']}</td></tr>
-		<tr><td>".gettext('Last Check')."</td><td>{$dets['LastCheckFmt']} ago</td></tr>
 		<tr><td>".gettext('Next Check')."</td><td>{$dets['NextCheckFmt']}</td></tr>
+		<tr><td>".gettext('Check Type')."</td><td>{$dets['CheckType']}</td></tr>
+		<tr><td>".gettext('Last Check')."</td><td>{$dets['LastCheckFmt']} ago</td></tr>
 		<tr><td>".gettext('Last State Change')."</td><td>{$dets['LastStateChangeFmt']} ago</td></tr>
 		<tr><td>".gettext('Last Notification')."</td><td>{$dets['LastNotification']}</td></tr>
-		<tr><td>".gettext('Check Type')."</td><td>{$dets['CheckType']}</td></tr>
 		<tr><td>".gettext('Check Latency')."</td><td>{$dets['CheckLatency']}</td></tr>
 		<tr><td>".gettext('Execution Time')."</td><td>{$dets['ExecutionTime']}</td></tr>
 		<tr><td>".gettext('State Change')."</td><td>{$dets['StateChange']}</td></tr>

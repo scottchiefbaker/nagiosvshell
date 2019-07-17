@@ -103,15 +103,27 @@ a.highlight {
 }
 
 /*navigation lists */
-ul.nav { top: 52px; position: absolute; }
 li.nav {
 	list-style: none;
 	padding: 0 10px;
 	float: left;
 }
 
-div.corelink {position: absolute; right: 15px; top: 15px;}
-#clearcache {position: absolute; right: 32px; top: 32px;}
+.header {
+	display: grid;
+	grid-template-columns: auto auto;
+}
+
+/* V-Shell Logo */
+#logoDiv {width: 225px; height: 50px; }
+#logoDiv img {border: none; }
+
+div.corelink {
+	text-align: right;
+	padding: 16px 15px;
+}
+
+#clearcache {}
 
 #infodiv {
 	/*position: absolute;*/
@@ -321,11 +333,6 @@ table.tac {
 }
 div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 .healthmeter {overflow:visible; height: 10px;}
-
-
-/* V-Shell Logo */
-#logoDiv {width: 225px; height: 50px; }
-#logoDiv img {border: none; }
 
 .servicedetail_key, .hostdetail_key {
 	font-weight: bold;

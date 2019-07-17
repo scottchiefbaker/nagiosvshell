@@ -327,4 +327,6 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 #logoDiv {width: 225px; height: 50px; }
 #logoDiv img {border: none; }
 
-
+.servicedetail_key, .hostdetail_key {
+	font-weight: bold;
+}

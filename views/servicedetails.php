@@ -68,24 +68,26 @@ function get_service_details($dets)
 	<fieldset class='servicedetails'>
 	<legend>".gettext('Advanced Details')."</legend>
 	<table class='details'>
-		<tr><td>".gettext('Service State')."</td><td class='{$dets['State']}'>{$dets['State']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Service State') . "</td><td class='{$dets['State']}'>{$dets['State']}</td></tr>
 	";
-	if($NagiosUser->if_has_authKey('authorized_for_configuration_information'))
-		$page .="<tr><td>".gettext('Check Command')."</td><td><div class='td_maxwidth'>{$dets['CheckCommand']}</div></td></tr>";
+
+	if ($NagiosUser->if_has_authKey('authorized_for_configuration_information')) {
+		$page .="<tr><td class=\"servicedetail_key\">" . gettext('Check Command') . "</td><td><div class='td_maxwidth'>{$dets['CheckCommand']}</div></td></tr>";
+	}
 
 	$page.="
-		<tr><td>".gettext('Plugin Output')."</td><td><div class='td_maxwidth'>{$dets['Output']}</div></td></tr>
-		<tr><td>".gettext('State Type')."</td><td>{$dets['StateType']}</td></tr>
-		<tr><td>".gettext('Current Check')."</td><td>{$dets['CurrentCheck']}</td></tr>
-		<tr><td>".gettext('Next Check')."</td><td>{$dets['NextCheckFmt']}</td></tr>
-		<tr><td>".gettext('Check Type')."</td><td>{$dets['CheckType']}</td></tr>
-		<tr><td>".gettext('Last Check')."</td><td>{$dets['LastCheckFmt']} ago</td></tr>
-		<tr><td>".gettext('Last State Change')."</td><td>{$dets['LastStateChangeFmt']} ago</td></tr>
-		<tr><td>".gettext('Last Notification')."</td><td>{$dets['LastNotification']}</td></tr>
-		<tr><td>".gettext('Check Latency')."</td><td>{$dets['CheckLatency']}</td></tr>
-		<tr><td>".gettext('Execution Time')."</td><td>{$dets['ExecutionTime']}</td></tr>
-		<tr><td>".gettext('State Change')."</td><td>{$dets['StateChange']}</td></tr>
-		<tr><td>".gettext('Performance Data')."</td><td><div class='td_maxwidth'>{$dets['PerformanceData']}</div></td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Plugin Output')     . "</td><td><div class='td_maxwidth'>{$dets['Output']}</div></td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('State Type')        . "</td><td>{$dets['StateType']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Current Check')     . "</td><td>{$dets['CurrentCheck']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Next Check')        . "</td><td>{$dets['NextCheckFmt']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Check Type')        . "</td><td>{$dets['CheckType']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Last Check')        . "</td><td>{$dets['LastCheckFmt']} ago</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Last State Change') . "</td><td>{$dets['LastStateChangeFmt']} ago</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Last Notification') . "</td><td>{$dets['LastNotification']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Check Latency')     . "</td><td>{$dets['CheckLatency']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Execution Time')    . "</td><td>{$dets['ExecutionTime']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('State Change')      . "</td><td>{$dets['StateChange']}</td></tr>
+		<tr><td class=\"servicedetail_key\">" . gettext('Performance Data')  . "</td><td><div class='td_maxwidth'>{$dets['PerformanceData']}</div></td></tr>
 
 	</table>
 
@@ -95,9 +97,8 @@ function get_service_details($dets)
 	<div class='rightContainer'>
 	";
 
-	if(!$NagiosUser->if_has_authKey('authorized_for_read_only'))
-	$page.="
-		<fieldset class='attributes'>
+	if (!$NagiosUser->if_has_authKey('authorized_for_read_only')) {
+	$page .= "<fieldset class='attributes'>
 		<legend>".gettext('Service Attributes')."</legend>
 		<table>
 		<tr><td class='{$dets['ActiveChecks']}'>".gettext('Active Checks').": {$dets['ActiveChecks']}</td>
@@ -130,6 +131,7 @@ function get_service_details($dets)
 			<a class='label' href='{$dets['CoreLink']}' title='".gettext('See This Service In Nagios Core')."'>".gettext('See This Service In Nagios Core')."</a>
 		</div>
 		</fieldset>"; //end if authorized for commands
+	}
 
 	$page .="
 	</div><!-- end rightContainer -->

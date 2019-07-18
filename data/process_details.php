@@ -58,8 +58,9 @@ function process_service_detail($serviceid)
 	{$cmd_flap_detection     = core_function_link('DISABLE_SVC_FLAP_DETECTION', $hostname, $ser_desc); }
 	else{$cmd_flap_detection = core_function_link('ENABLE_SVC_FLAP_DETECTION',  $hostname, $ser_desc); }
 
-	$process_perf_data = return_enabled($sd['process_performance_data']);
-	$obsession = return_enabled($sd['obsess_over_service']);
+	$process_perf_data = return_enabled(get_in($sd,['process_performance_data']));
+	$obsession         = return_enabled(get_in($sd,['obsess_over_service']));
+
 	if($obsession == 'Enabled')
 	{$cmd_obsession     = core_function_link('STOP_OBSESSING_OVER_SVC',  $hostname, $ser_desc); }
 	else{$cmd_obsession = core_function_link('START_OBSESSING_OVER_SVC', $hostname, $ser_desc); }
@@ -322,8 +323,8 @@ function human_time($time,$approximate = 0) {
 		$ret    = "~";
 
 		for ($i = 0; $i < $approximate; $i++) {
-			$first  = $parts[$i * 2];
-			$second = $parts[($i * 2) + 1];
+			$first  = get_in($parts, [$i * 2]);
+			$second = get_in($parts, [($i * 2) + 1]);
 			$p[]    = "$first $second";
 		}
 

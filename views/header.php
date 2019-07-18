@@ -53,12 +53,12 @@
 
 function display_header($page_title='Nagios Visual Shell')
 {
-	$js_path = BASEURL.'js/';
-	$jquery_path = $js_path.'jquery-1.4.4.min.js';
-	$header_js_path = $js_path.'header.inc.js';
-	$css_path = BASEURL.'css/style.css';
-	$navlinks = build_nav_links();
-	$coreurl = COREURL;
+	$js_path        = BASEURL  . 'js/';
+	$jquery_path    = $js_path . 'jquery-3.4.1.min.js';
+	$header_js_path = $js_path . 'header.inc.js';
+	$css_path       = BASEURL  . 'css/style.css';
+	$navlinks       = build_nav_links();
+	$coreurl        = COREURL;
 
 	$header = '
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">

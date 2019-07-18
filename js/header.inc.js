@@ -12,7 +12,7 @@ if (document.all || document.getElementById) {
 
 function showDropdown(id)
 {
-	if (document.layers) 
+	if (document.layers)
 	{
 		//alert("there are layers");
 		menu = document.layers[id];
@@ -24,8 +24,8 @@ function showDropdown(id)
 	if(menu)
 	{
 		//alert(menu);
-		menu.style.visibility = visible;		
-	} 
+		menu.style.display = "block";
+	}
 
 }
 
@@ -35,7 +35,7 @@ function hideDropdown(id)
 	if(menu)
 	{
 		//alert(menu);
-		menu.style.visibility = hidden;		
+		menu.style.display = "none";
 	}
 
 }
@@ -43,10 +43,10 @@ function hideDropdown(id)
 function showHide(id)
 {
 	//alert(id);
-	var divID = "#"+id;			
+	var divID = "#"+id;
 	$(divID).slideToggle("fast");
-	
-	   
+
+
 }
 /*this function hides the grids and configuration tables that can be toggled*/
 function hide()

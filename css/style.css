@@ -106,6 +106,7 @@ a.highlight {
 li.nav {
 	list-style: none;
 	padding: 0 10px;
+	position: relative;
 	float: left;
 }
 
@@ -250,16 +251,14 @@ div.td_maxwidth{ overflow:auto; }
 img.label {border: none;}
 
 /*dropdown menus*/
-#confDrop, #sysDrop, #reportDrop
-{
-	position: relative;
-	margin-left: -3px;
-	visibility: hidden;
+#confDrop, #sysDrop, #reportDrop {
+	position: absolute;
+	display: none;
 	background: #333;
 	z-index: 5;
 	padding: 3px 10px 4px 3px;
-
 }
+
 #confDrop li, #sysDrop li, #reportDrop li
 {
 	list-style: none;

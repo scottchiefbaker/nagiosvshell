@@ -190,9 +190,9 @@ function process_host_detail($in_hostname)
 	{$cmd_flap_detection     = core_function_link('DISABLE_HOST_FLAP_DETECTION', $hostname); }
 	else{$cmd_flap_detection = core_function_link('ENABLE_HOST_FLAP_DETECTION',  $hostname); }
 
-	$process_perf_data = return_enabled($hd['process_performance_data']);
+	$process_perf_data = return_enabled(get_in($hd,['process_performance_data']));
+	$obsession         = return_enabled(get_in($hd,['obsess_over_host']));
 
-	$obsession = return_enabled($hd['obsess_over_host']);
 	if($obsession == 'Enabled')
 	{$cmd_obsession     = core_function_link('STOP_OBSESSING_OVER_HOST',  $hostname); }
 	else{$cmd_obsession = core_function_link('START_OBSESSING_OVER_HOST', $hostname); }

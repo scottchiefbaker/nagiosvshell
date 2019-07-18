@@ -192,7 +192,10 @@ th.duration, td.duration {
 	width: 110px;
 	display: none;
 }
-th.status, td.ok, td.critical, td.warning, td.unknown {width: 60px; }
+.tac th.status, .tac td.ok, .tac td.critical, .tac td.warning, .tac td.unknown, .tac td.pending {
+	width: 20%;
+}
+
 th.last_check, td.last_check {
 	width: 140px;
 	display: none;

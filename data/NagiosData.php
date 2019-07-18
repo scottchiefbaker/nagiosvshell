@@ -57,7 +57,7 @@ class NagiosData
 	// Storage for all necessary variables.  Replaces the many globals
 	protected $_vars;
 
-	protected static $properties = array('hosts_objs', 'services_objs',
+	protected $properties = array('hosts_objs', 'services_objs',
 		'hostgroups_objs', 'servicegroups_objs', 'contacts', 'contactgroups',
 		'timeperiods', 'commands', 'hosts', 'services', 'comments', 'info',
 		'details', 'permissions', 'hostgroups', 'servicegroups', 'program',
@@ -206,21 +206,24 @@ class NagiosData
 		if(!$objects_are_cached)
 		{
 			//objects.cache data
-			list( $this->properties['hosts_objs'],
-					$this->properties['services_objs'],
-				   $this->properties['hostgroups_objs'],
-				   $this->properties['servicegroups_objs'],
-				   $this->properties['timeperiods'],
-				   $this->properties['commands'],
-				   $this->properties['contacts'],
-					$this->properties['contactgroups'],
-					$this->properties['serviceescalations'],
-					$this->properties['hostescalations'],
-					$this->properties['hostdependencys'],
-					$this->properties['servicedependencys']) = parse_objects_file();
+			list(
+				$this->properties['hosts_objs'],
+				$this->properties['services_objs'],
+				$this->properties['hostgroups_objs'],
+				$this->properties['servicegroups_objs'],
+				$this->properties['timeperiods'],
+				$this->properties['commands'],
+				$this->properties['contacts'],
+				$this->properties['contactgroups'],
+				$this->properties['serviceescalations'],
+				$this->properties['hostescalations'],
+				$this->properties['hostdependencys'],
+				$this->properties['servicedependencys']
+			) = parse_objects_file();
 
-			if($apc_exists)
-			   $this->set_data_to_apc('objects');
+			if ($apc_exists) {
+				$this->set_data_to_apc('objects');
+			}
 
 		}
 

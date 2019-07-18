@@ -51,7 +51,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 
-function display_header($page_title='Nagios Visual Shell')
+function display_header($page_title='Nagios Visual Shell', $notification_str = "")
 {
 	$js_path        = BASEURL  . 'js/';
 	$jquery_path    = $js_path . 'jquery-3.4.1.min.js';
@@ -92,12 +92,13 @@ $(document).ready(function() {
 			<a class="label" href="'.$coreurl.'" target="_blank" title="'.gettext('Access Nagios Core').'">'.gettext('Access Nagios Core').'</a>
 		</div>
 	</div>
-	'.clear_cache_link().'
+	' . clear_cache_link() . '
 
 	<div class="topnav">
-		'.$navlinks.'
+		' . $navlinks . '
 	</div>
 
+	' . $notification_str . '
 
 <div class="main">
 

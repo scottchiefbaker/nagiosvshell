@@ -110,6 +110,10 @@ li.nav {
 	float: left;
 }
 
+a.sub-nav {
+	font-size: 13pt;
+}
+
 .header {
 	display: grid;
 	grid-template-columns: auto auto;

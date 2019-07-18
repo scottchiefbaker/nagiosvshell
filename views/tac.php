@@ -135,7 +135,7 @@ function hosts_table($tac_data)
 	$hosts_table ="
 <!-- ########################HOSTS TABLE########################## -->
 <table class='tac'>
-<tr><th>".gettext('Hosts')."</th></tr>
+<tr><th colspan=\"5\">" . gettext('Hosts') . "</th></tr>
 <tr>
 	<td class='ok'><a class='highlight' href='{$tac_data['hostlink']}UP'><div class='td'>{$tac_data['hostsUpTotal']} ".gettext('Up')."</div></a></td>
 	<td class='down'><a class='highlight' href='{$tac_data['hostlink']}DOWN'><div class='td'>{$tac_data['hostsDownTotal']} ".gettext('Down')."</div></a></td>

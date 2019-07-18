@@ -19,20 +19,19 @@ function get_host_details($dets)
 	<fieldset class='hostdetails'>
 	<legend>".gettext('Advanced Details')."</legend>
 	<table>
-		<tr><td class=\"hostdetail_key\">".gettext('Current State')."</td><td class='{$dets['State']}'>{$dets['State']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Status Information')."</td><td><div class='td_maxwidth'>{$dets['StatusInformation']}</div></td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Duration')."</td><td>{$dets['Duration']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('State Type')."</td><td>{$dets['StateType']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Current Check')."</td><td>{$dets['CurrentCheck']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Last Check')."</td><td>{$dets['LastCheck']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Next Check')."</td><td>{$dets['NextCheck']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Last State Change')."</td><td>{$dets['LastStateChange']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Last Notification')."</td><td>{$dets['LastNotification']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Check Type')."</td><td>{$dets['CheckType']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Check Latency')."</td><td>{$dets['CheckLatency']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Execution Time')."</td><td>{$dets['ExecutionTime']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('State Change')."</td><td>{$dets['StateChange']}</td></tr>
-		<tr><td class=\"hostdetail_key\">".gettext('Performance Data')."</td><td><div class='td_maxwidth'>{$dets['PerformanceData']}</div></td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Current State')      . "</td><td class='{$dets['State']}'>{$dets['State']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Status Information') . "</td><td><div class='td_maxwidth'>{$dets['StatusInformation']}</div></td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('State Type')         . "</td><td>{$dets['StateType']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Current Check')      . "</td><td>{$dets['CurrentCheck']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Next Check')         . "</td><td>{$dets['NextCheckFmt']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Check Type')         . "</td><td>{$dets['CheckType']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Last State Change')  . "</td><td>{$dets['LastStateChangeFmt']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Last Check')         . "</td><td>{$dets['LastCheckFmt']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Last Notification')  . "</td><td>{$dets['LastNotification']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Check Latency')      . "</td><td>{$dets['CheckLatency']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Execution Time')     . "</td><td>{$dets['ExecutionTime']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('State Change')       . "</td><td>{$dets['StateChange']}</td></tr>
+		<tr><td class=\"hostdetail_key\">" . gettext('Performance Data')   . "</td><td><div class='td_maxwidth'>{$dets['PerformanceData']}</div></td></tr>
 
 	</table>
 

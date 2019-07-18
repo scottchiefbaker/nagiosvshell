@@ -98,8 +98,12 @@ a.highlight {
 	color: #097AC7;
 }
 
-.tac {
+table a {
 	text-shadow: 0 0 3px #ccfdff;
+}
+
+.nav {
+	margin-top: 1px;
 }
 
 /*navigation lists */

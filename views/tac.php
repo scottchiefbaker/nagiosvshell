@@ -91,7 +91,7 @@ function overview_table($tac_data)
 <table class='tac no_mobile'>
 <tr><th>".gettext('Tactical Monitoring Overview')."</th></tr>
 	<tr>
-		<td>
+		<td class=\"center\">
 			".gettext('Last Check').": {$tac_data['lastcmd']}<br />
 			 Nagios® Core™ {$tac_data['version']} - www.nagios.org<br />
 			".gettext('Logged in as')." ".$NagiosUser->get_username()."

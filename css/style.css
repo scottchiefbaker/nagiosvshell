@@ -200,7 +200,8 @@ th.service_description {
 /* table.servicetable {width: 1200px; } */
 th.hostname, td.hostname, div.hostname { }
 th.service_description, td.service_description, div.service_description { }
-th.duration, td.duration {
+
+table.resp th.duration, table.resp td.duration, table.resp th.last_check, table.resp td.last_check {
 	display: none;
 }
 
@@ -213,9 +214,6 @@ td.attempt {
 	text-align: center;
 }
 
-th.last_check, td.last_check {
-	display: none;
-}
 th.plugin_output, td.plugin_output, div.plugin_output{
 	overflow: hidden;
 	text-align: left;

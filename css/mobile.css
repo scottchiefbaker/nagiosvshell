@@ -1,5 +1,5 @@
 /* Mobile interface */
-@media screen and (max-width: 900px) {
+@media screen and (max-width: 640px) {
 
 	table.resp, table.resp thead, table.resp, table.resp tbody, table.resp th, table.resp td, table.resp tr {
 		display: block;

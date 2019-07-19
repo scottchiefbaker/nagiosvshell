@@ -64,10 +64,8 @@ a:link, a:visited { color: #00A3FF; text-decoration: none;}
 a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }
 
 table {
-	font-size: 11pt;
-	font-family: 'Open Sans', Verdana, sans-serif;
-	/*text-align: center;*/
-	width: 100%;
+	font-size : 11pt;
+	width     : 100%;
 }
 
 .center {

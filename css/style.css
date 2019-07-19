@@ -181,12 +181,12 @@ div.corelink {
 	padding: 5px;
 }
 
-.down, .up {
+th.hostname {
 	min-width: 20%;
 }
 
-td.service_description {
-	width: 15%;
+th.service_description {
+	min-width: 20%;
 }
 
 /* table.servicetable {width: 1200px; } */

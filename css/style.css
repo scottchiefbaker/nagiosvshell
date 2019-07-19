@@ -154,13 +154,10 @@ div.corelink {
 .contentWrapper {width:80%; margin: auto; }
 
 /*main container div for all content */
-.main
-{
-	position: relative;
-	top:2px;
-	bottom: 30px;
-	margin: 10px;
-	height: 90%;
+.main {
+	position : relative;
+	top      : 0px;
+	margin   : 10px;
 }
 
 /* /////////////FORMATTING CLASSES /////*/

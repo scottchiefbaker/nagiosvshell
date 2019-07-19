@@ -1,12 +1,6 @@
 /* Mobile interface */
 @media screen and (max-width: 900px) {
 
-	table.tac td, table.tac tr, table.tac th {
-		display: block;
-		width: 100%;
-		padding: 0;
-	}
-
 	table.resp, table.resp thead, table.resp, table.resp tbody, table.resp th, table.resp td, table.resp tr {
 		display: block;
 	}

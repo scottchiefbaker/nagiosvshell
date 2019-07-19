@@ -73,7 +73,7 @@ function info_table()
 <!-- ##################Nagios Info Table################### -->
 <div id='infodiv'>
 
-<p class='note'>Nagios V-Shell $version<br />
+<p class='note no_mobile'>Nagios V-Shell $version<br />
 	Copyright (c) 2010-2012 <br />
 	Nagios Enterprises, LLC. <br />
    ".gettext('Written by')." Mike Guthrie<br />
@@ -88,7 +88,7 @@ function overview_table($tac_data)
 {
 	global $NagiosUser;
 	$overview_table = "
-<table class='tac'>
+<table class='tac no_mobile'>
 <tr><th>".gettext('Tactical Monitoring Overview')."</th></tr>
 	<tr>
 		<td>
@@ -107,7 +107,7 @@ function overview_table($tac_data)
 //builds health meter divs for hosts and services
 function health_meters($tac_data)
 {
-		$tac  = "<div id='meterContainer'>";
+		$tac  = "<div class=\"meterContainer no_mobile\">";
 		$tac .= health_meter($tac_data, 'host'); //added meter
 		$tac .= health_meter($tac_data, 'service');
 		$tac .= "</div> <!-- end health meters --> \n";
@@ -122,7 +122,7 @@ function health_meter($tac_data, $type)
 	$health = (floatval($Total-$problems) / floatval($Total)) *100;
 	//$health = 30;
 	$title = ucfirst($type);
-	$meter =  "<div class='h_container'>".ucfirst($type)." ".gettext('Health').": ".round($health,2)."% <br />\n
+	$meter =  "<div class='h_container no_mobile'>".ucfirst($type)." ".gettext('Health').": ".round($health,2)."% <br />\n
 					<div class='borderDiv'>
 					<div class='healthmeter' style='background: rgb(".color_code(round($health,0))."); width: ".$health."%;'>\n
 				</div></div></div>\n";
@@ -221,7 +221,7 @@ function features_table($tac_data)
 {
 	$features_table = "
 <!-- #####################ENABLED FEATURES TABLE ####################-->
-<table class='tac'>
+<table class='tac no_mobile'>
 <tr><th>".gettext('Monitoring Features')."</th></tr>
 <tr>
 	<td>".gettext('Flap Detection')."</td><td>".gettext('Notifications')."</td><td>".gettext('Event Handlers')."</td>

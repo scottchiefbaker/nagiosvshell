@@ -66,8 +66,9 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <title>'.$page_title.'</title>
 
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-<meta name="description" content="Nagios" />
+<meta name="description" content="Nagios VShell" />
 <meta name="keywords" content="Nagios VShell" />
+<meta content="width=device-width, initial-scale=1" name="viewport" />
 
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/mobile.css" type="text/css" media="screen" />
@@ -94,7 +95,7 @@ $(document).ready(function() {
 	</div>
 	' . clear_cache_link() . '
 
-	<div class="topnav">
+	<div class="topnav no_mobile">
 		' . $navlinks . '
 	</div>
 

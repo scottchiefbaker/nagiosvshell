@@ -333,7 +333,7 @@ table.tac {
 	margin-bottom: 15px;
 }
 
-#meterContainer {
+.meterContainer {
 	margin-bottom: 15px;
 	display: flex;
 }

@@ -64,9 +64,12 @@ a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }
 table {
 	font-size: 11pt;
 	font-family: 'Open Sans', Verdana, sans-serif;
-	text-align: center;
-	background: #f1f1f1;
+	/*text-align: center;*/
 	width: 100%;
+}
+
+.center {
+	text-align: center;
 }
 
 td, th { padding: 1px 10px 1px 10px; background-color: #DEDEDE; 	}
@@ -192,26 +195,26 @@ th.service_description {
 /* table.servicetable {width: 1200px; } */
 th.hostname, td.hostname, div.hostname { }
 th.service_description, td.service_description, div.service_description { }
-th.attempt, td.attempt {width: 55px;}
 th.duration, td.duration {
-	width: 110px;
 	display: none;
 }
 
 td.tac_col {
 	width: 20%;
+	text-align: center;
+}
+
+td.attempt {
+	text-align: center;
 }
 
 th.last_check, td.last_check {
-	width: 140px;
 	display: none;
 }
 th.plugin_output, td.plugin_output, div.plugin_output{
 	overflow: hidden;
 	text-align: left;
 }
-tr.servicetablerow { width: 1400px; height: 1em; }
-tr.statustablerow { width: 1400px; height: 1em; }
 
 table.objectList, tr.objectList
 { background-color: #EDEDED; margin: 0px; }
@@ -219,7 +222,12 @@ table.objectList, tr.objectList
 table.tac { background-color: #AAA; }
 .singleLine {   width: 80px; }
 
-img.tableIcon{ float: right; display: inline; padding: 0; margin: 0;	}
+img.tableIcon{
+	float: right;
+	display: inline;
+	padding: 0 3px;
+	margin: 0;
+}
 
 
 /*details pages */

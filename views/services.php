@@ -76,14 +76,19 @@ function display_services($services,$start,$limit)
 
 	//Table header generation
 	$page .= '<div class="statusTable">
-	<table class="servicetable"><tr>
-	<th class="hostname">'.gettext('Host Name').'</th>
-	<th class="service_description">'.gettext('Service').'</th>
-	<th class="status">'.gettext('Status').'</th>
-	<th class="duration">'.gettext('Duration').'</th>
-	<th class="attempt">'.gettext('Attempt').'</th>
-	<th class="last_check">'.gettext('Last Check').'</th>
-	<th class="plugin_output">'.gettext('Status Information').'</th></tr>';
+<table class="servicetable resp">
+	<thead>
+	<tr>
+		<th class="hostname">'            . gettext('Host Name')          . '</th>
+		<th class="service_description">' . gettext('Service')            . '</th>
+		<th class="status">'              . gettext('Status')             . '</th>
+		<th class="duration">'            . gettext('Duration')           . '</th>
+		<th class="attempt">'             . gettext('Attempt')            . '</th>
+		<th class="last_check">'          . gettext('Last Check')         . '</th>
+		<th class="plugin_output">'       . gettext('Status Information') . '</th>
+	</tr>
+	</thead>
+	<tbody>';
 
 	/*
 	// Fixup post filtering indices
@@ -143,7 +148,7 @@ TABLEROW;
 		$page .= $pagerow;
 
 	}
-	$page .= "</table>\n</div> <!--end div.statusTable -->\n" ;
+	$page .= "</tbody></table>\n</div> <!--end div.statusTable -->\n" ;
 
 	if($doPagination)
 	{

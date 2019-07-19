@@ -7,6 +7,54 @@
 		padding: 0;
 	}
 
+	table.resp, table.resp thead, table.resp, table.resp tbody, table.resp th, table.resp td, table.resp tr {
+		display: block;
+	}
+
+	/* Hide table headers (but not display: none;, for accessibility) */
+	table.resp thead tr {
+		position: absolute;
+		top: -9999px;
+		left: -9999px;
+	}
+
+	table.resp tr {
+		border: 0px solid #ccc;
+		margin-bottom: 8px;
+	}
+
+	table.resp td {
+		/* Behave  like a "row" */
+		border: none;
+		border-bottom: 1px solid #eee;
+		position: relative;
+		padding-left: 50%;
+	}
+
+	table.resp td:before {
+		/* Now like a table header */
+		position: absolute;
+		/* Top/left values mimic padding */
+		top: 6px;
+		left: 6px;
+		width: 45%;
+		padding-right: 10px;
+		white-space: nowrap;
+		font-weight: bold;
+	}
+
+	td.attempt {
+		text-align: left;
+	}
+
+	table.resp td:nth-of-type(1):before { content: "Host"; }
+	table.resp td:nth-of-type(2):before { content: "Service"; }
+	table.resp td:nth-of-type(3):before { content: "Status"; }
+	table.resp td:nth-of-type(4):before { content: "Duration"; }
+	table.resp td:nth-of-type(5):before { content: "Attempt"; }
+	table.resp td:nth-of-type(6):before { content: "Last Change"; }
+	table.resp td:nth-of-type(7):before { content: "Command Output"; }
+
 	div.detailWrapper {
 		width: inherit;
 		padding: 10px;

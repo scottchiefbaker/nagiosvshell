@@ -147,7 +147,7 @@ function hosts_table($tac_data)
 	<td class='problem tac_col'><a class='highlight' href='{$tac_data['hostlink']}PROBLEMS'><div class='td'>{$tac_data['hostsProblemsTotal']} ".gettext('Problems')."</div></a></td>
 	<td class='unhandled tac_col'><a class='highlight' href='{$tac_data['hostlink']}UNHANDLED'><div class='td'>{$tac_data['hostsUnhandledTotal']} ".gettext('Unhandled')."</div></a></td>
 	<td class='acknowledged tac_col'><a class='highlight' href='{$tac_data['hostlink']}ACKNOWLEDGED'><div class='td'>{$tac_data['hostsAcknowledgedTotal']} ".gettext('Acknowledged')."</div></a></td>
-	<td><div class='td tac_col'><a class='highlight' href='index.php?type=hosts' title='All Hosts'>{$tac_data['hostsTotal']} ".gettext('Total')."</div></a></td>
+	<td class=\"tac_col\" ><a class='highlight' href='index.php?type=hosts' title='All Hosts'>{$tac_data['hostsTotal']} " . gettext('Total') . "</a></td>
 </tr>
 
 </table>

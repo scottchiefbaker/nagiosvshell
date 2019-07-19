@@ -85,10 +85,10 @@ function display_hosts($hosts, $start,$limit)
 			<table class="statusTable resp">
 				<thead>
 				<tr>
-					<th>'.gettext('Host Name').'</th>
-					<th>'.gettext('Status').'</th>
+					<th class="hostname">'.gettext('Host Name').'</th>
+					<th class="status">'.gettext('Status').'</th>
 					<th class="hidden">'.gettext('Duration').'</th>
-					<th>'.gettext('Attempt').'</th>
+					<th class="attempt">'.gettext('Attempt').'</th>
 					<th class="hidden">'.gettext('Last Check').'</th>
 					<th>'.gettext('Status Information').'</th>
 				</tr>
@@ -113,7 +113,7 @@ function display_hosts($hosts, $start,$limit)
 
 		<tr>
 			<td class="hostname"><a href="{$url}">{$host['host_name']}</a>{$icons}</td>
-			<td class="{$tr} status">{$host['current_state']}</td>
+			<td class="{$tr} status center">{$host['current_state']}</td>
 			<td class="hidden duration">{$host['duration']}</td>
 			<td class="center attempt">{$host['attempt']}</td>
 			<td class="hidden last_check">{$host['last_check']}</td>

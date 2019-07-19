@@ -43,7 +43,7 @@
 		font-weight: bold;
 	}
 
-	td.attempt, td.duration {
+	td.attempt, td.duration, td.status {
 		text-align: left;
 	}
 

@@ -7,6 +7,28 @@
 		padding: 0;
 	}
 
+	div.detailWrapper {
+		width: inherit;
+		padding: 10px;
+	}
+
+	div.detailcontainer {
+		float: none;
+		width: inherit;
+		margin: auto;
+	}
+
+	div.rightContainer {
+		float: none;
+		width: inherit;
+		margin: auto;
+	}
+
+	fieldset.servicedetails, fieldset.hostdetails, fieldset.attributes, fieldset.corecommands {
+		float: none;
+		width: inherit;
+	}
+
 	.no_mobile {
 		display: none;
 	}

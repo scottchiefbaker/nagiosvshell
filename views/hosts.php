@@ -112,12 +112,12 @@ function display_hosts($hosts, $start,$limit)
 		$pagerow = <<<TABLEROW
 
 		<tr>
-			<td class="hostname"><a href="{$url}">{$host['host_name']}</a>{$icons}</td>
-			<td class="{$tr} status center">{$host['current_state']}</td>
-			<td class="hidden duration">{$host['duration']}</td>
-			<td class="center attempt">{$host['attempt']}</td>
-			<td class="hidden last_check">{$host['last_check']}</td>
-			<td>{$host['plugin_output']}</td>
+			<td column-name="Hostname" class="hostname"><a href="{$url}">{$host['host_name']}</a>{$icons}</td>
+			<td column-name="Status" class="{$tr} status center">{$host['current_state']}</td>
+			<td column-name="Duration" class="hidden duration">{$host['duration']}</td>
+			<td column-name="Attempt" class="center attempt">{$host['attempt']}</td>
+			<td column-name="Last Check" class="hidden last_check">{$host['last_check']}</td>
+			<td column-name="Output" >{$host['plugin_output']}</td>
 		</tr>
 
 TABLEROW;

@@ -126,7 +126,7 @@ function display_services($services,$start,$limit)
 		{
 			$last_displayed_host = $services[$i]['host_name'];
 			$hostlink = "<a class='highlight' href='$host_url' title='".gettext('View Host Details')."'>";
-			$td1 = "<td class='$color'><div class='hostname'>$hostlink".htmlentities($services[$i]['host_name'])."</a> $hosticons </div></td>";
+			$td1 = "<td column-name=\"Hostname\" class='$color'><div class='hostname'>$hostlink".htmlentities($services[$i]['host_name'])."</a> $hosticons </div></td>";
 		}
 
 		//table data generation
@@ -135,12 +135,12 @@ function display_services($services,$start,$limit)
 
 		<tr class='statustablerow'>
 			{$td1}
-			<td class='service_description'><div class='service_description'><a href="{$url}">{$services[$i]['service_description']}</a> $serviceicons </div></td>
-			<td class="{$tr} status center">{$services[$i]['current_state']}</td>
-			<td class='duration'>{$services[$i]['duration']}</td>
-			<td class='attempt'>{$services[$i]['attempt']}</td>
-			<td class='last_check'>{$services[$i]['last_check']}</td>
-			<td class='plugin_output'><div class='plugin_output'>{$services[$i]['plugin_output']}</div></td>
+			<td column-name="Service" class='service_description'><div class='service_description'><a href="{$url}">{$services[$i]['service_description']}</a> $serviceicons </div></td>
+			<td column-name="Status" class="{$tr} status center">{$services[$i]['current_state']}</td>
+			<td column-name="Duration" class='duration'>{$services[$i]['duration']}</td>
+			<td column-name="Attempt" class='attempt'>{$services[$i]['attempt']}</td>
+			<td column-name="Last Check" class='last_check'>{$services[$i]['last_check']}</td>
+			<td column-name="Output" class='plugin_output'><div class='plugin_output'>{$services[$i]['plugin_output']}</div></td>
 		</tr>
 
 TABLEROW;

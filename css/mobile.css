@@ -47,13 +47,8 @@
 		text-align: left;
 	}
 
-	table.resp td:nth-of-type(1):before { content: "Host"; }
-	table.resp td:nth-of-type(2):before { content: "Service"; }
-	table.resp td:nth-of-type(3):before { content: "Status"; }
-	table.resp td:nth-of-type(4):before { content: "Duration"; }
-	table.resp td:nth-of-type(5):before { content: "Attempt"; }
-	table.resp td:nth-of-type(6):before { content: "Last Change"; }
-	table.resp td:nth-of-type(7):before { content: "Command Output"; }
+	/* Read the column header FROM the the HTML attr */
+	table.resp td:before { content: attr(column-name); }
 
 	div.detailWrapper {
 		width: inherit;

@@ -179,9 +179,7 @@ function search_box() {
 <div class='resultFilter'>
 	<form id='resultfilterform' action='{$_SERVER['PHP_SELF']}' method='get'>
 		<input type='hidden' name='type' value='services'>
-		<label class='label' for='name_filter'>".gettext('Search String')."</label>
-		<input type='text' name='name_filter'></input>
-		<input type='submit' name='submitbutton' value='".gettext('Filter')."' />
+		<input type='text' name='name_filter' placeholder=\"Search services\"></input>
 	</form>
 </div>
 ";

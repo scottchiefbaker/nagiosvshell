@@ -85,8 +85,6 @@ td { background-color: #F8F8F8; }
 
 h3 {	text-align: center;  }
 
-select, input { font-size: 8pt; }
-
 /*class for top navigation bar with main links */
 div.topnav {
 	/*margin-top: 50px; */
@@ -374,4 +372,14 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 	background: repeating-linear-gradient(-45deg, #FFD2D2, #FFD2D2 10px, #FFC8C8 10px, #FF7F7F 20px);
 	color: black;
 	text-shadow: 1px 1px 1px white;
+}
+
+.resultFilter {
+	width: 40%;
+	border: 0px solid black;
+}
+
+.resultFilter > form > input {
+	width: 100%;
+	box-sizing: border-box;
 }

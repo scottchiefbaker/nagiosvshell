@@ -66,6 +66,10 @@
 		width: inherit;
 	}
 
+	.resultFilter {
+		width: 100%;
+	}
+
 	.no_mobile {
 		display: none;
 	}

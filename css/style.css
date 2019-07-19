@@ -55,7 +55,9 @@
 /* site-wide styles */
 * { margin: 0px; padding: 0px;  }
 
-body { font-family: verdana, arial; }
+body {
+	font-family: 'Open Sans', Verdana, sans-serif;
+}
 
 a:link, a:visited { color: #00A3FF; text-decoration: none;}
 
@@ -70,6 +72,9 @@ table {
 
 .center {
 	text-align: center;
+}
+.hidden {
+	display: none;
 }
 
 td, th { padding: 1px 10px 1px 10px; background-color: #DEDEDE; 	}
@@ -180,7 +185,7 @@ div.corelink {
 
 .note{	font-style: italic;  font-size: 8pt; color: #989898; }
 
-.servicetable th, .servicetable td, .statustable th, .statustable td {
+.servicetable th, .servicetable td, .statusTable th, .statusTable td {
 	padding: 5px;
 }
 

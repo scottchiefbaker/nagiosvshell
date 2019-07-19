@@ -83,19 +83,19 @@ function build_nav_links() //build page links based on user's permission level
 
 
 
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=hosts_objs'>".gettext('Hosts')."</a></li>\n"; //hosts
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=services_objs'>".gettext('Services')."</a></li>\n"; //services
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=hostgroups_objs'>".gettext('Hostgroups')."</a></li>\n"; //hostgroups
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=servicegroups_objs'>".gettext('Servicegroups')."</a></li>\n"; //servicegroups
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=timeperiods'>".gettext('Timeperiods')."</a></li>\n"; //timeperiods
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=contacts'>".gettext('Contacts')."</a></li>\n"; //contacts
-		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&objtype_filter=contactgroups'>".gettext('Contactgroups')."</a></li>\n"; //contactgroups
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=hosts_objs'>".gettext('Hosts')."</a></li>\n"; //hosts
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=services_objs'>".gettext('Services')."</a></li>\n"; //services
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=hostgroups_objs'>".gettext('Hostgroups')."</a></li>\n"; //hostgroups
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=servicegroups_objs'>".gettext('Servicegroups')."</a></li>\n"; //servicegroups
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=timeperiods'>".gettext('Timeperiods')."</a></li>\n"; //timeperiods
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=contacts'>".gettext('Contacts')."</a></li>\n"; //contacts
+		$navlinks .= "<li><a class='nav sub-nav' href='".$base."type=object&amp;objtype_filter=contactgroups'>".gettext('Contactgroups')."</a></li>\n"; //contactgroups
 
 				//COMMAND VIEW
 		if($NagiosUser->is_admin())
 		{
 			//make link for commands
-			$navlinks .= "<li><a href='".$base."type=object&objtype_filter=commands' class='nav sub-nav'>".gettext('Commands')."</a></li>\n"; //commands config
+			$navlinks .= "<li><a href='".$base."type=object&amp;objtype_filter=commands' class='nav sub-nav'>".gettext('Commands')."</a></li>\n"; //commands config
 		}
 
 		$navlinks .= '</ul></div></li>';
@@ -341,10 +341,10 @@ function result_filter($name_filter="", $type='host')
 
 
 	<form id='resultfilterform' action='".$_SERVER['PHP_SELF']."' method='get'>
-	  <div class='stateFilter'>
-		<input type='hidden' name='type' value=\"".$plType."\">
-		<label class='label note' for='resultfilter'>".gettext('Filter by State').": </label><br />
-		<select id='resultfilter' name='state_filter' onChange='this.form.submit();'>
+		<div class='stateFilter'>
+			<input type='hidden' name='type' value=\"".$plType."\">
+			<label class='label note' for='resultfilter'>".gettext('Filter by State').": </label><br />
+			<select id='resultfilter' name='state_filter' onChange='this.form.submit();'>
 ";
 
 		foreach ($states as $val)
@@ -355,14 +355,14 @@ function result_filter($name_filter="", $type='host')
 		}
 
 	$resultFilter.= "
-		</select>
+			</select>
 		</div> <!-- end stateFilter div -->
 
 		<div class='nameFilter'>
-		<label class='label note' for='name_filter'>".gettext('Search')." ".$ucType."name: </label><br />
-		<input type='text' id='name_filter' name='name_filter' value='".$name_filter."'></input>
-		<input type='submit' name='submitbutton' value='Filter' />
-	  </div><!-- end nameFilter div -->
+			<label class='label note' for='name_filter'>".gettext('Search')." ".$ucType."name: </label><br />
+			<input type='text' id='name_filter' name='name_filter' value='".$name_filter."' />
+			<input type='submit' name='submitbutton' value='Filter' />
+		</div><!-- end nameFilter div -->
 	</form>
 
 ";

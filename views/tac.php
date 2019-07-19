@@ -89,7 +89,7 @@ function overview_table($tac_data)
 	global $NagiosUser;
 	$overview_table = "
 <table class='tac no_mobile'>
-<tr><th>".gettext('Tactical Monitoring Overview')."</th></tr>
+<tr><th><h2>".gettext('Tactical Monitoring Overview')."</h2></th></tr>
 	<tr>
 		<td class=\"center\">
 			".gettext('Last Check').": {$tac_data['lastcmd']}<br />

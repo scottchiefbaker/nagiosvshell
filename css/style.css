@@ -99,7 +99,12 @@ a.highlight {
 }
 
 table a {
-	text-shadow: 0 0 3px #ccfdff;
+	/*text-shadow: 0 0 3px #ccfdff;*/
+
+	text-shadow:	-1px  1px 0px #fff,
+					-1px -1px 0px #fff,
+					1px  1px 0px #fff,
+					1px -1px 0px #fff;
 }
 
 .nav {
@@ -192,7 +197,8 @@ th.duration, td.duration {
 	width: 110px;
 	display: none;
 }
-.tac th.status, .tac td.ok, .tac td.critical, .tac td.warning, .tac td.unknown, .tac td.pending {
+
+td.tac_col {
 	width: 20%;
 }
 
@@ -326,8 +332,6 @@ div.hidden { display:none;  }
 table.tac {
 	margin-bottom: 15px;
 }
-
-#td_servicestotal {padding-left:15%;}
 
 #meterContainer {
 	margin-bottom: 15px;

@@ -137,17 +137,17 @@ function hosts_table($tac_data)
 <table class='tac'>
 <tr><th colspan=\"5\">" . gettext('Hosts') . "</th></tr>
 <tr>
-	<td class='ok'><a class='highlight' href='{$tac_data['hostlink']}UP'><div class='td'>{$tac_data['hostsUpTotal']} ".gettext('Up')."</div></a></td>
-	<td class='down'><a class='highlight' href='{$tac_data['hostlink']}DOWN'><div class='td'>{$tac_data['hostsDownTotal']} ".gettext('Down')."</div></a></td>
-	<td class='unreachable'><a class='highlight' href='{$tac_data['hostlink']}UNREACHABLE'><div class='td'>{$tac_data['hostsUnreachableTotal']} ".gettext('Unreachable')."</div></a></td>
-	<td class='pending'><a class='highlight' href='{$tac_data['hostlink']}PENDING'><div class='td'>{$tac_data['hostsPending']} ".gettext('Pending')."</div></a></td>
+	<td class='ok tac_col'><a class='highlight' href='{$tac_data['hostlink']}UP'><div class='td'>{$tac_data['hostsUpTotal']} ".gettext('Up')."</div></a></td>
+	<td class='down tac_col'><a class='highlight' href='{$tac_data['hostlink']}DOWN'><div class='td'>{$tac_data['hostsDownTotal']} ".gettext('Down')."</div></a></td>
+	<td class='unreachable tac_col'><a class='highlight' href='{$tac_data['hostlink']}UNREACHABLE'><div class='td'>{$tac_data['hostsUnreachableTotal']} ".gettext('Unreachable')."</div></a></td>
+	<td class='pending tac_col'><a class='highlight' href='{$tac_data['hostlink']}PENDING'><div class='td'>{$tac_data['hostsPending']} ".gettext('Pending')."</div></a></td>
 
 </tr>
 <tr>
-	<td class='problem'><a class='highlight' href='{$tac_data['hostlink']}PROBLEMS'><div class='td'>{$tac_data['hostsProblemsTotal']} ".gettext('Problems')."</div></a></td>
-	<td class='unhandled'><a class='highlight' href='{$tac_data['hostlink']}UNHANDLED'><div class='td'>{$tac_data['hostsUnhandledTotal']} ".gettext('Unhandled')."</div></a></td>
-	<td class='acknowledged'><a class='highlight' href='{$tac_data['hostlink']}ACKNOWLEDGED'><div class='td'>{$tac_data['hostsAcknowledgedTotal']} ".gettext('Acknowledged')."</div></a></td>
-	<td><div class='td'><a class='highlight' href='index.php?type=hosts' title='All Hosts'>{$tac_data['hostsTotal']} ".gettext('Total')."</div></a></td>
+	<td class='problem tac_col'><a class='highlight' href='{$tac_data['hostlink']}PROBLEMS'><div class='td'>{$tac_data['hostsProblemsTotal']} ".gettext('Problems')."</div></a></td>
+	<td class='unhandled tac_col'><a class='highlight' href='{$tac_data['hostlink']}UNHANDLED'><div class='td'>{$tac_data['hostsUnhandledTotal']} ".gettext('Unhandled')."</div></a></td>
+	<td class='acknowledged tac_col'><a class='highlight' href='{$tac_data['hostlink']}ACKNOWLEDGED'><div class='td'>{$tac_data['hostsAcknowledgedTotal']} ".gettext('Acknowledged')."</div></a></td>
+	<td><div class='td tac_col'><a class='highlight' href='index.php?type=hosts' title='All Hosts'>{$tac_data['hostsTotal']} ".gettext('Total')."</div></a></td>
 </tr>
 
 </table>
@@ -165,34 +165,34 @@ function services_table($tac_data)
 	</tr>
 
 	<tr>
-		<td class='ok'>
+		<td class='ok tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}OK'><div class='td'>{$tac_data['servicesOkTotal']} ".gettext('Ok')."</div></a>
 		</td>
-		<td class='warning'>
+		<td class='warning tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}WARNING'><div class='td'>{$tac_data['servicesWarningTotal']} ".gettext('Warning')."</div></a>
 		</td>
-		<td class='critical'>
+		<td class='critical tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}CRITICAL'><div class='td'>{$tac_data['servicesCriticalTotal']} ".gettext('Critical')."</div></a>
 		</td>
-		<td class='unknown'>
+		<td class='unknown tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}UNKNOWN'><div class='td'>{$tac_data['servicesUnknownTotal']} ".gettext('Unknown')."</div></a>
 		</td>
-		<td class='pending'>
+		<td class='pending tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}PENDING'><div class='td'>{$tac_data['servicesPendingTotal']} ".gettext('Pending')."</div></a>
 		</td>
 	</tr>
 
 	<tr>
-		<td class='problem'>
+		<td class='problem tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}PROBLEMS'><div class='td'>{$tac_data['servicesProblemsTotal']} ".gettext('Problems')."</div></a>
 		</td>
-		<td class='unhandled'>
+		<td class='unhandled tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}UNHANDLED'><div class='td'>{$tac_data['servicesUnhandledTotal']} ".gettext('Unhandled')."</div></a>
 		</td>
-		<td class='acknowledged'>
+		<td class='acknowledged tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}ACKNOWLEDGED'>{$tac_data['servicesAcknowledgedTotal']} ".gettext('Acknowledged')."</a>
 		</td>
-		<td colspan='2'>
+		<td colspan='2' class=\"tac_col\">
 			<a class='highlight' href='index.php?type=services' title='All Services'><div id='td_servicestotal' class='td'>{$tac_data['servicesTotal']} ".gettext('Total')." </div></a>
 		</td>
 	</tr>

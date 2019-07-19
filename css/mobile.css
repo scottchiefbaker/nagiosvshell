@@ -1,0 +1,14 @@
+// Mobile interface
+@media screen and (max-width: 639px) {
+
+	table.tac td, table.tac tr {
+		display: block;
+		width: 100%;
+		padding: 0;
+	}
+
+	.no_mobile {
+		display: none;
+	}
+
+}

@@ -56,7 +56,6 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 	$js_path        = BASEURL  . 'js/';
 	$jquery_path    = $js_path . 'jquery-3.4.1.min.js';
 	$header_js_path = $js_path . 'header.inc.js';
-	$css_path       = BASEURL  . 'css/style.css';
 	$navlinks       = build_nav_links();
 	$coreurl        = COREURL;
 
@@ -70,7 +69,8 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <meta name="description" content="Nagios" />
 <meta name="keywords" content="Nagios VShell" />
 
-<link rel="stylesheet" href="' . $css_path . '" type="text/css" media="screen" />
+<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
+<link rel="stylesheet" href="css/mobile.css" type="text/css" media="screen" />
 <style type="text/css">
 <!-- use external stylesheet to control page style -->
 </style>

@@ -62,9 +62,7 @@ function display_hosts($hosts, $start,$limit)
 	$doPagination = $pageCount * $limit < $resultsCount;
 	$name_filter = isset($_GET['name_filter']) ? htmlentities($_GET['name_filter']) : '';
 	$hostnames = array_keys($hosts);
-	sort($hostnames);
-
-
+	natcasesort($hostnames);
 
 	//begin html output / VIEW
 	$page = '';
@@ -94,12 +92,21 @@ function display_hosts($hosts, $start,$limit)
 				</tr>
 				</thead><tbody>' . "\n";
 
-	//begin looping table results
-	for($i=$start; $i<=($start+$limit); $i++)
-	{
-		if ($i >= $resultsCount) break;
-		if(!isset($hosts[$hostnames[$i]])) continue; //skip undefined indexes of hosts array
-		$host = $hosts[$hostnames[$i]];
+	$i = 0;
+	foreach ($hostnames as $h) {
+		// Don't go past the end
+		if ($i >= $resultsCount) {
+			break;
+		}
+
+		// Don't show any that are before where we start
+		if ($i < $start) {
+			$i++;
+			continue;
+		}
+
+		$host = $hosts[$h];
+
 		//process remaining variables for display here
 		process_host_status_keys($host);
 
@@ -122,6 +129,8 @@ function display_hosts($hosts, $start,$limit)
 
 TABLEROW;
 		$page .= $pagerow;
+
+		$i++;
 	}
 
 

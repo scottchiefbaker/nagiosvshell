@@ -68,7 +68,7 @@ if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 && $_SERVER[
 // All other setting should be adjusted by editing vshell.conf
 // Switch to use external configuration file by Tony Yarusso, 30 March 2011
 
-if (is_readable("config/vshell.conf")) {
+if (is_readable(dirname(__FILE__) . "/config/vshell.conf")) {
 	$ini_array = parse_ini_file("config/vshell.conf");
 } elseif (is_readable("/etc/vshell.conf")) {
 	$ini_array = parse_ini_file("/etc/vshell.conf");

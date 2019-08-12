@@ -49,18 +49,21 @@
 // NEGLIGENCE OR OTHERWISE) OR OTHER ACTION, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-
 function get_service_details($dets)
 {
 	global $NagiosUser;
+
+	if (!empty($_GET['debug'])) {
+		k($dets);
+	}
 
 	$page="
 
 	<h3>".gettext('Service Status Detail')."</h3>
 	<div class='detailWrapper'>
 
-	<h4>".gettext('Service').": {$dets['Service']}</h4>
-	<h4>".gettext('Host').": <a href='index.php?type=hostdetail&name_filter={$dets['Host']}' title='".gettext('Host Details')."'>{$dets['Host']}</a></h4>
+	<h4 id=\"service\" data-value=\"{$dets['Service']}\">".gettext('Service').": {$dets['Service']}</h4>
+	<h4 id=\"host\" data-value=\"{$dets['Host']}\">".gettext('Host').": <a href='index.php?type=hostdetail&name_filter={$dets['Host']}' title='".gettext('Host Details')."'>{$dets['Host']}</a></h4>
 	<h5 class=\"margin-bottom\">".gettext('Member of').": {$dets['MemberOf']}</h5>
 	<h6><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h6>
 
@@ -97,29 +100,88 @@ function get_service_details($dets)
 	<div class='rightContainer'>
 	";
 
+
+	if (strtolower($dets['Notifications']) === "enabled") {
+		$notify_check = "checked";
+	} else {
+		$notify_check = "";
+	}
+
+	if (strtolower($dets['FlapDetection']) === "enabled") {
+		$flap_check = "checked";
+	} else {
+		$flap_check = "";
+	}
+
+	if (strtolower($dets['ActiveChecks']) === "enabled") {
+		$active_check = "checked";
+	} else {
+		$active_check = "";
+	}
+
+	if (strtolower($dets['PassiveChecks']) === "enabled") {
+		$passive_check = "checked";
+	} else {
+		$passive_check = "";
+	}
+
+	/////////////////////////////////////////////////////////////////////////////////
+
 	if (!$NagiosUser->if_has_authKey('authorized_for_read_only')) {
 	$page .= "<fieldset class='attributes'>
 		<legend>".gettext('Service Attributes')."</legend>
 		<table>
 			<tr>
-				<td class='{$dets['ActiveChecks']}'>".gettext('Active Checks').": {$dets['ActiveChecks']}</td>
-				<td class=\"center\"><a href='{$dets['CmdActiveChecks']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Active Checks')."' class='iconLink' alt='Toggle' /></a></td>
+				<td class=\"" . strtolower($dets['ActiveChecks']) . "\">".gettext('Active Checks').": {$dets['ActiveChecks']}</td>
+				<td class=\"center\">
+					<div class=\"\">
+						<label class=\"switch\">
+							<input data-cmd=\"_SVC_CHECK\" type=\"checkbox\" class=\"input_toggle\" " . $active_check . " />
+							<span class=\"slider round\"></span>
+						</label>
+					</div>
+				</td>
 			</tr>
 			<tr>
-				<td class='{$dets['PassiveChecks']}'>".gettext('Passive Checks').": {$dets['PassiveChecks']}</td>
-				<td class=\"center\"><a href='{$dets['CmdPassiveChecks']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Passive Checks')."' class='iconLink' alt='Toggle' /></a></td>
+				<td class=\"" . strtolower($dets['PassiveChecks']) . "\">".gettext('Passive Checks').": {$dets['PassiveChecks']}</td>
+				<td class=\"center\">
+					<div class=\"\">
+						<label class=\"switch\">
+							<input data-cmd=\"_PASSIVE_SVC_CHECKS\" type=\"checkbox\" class=\"input_toggle\" " . $passive_check . " />
+							<span class=\"slider round\"></span>
+						</label>
+					</div>
+				</td>
 			</tr>
+
+			<!--
 			<tr>
-				<td class='{$dets['Obsession']}'>".gettext('Obsession').": {$dets['Obsession']}</td>
+				<td class=\"" . strtolower($dets['Obsession']) . "\">" . gettext('Obsession') . ": {$dets['Obsession']}</td>
 				<td class=\"center\"><a href='{$dets['CmdObsession']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Obsession')."' class='iconLink' alt='Toggle' /></a></td>
 			</tr>
+			-->
+
 			<tr>
-				<td class='{$dets['Notifications']}'>".gettext('Notifications').": {$dets['Notifications']}</td>
-				<td class=\"center\"><a href='{$dets['CmdNotifications']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Notifications')."' class='iconLink' alt='Toggle' /></a></td>
+				<td class=\"" . strtolower($dets['Notifications']) . "\">" . gettext('Notifications').": {$dets['Notifications']}</td>
+				<td class=\"center\">
+					<div class=\"\">
+						<label class=\"switch\">
+							<input data-cmd=\"_SVC_NOTIFICATIONS\" type=\"checkbox\" class=\"input_toggle\" " . $notify_check . " />
+							<span class=\"slider round\"></span>
+						</label>
+					</div>
+				</td>
 			</tr>
 			<tr>
-				<td class='{$dets['FlapDetection']}'>".gettext('Flap Detection').": {$dets['FlapDetection']}</td>
-				<td class=\"center\"><a href='{$dets['CmdFlapDetection']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Flap Detection')."' class='iconLink' alt='Toggle' /></a></td>
+				<td class=\"" . strtolower($dets['FlapDetection']) . "\">" . gettext('Flap Detection') . ": {$dets['FlapDetection']}</td>
+				<td class=\"center\">
+					<div class=\"\">
+						<label class=\"switch\">
+							<input data-cmd=\"_SVC_FLAP_DETECTION\" type=\"checkbox\" class=\"input_toggle\" " . $flap_check . " />
+							<span class=\"slider round\"></span>
+						</label>
+					</div>
+				</td>
 			</tr>
 		</table>
 	</fieldset>
@@ -175,8 +237,6 @@ function get_service_details($dets)
 		$page .= '</table>';
 	}
 	$page.='</div><br />';
+
 	return $page;
 }
-
-
-?>

@@ -8,6 +8,10 @@ function get_host_details($dets)
 {
 	global $NagiosUser;
 
+	if (!empty($_GET['debug'])) {
+		k($dets);
+	}
+
 	$page="
 
 	<h3>".gettext('Host Status Detail')."</h3>
@@ -56,10 +60,12 @@ function get_host_details($dets)
 				<td class='{$dets['PassiveChecks']}'>".gettext('Passive Checks').": {$dets['PassiveChecks']}</td>
 				<td class=\"center\"><a href='{$dets['CmdPassiveChecks']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Passive Checks')."' class='iconLink' alt='Toggle' /></a></td>
 			</tr>
+			<!--
 			<tr>
 				<td class='{$dets['Obsession']}'>".gettext('Obsession').": {$dets['Obsession']}</td>
 				<td class=\"center\"><a href='{$dets['CmdObsession']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Obsession')."' class='iconLink' alt='Toggle' /></a></td>
 			</tr>
+			-->
 			<tr>
 				<td class='{$dets['Notifications']}'>".gettext('Notifications').": {$dets['Notifications']}</td>
 				<td class=\"center\"><a href='{$dets['CmdNotifications']}'><img src='views/images/action_small.gif' title='".gettext('Toggle Notifications')."' class='iconLink' alt='Toggle' /></a></td>

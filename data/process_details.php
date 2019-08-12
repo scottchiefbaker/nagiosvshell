@@ -59,11 +59,13 @@ function process_service_detail($serviceid)
 	else{$cmd_flap_detection = core_function_link('ENABLE_SVC_FLAP_DETECTION',  $hostname, $ser_desc); }
 
 	$process_perf_data = return_enabled(get_in($sd,['process_performance_data']));
-	$obsession         = return_enabled(get_in($sd,['obsess_over_service']));
+	$obsession         = return_enabled(get_in($sd,['obsess']));
 
-	if($obsession == 'Enabled')
-	{$cmd_obsession     = core_function_link('STOP_OBSESSING_OVER_SVC',  $hostname, $ser_desc); }
-	else{$cmd_obsession = core_function_link('START_OBSESSING_OVER_SVC', $hostname, $ser_desc); }
+	if ($obsession == 'Enabled') {
+		$cmd_obsession = core_function_link('STOP_OBSESSING_OVER_SVC',  $hostname, $ser_desc);
+	}	else{
+		$cmd_obsession = core_function_link('START_OBSESSING_OVER_SVC', $hostname, $ser_desc);
+	}
 
 	$add_comment = core_function_link('ADD_SVC_COMMENT', $hostname, $ser_desc);
 
@@ -191,11 +193,13 @@ function process_host_detail($in_hostname)
 	else{$cmd_flap_detection = core_function_link('ENABLE_HOST_FLAP_DETECTION',  $hostname); }
 
 	$process_perf_data = return_enabled(get_in($hd,['process_performance_data']));
-	$obsession         = return_enabled(get_in($hd,['obsess_over_host']));
+	$obsession         = return_enabled(get_in($hd,['obsess']));
 
-	if($obsession == 'Enabled')
-	{$cmd_obsession     = core_function_link('STOP_OBSESSING_OVER_HOST',  $hostname); }
-	else{$cmd_obsession = core_function_link('START_OBSESSING_OVER_HOST', $hostname); }
+	if ($obsession == 'Enabled') {
+		$cmd_obsession = core_function_link('STOP_OBSESSING_OVER_HOST', $hostname);
+	} else {
+		$cmd_obsession = core_function_link('START_OBSESSING_OVER_HOST', $hostname);
+	}
 
 	$add_comment = core_function_link('ADD_HOST_COMMENT', $hostname);
 

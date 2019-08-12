@@ -158,15 +158,19 @@ div.corelink {
 	margin   : 10px;
 }
 
-/* /////////////FORMATTING CLASSES /////*/
-.down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL
-{	background-color: #FF795F;  }
-.warning, .yellow, .WARNING
-{	background-color: #FEFF5F; }
-.ok, .green, .up, .enabled, .Enabled, .OK, .UP
-{	background-color: #b2ff5f; }
-.unknown, .unreachable, .orange, .UNKNOWN, .UNREACHABLE
-{	background-color: #FFC45F; }
+/* ========== Formatting Classes ========== */
+.down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL {
+	background-color: #FF795F;
+}
+.warning, .yellow, .WARNING {
+	background-color: #FEFF5F;
+}
+.ok, .green, .up, .enabled, .Enabled, .OK, .UP {
+	background-color: #b2ff5f;
+}
+.unknown, .unreachable, .orange, .UNKNOWN, .UNREACHABLE {
+	background-color: #FFC45F;
+}
 
 .problem { background-color: #FFC85F; }
 .pending { background-color: #C7C7C7; }
@@ -242,6 +246,10 @@ fieldset.attributes table, fieldset.corecommands table, table.details
 {
 	margin-left: auto;
 	margin-right: auto;
+}
+
+fieldset.attributes td {
+	transition: all 0.5s ease-in-out;
 }
 
 div.detailWrapper{

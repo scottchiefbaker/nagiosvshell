@@ -2,6 +2,8 @@ $(document).ready(function() {
 	init_toggles();
 });
 
+// Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
+
 function init_toggles() {
 	$(".input_toggle").on("click", function() {
 		var checked  = $(this).prop('checked');

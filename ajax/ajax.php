@@ -14,6 +14,8 @@ if (!is_writable(CMDFILE)) {
 	return null;
 }
 
+// Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
+
 $cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);
 $ok  = file_put_contents(CMDFILE, $cmd);
 

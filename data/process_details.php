@@ -234,7 +234,7 @@ function process_host_detail($in_hostname)
 		'LastCheck'              => $last_check,
 		'LastCheckFmt'           => human_time(time() - $hd['last_check'], 2) . ' ago',
 		'NextCheck'              => $next_check,
-		'NextCheckFmt'           => human_time(time() - $hd['next_check'], 2),
+		'NextCheckFmt'           => human_time(abs(time() - $hd['next_check']), 2),
 		'LastStateChange'        => $last_state_change,
 		'LastStateChangeFmt'     => human_time(time() - $hd['last_state_change'], 2) . ' ago',
 		'LastNotification'       => $last_notification,

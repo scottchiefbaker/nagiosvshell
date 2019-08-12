@@ -63,7 +63,7 @@ function get_service_details($dets)
 	<div class='detailWrapper'>
 
 	<h4 id=\"service\" data-value=\"{$dets['Service']}\">".gettext('Service').": {$dets['Service']}</h4>
-	<h4 id=\"host\" data-value=\"{$dets['Host']}\">".gettext('Host').": <a href='index.php?type=hostdetail&name_filter={$dets['Host']}' title='".gettext('Host Details')."'>{$dets['Host']}</a></h4>
+	<h4 id=\"host\" data-target=\"service\" data-value=\"{$dets['Host']}\">".gettext('Host').": <a href='index.php?type=hostdetail&name_filter={$dets['Host']}' title='".gettext('Host Details')."'>{$dets['Host']}</a></h4>
 	<h5 class=\"margin-bottom\">".gettext('Member of').": {$dets['MemberOf']}</h5>
 	<h6><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h6>
 

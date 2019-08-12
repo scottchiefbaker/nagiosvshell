@@ -2,9 +2,9 @@
 
 include(dirname(__FILE__) . '/../inc.inc.php');
 
-$host = $_POST['host'];
-$svc  = $_POST['service'];
-$cmd  = $_POST['command'];
+$host = trim(get_in($_POST,['host']));
+$svc  = trim(get_in($_POST,['service']));
+$cmd  = trim(get_in($_POST,['command']));
 
 ////////////////////////////////////////////////////////////////////////
 
@@ -16,7 +16,12 @@ if (!is_writable(CMDFILE)) {
 
 // Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
 
-$cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);
+if (!empty($service)) {
+	$cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);
+} else {
+	$cmd = sprintf("[%lu] %s;%s;\n",$time,$cmd,$host);
+}
+
 $ok  = file_put_contents(CMDFILE, $cmd);
 
 if ($ok) {

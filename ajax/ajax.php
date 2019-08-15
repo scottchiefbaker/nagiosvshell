@@ -16,7 +16,7 @@ if (!is_writable(CMDFILE)) {
 
 // Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
 
-if (!empty($service)) {
+if (!empty($svc)) {
 	$cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);
 } else {
 	$cmd = sprintf("[%lu] %s;%s;\n",$time,$cmd,$host);

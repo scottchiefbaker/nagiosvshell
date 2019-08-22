@@ -182,11 +182,11 @@ function get_by_name($name, $data, $field='host_name',$host_filter=false) {
 				$newarray[] = $d;
 			}
 		}
-	} else { //match for searc
+	} else { //match for search
+		// We're using '^' as the delimiter so you have to escape it if you want to search for it
+		$name = preg_replace("/\^/","\\^",$name);
 		foreach($data as $d) {
-			//$name = preg_replace("/\//","\\\\\\\\\/",$name);
-			//kd($name);
-			if (preg_match("^$name^", $d[$field])) {
+			if (preg_match("^$name^i", $d[$field])) {
 				$newarray[] = $d;
 			}
 		}

@@ -168,27 +168,32 @@ function get_by_state($state, $data,$service=false)
 
 
 function get_by_name($name, $data, $field='host_name',$host_filter=false) {
-	//echo $field; 
-//	$name = preg_quote($name, '/');
-   $newarray = array();
-	//bug fix for hosts that don't have any services -MG 
-	if(!array_key_exists($field, $data) && htmlentities($_GET['type'],ENT_QUOTES) == 'hosts') 
-	   $field = 'host_name'; 
- 
-	if($host_filter) {//match exact hostname 
-	   foreach($data as $d) {
-	      if($host_filter == $d[$field])
-	         $newarray[]=$d;
-	   } 
-	}   
-	else { //match for search 	   
-	   foreach($data as $d) {
-	      if(preg_match("/$name/i", $d[$field]))
-	      $newarray[] = $d;	   
-	   }
-	 } 
-	   //return array_filter($data, create_function('$d', 'return preg_match("/'.$name.'/i", $d[\''.$field.'\']);'));
-	 return $newarray;  
+	//echo $field;
+	//	$name = preg_quote($name, '/');
+	$newarray = array();
+	//bug fix for hosts that don't have any services -MG
+	if (!array_key_exists($field, $data) && htmlentities($_GET['type'],ENT_QUOTES) == 'hosts') {
+		$field = 'host_name';
+	}
+
+	if ($host_filter) {//match exact hostname
+		foreach($data as $d) {
+			if ($host_filter == $d[$field]) {
+				$newarray[] = $d;
+			}
+		}
+	} else { //match for searc
+		foreach($data as $d) {
+			//$name = preg_replace("/\//","\\\\\\\\\/",$name);
+			//kd($name);
+			if (preg_match("^$name^", $d[$field])) {
+				$newarray[] = $d;
+			}
+		}
+	}
+
+	//return array_filter($data, create_function('$d', 'return preg_match("/'.$name.'/i", $d[\''.$field.'\']);'));
+	return $newarray;
 }
 
 

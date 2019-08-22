@@ -234,7 +234,7 @@ function process_host_detail($in_hostname)
 		'LastCheck'              => $last_check,
 		'LastCheckFmt'           => human_time(time() - $hd['last_check'], 2) . ' ago',
 		'NextCheck'              => $next_check,
-		'NextCheckFmt'           => human_time(abs(time() - $hd['next_check']), 2),
+		'NextCheckFmt'           => human_time($hd['next_check'] - time(), 2),
 		'LastStateChange'        => $last_state_change,
 		'LastStateChangeFmt'     => human_time(time() - $hd['last_state_change'], 2) . ' ago',
 		'LastNotification'       => $last_notification,
@@ -287,6 +287,11 @@ function core_function_link($function_name, $hostname, $service ='',$options='')
 function human_time($time,$approximate = 0) {
 	if ($time === 0) {
 		return "0 seconds";
+	}
+
+	// If the time Nagios is reporting is more than 10 years ago it means it's never been checked
+	if ($time > 86400 * 365 * 10) {
+		return "Never";
 	}
 
 	$years = intval($time / (86400 * 365));

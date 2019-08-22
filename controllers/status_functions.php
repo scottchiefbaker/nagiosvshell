@@ -183,10 +183,10 @@ function get_by_name($name, $data, $field='host_name',$host_filter=false) {
 			}
 		}
 	} else { //match for search
-		// We're using '^' as the delimiter so you have to escape it if you want to search for it
-		$name = preg_replace("/\^/","\\^",$name);
+		// We're using '_' as the delimiter so you have to escape it if you want to search for it
+		$name = preg_replace("/_/","\\_",$name);
 		foreach($data as $d) {
-			if (preg_match("^$name^i", $d[$field])) {
+			if (preg_match("_" . $name . "_i", $d[$field])) {
 				$newarray[] = $d;
 			}
 		}

@@ -191,7 +191,7 @@ function features_table($tac_data)
 	$features_table = "
 <!-- #####################ENABLED FEATURES TABLE ####################-->
 <table class='tac no_mobile'>
-<tr><th>".gettext('Monitoring Features')."</th></tr>
+<tr><th colspan=\"5\">".gettext('Monitoring Features')."</th></tr>
 <tr>
 	<td>".gettext('Flap Detection')."</td><td>".gettext('Notifications')."</td><td>".gettext('Event Handlers')."</td>
 	<td>".gettext('Active Checks')."</td><td>".gettext('Passive Checks')."</td>

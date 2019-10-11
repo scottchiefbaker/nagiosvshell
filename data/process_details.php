@@ -36,7 +36,8 @@ function process_service_detail($serviceid)
 	$state = return_service_state($sd['current_state']);
 
 	//service attributes
-	$ser_desc = preg_replace('/\ /', '+', $sd['service_description']);    //replacing spaces with pluses for cgi URL
+	$ser_desc = urlencode($sd['service_description']);
+
 	//if else statements generate links for Nagios core commands based on status
 	$active_checks = return_enabled($sd['active_checks_enabled']);
 	if($active_checks == 'Enabled')

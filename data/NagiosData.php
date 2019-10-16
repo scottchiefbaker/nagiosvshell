@@ -57,7 +57,7 @@ class NagiosData
 	// Storage for all necessary variables.  Replaces the many globals
 	protected $_vars;
 
-	protected $properties = array('hosts_objs', 'services_objs',
+	public $properties = array('hosts_objs', 'services_objs',
 		'hostgroups_objs', 'servicegroups_objs', 'contacts', 'contactgroups',
 		'timeperiods', 'commands', 'hosts', 'services', 'comments', 'info',
 		'details', 'permissions', 'hostgroups', 'servicegroups', 'program',
@@ -202,6 +202,7 @@ class NagiosData
 
 	private function raw_file_parse($objects_are_cached = false,$perms_are_cached=false,$apc_exists = false)
 	{
+
 		//echo "RAW PARSE<br />";
 		if(!$objects_are_cached)
 		{

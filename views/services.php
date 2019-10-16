@@ -52,13 +52,20 @@
 //expecting array of service status and returns a service table
 function display_services($services,$start,$limit)
 {
+	global $NagiosData;
+
 	//LOGIC
 	$resultsCount = count($services);
 	//if results are greater than number that the page can display, create page links
 	//calculate number of pages
-	$pageCount = (($resultsCount / $limit) < 1) ? 1 : intval($resultsCount/$limit);
+	$pageCount    = (($resultsCount / $limit) < 1) ? 1 : intval($resultsCount/$limit);
 	$doPagination = $pageCount * $limit < $resultsCount;
-	$name_filter = isset($_GET['name_filter']) ? $_GET['name_filter'] : '';
+	$name_filter  = isset($_GET['name_filter']) ? $_GET['name_filter'] : '';
+	$hosts        = $NagiosData->properties['hosts_objs'];
+
+	if (!empty($_GET['debug'])) {
+		k($services);
+	}
 
 	//VIEW / html output
 	$page='';
@@ -119,13 +126,17 @@ function display_services($services,$start,$limit)
 		$color = get_host_status_color($services[$i]['host_name']);
 		$hosticons = fetch_host_icons($services[$i]['host_name']);
 		$serviceicons = fetch_service_icons($services[$i]['service_id']);
+		$host_name = $services[$i]['host_name'];
+
+		$host_info = $hosts[$host_name];
+		$host_addr = $host_info['address'];
 
 		//removing duplicate host names from table for a cleaner look
 		if ($services[$i]['host_name'] == $last_displayed_host) $td1 = '<td></td>';
 		else
 		{
 			$last_displayed_host = $services[$i]['host_name'];
-			$hostlink = "<a class='highlight' href='$host_url' title='".gettext('View Host Details')."'>";
+			$hostlink = "<a class=\"highlight\" href=\"$host_url\" title=\"Host address: $host_addr\">";
 			$td1 = "<td column-name=\"Hostname\" class='$color'><div class='hostname'>$hostlink".htmlentities($services[$i]['host_name'])."</a> $hosticons </div></td>";
 		}
 

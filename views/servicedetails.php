@@ -200,8 +200,8 @@ function get_service_details($dets)
 					<td>".gettext('Schedule downtime')."</td>
 					<td class=\"center\"><a href='{$dets['CmdScheduleDowntime']}' title='".gettext('Schedule Downtime')."'><img src='views/images/downtime.png' class='iconLink' alt='Downtime' /></a></td></tr>
 				<tr>
-					<td>".gettext('Reschedule Next Check')."</td>
-					<td class=\"center\"><a href='{$dets['CmdScheduleChecks']}' title='".gettext('Schedule Check')."'><img src='views/images/schedulecheck.png' class='iconLink' alt='Schedule' /></a></td>
+					<td>Check Immediately</td>
+					<td class=\"center\"><img src='views/images/schedulecheck.png' class='pointer recheck_now iconLink' alt='Recheck now' /></td>
 				</tr>
 				<tr>
 					<td>{$dets['AckTitle']}</td>

@@ -386,3 +386,7 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 	width: 100%;
 	box-sizing: border-box;
 }
+
+.pointer {
+	cursor: pointer;
+}

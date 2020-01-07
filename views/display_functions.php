@@ -156,13 +156,15 @@ function build_nav_links() //build page links based on user's permission level
  */
 function get_color_code($array,$int=false)
 {
-
-	if($int)
+	if ($int) {
 		$state = strtolower(return_host_state($array['current_state']));
-	else
+	} else {
 		$state = strtolower($array['current_state']);
+	}
+
 	$vals = array('ok', 'up', 'down', 'warning', 'unknown', 'critical', 'pending');
-	$str = (in_array($state, $vals) ? $state : 'unknown');
+	$str  = (in_array($state, $vals) ? $state : 'unknown');
+
 	return $str;
 }
 
@@ -175,9 +177,9 @@ function get_host_status_color($hostname)
 	$host = $NagiosData->get_details_by('host',$hostname);
 
 	$color = '';
-	if(isset($host))
+	if (isset($host)) {
 		$color = get_color_code($host,true);
-
+	}
 
 	return $color;
 }
@@ -192,22 +194,20 @@ function get_host_comments($host)
 	global $NagiosData;
 
 	$hostcomments = $NagiosData->getProperty('hostcomments');
-	$comments = "";
+	$comments     = "";
 
-
-	foreach($hostcomments as $comment)
-	{
-	   if($comment['host_name'] == $host)
-	   {
-   		$entrytime = date('M d H:i\:s\s', $comment['entry_time']);
-   		$comments .= "<tr><td>".$comment['author']."</td><td>$entrytime</td><td>".$comment['comment_data']."</td><td>
-   					<a href='".CORECMD."cmd_typ=2&com_id=".$comment['comment_id']."' title='".gettext('Delete Comment')."'>
-   					<img class='iconLink' src='views/images/delete.png' alt='Delete' width='15' height='15' /></a></td></tr>\n";
+	foreach($hostcomments as $comment) {
+		if($comment['host_name'] == $host) {
+			$entrytime = date('M d H:i\:s\s', $comment['entry_time']);
+			$comments .= "<tr><td>".$comment['author']."</td><td>$entrytime</td><td>".$comment['comment_data']."</td><td>
+				<a href='".CORECMD."cmd_typ=2&com_id=".$comment['comment_id']."' title='".gettext('Delete Comment')."'>
+				<img class='iconLink' src='views/images/delete.png' alt='Delete' width='15' height='15' /></a></td></tr>\n";
 		}
-	}//end foreach
+	}
 
-	if($comments == '')
+	if ($comments == '') {
 		$comments .= "<tr><td colspan='4'>".gettext('There are no comments associated with this host')."</td></tr>";
+	}
 
 	return $comments;
 }
@@ -218,22 +218,22 @@ function get_host_comments($host)
  */
 function get_service_comments($host, $service)
 {
-   global $NagiosData;
-	$comments = '';
+	global $NagiosData;
+	$comments        = '';
 	$servicecomments = $NagiosData->getProperty('servicecomments');
 
-	foreach($servicecomments as $comment)
-	{
+	foreach($servicecomments as $comment) {
 		if ($comment['host_name'] == $host && $comment['service_description'] == $service) {
 			$entrytime = date('M d H:i\:s\s', $comment['entry_time']);
 			$comments .= "<tr><td>".$comment['author']."</td><td>$entrytime</td><td>".$comment['comment_data']."</td><td>
-						<a href='".CORECMD."cmd_typ=4&com_id=".$comment['comment_id']."' title='".gettext('Delete Comment')."'>
-						<img class='iconLink' src='views/images/delete.png' alt='Delete' width='15' height='15' /></a></td></tr>\n";
+				<a href='".CORECMD."cmd_typ=4&com_id=".$comment['comment_id']."' title='".gettext('Delete Comment')."'>
+				<img class='iconLink' src='views/images/delete.png' alt='Delete' width='15' height='15' /></a></td></tr>\n";
 		}
 	}
 
-	if($comments=='')
+	if ($comments == '') {
 		$comments .= "<tr><td colspan='3'>".gettext('There are no comments associated with this host')."</td></tr>";
+	}
 
 	return $comments;
 }

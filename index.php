@@ -69,7 +69,7 @@ $username = false;
 //$username = 'nagiosadmin';
 
 
-include(dirname(__FILE__).'/inc.inc.php'); //master include file
+include (dirname(__FILE__) . '/include/inc.inc.php'); //master include file
 
 //load language and other sitewide settings
 init_vshell();

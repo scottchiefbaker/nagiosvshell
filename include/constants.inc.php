@@ -68,8 +68,13 @@ if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] != 80 && $_SERVER[
 // All other setting should be adjusted by editing vshell.conf
 // Switch to use external configuration file by Tony Yarusso, 30 March 2011
 
-if (is_readable(dirname(__FILE__) . "/config/vshell.conf")) {
-	$ini_array = parse_ini_file("config/vshell.conf");
+$base_dir = dirname(__FILE__) . "/../";
+$base_dir = realpath($base_dir) . "/";
+
+$ini_path = "$base_dir/config/vshell.conf";
+
+if (is_readable($ini_path)) {
+	$ini_array = parse_ini_file($ini_path);
 } elseif (is_readable("/etc/vshell.conf")) {
 	$ini_array = parse_ini_file("/etc/vshell.conf");
 } else {
@@ -83,7 +88,8 @@ define('LANG',$ini_array["LANG"]);
 //server root information
 define("BASEURL", $base.'/'.$ini_array["BASEURL"].'/');
 define("SERVERBASE", $base); //http://<address>
-define('DIRBASE', dirname(__FILE__)); //assigns current directory as root
+
+define('DIRBASE', $base_dir); //assigns current directory as root
 
 //nagios core locations
 define('COREURL', $base.'/'.$ini_array["COREURL"].'/'); //Nagios core web URL

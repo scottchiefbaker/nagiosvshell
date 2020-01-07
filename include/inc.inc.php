@@ -49,16 +49,17 @@
 // NEGLIGENCE OR OTHERWISE) OR OTHER ACTION, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+$base_dir = dirname(__FILE__) . "/../";
+$base_dir = realpath($base_dir) . "/";
+
 //include files for local directory
-include(dirname(__FILE__) . '/constants.inc.php'); //DO NOT ADD INCLUDES ABOVE THIS LINE
-include(dirname(__FILE__) . '/include/krumo/class.krumo.php'); //DO NOT ADD INCLUDES ABOVE THIS LINE
-include(dirname(__FILE__) . '/include/global-functions.php'); //DO NOT ADD INCLUDES ABOVE THIS LINE
+include("$base_dir/include/constants.inc.php"); //DO NOT ADD INCLUDES ABOVE THIS LINE
+include("$base_dir/include/krumo/class.krumo.php"); //DO NOT ADD INCLUDES ABOVE THIS LINE
+include("$base_dir/include/global-functions.php"); //DO NOT ADD INCLUDES ABOVE THIS LINE
 
 //main include files for each directory
-include(dirname(__FILE__) . '/data/data.inc.php');
-include(dirname(__FILE__) . '/controllers/controllers.inc.php');
-include(dirname(__FILE__) . '/views/views.inc.php');
+include("$base_dir/data/data.inc.php");
+include("$base_dir/controllers/controllers.inc.php");
+include("$base_dir/views/views.inc.php");
 
-include(dirname(__FILE__) . '/session.inc.php');
-
-//krumo([1,2,34]);
+include("$base_dir/include/session.inc.php");

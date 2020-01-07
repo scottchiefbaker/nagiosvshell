@@ -15,8 +15,10 @@ Overview
 --------
 
 The Nagios V-Shell is a web interface written in PHP that is designed to render
-as valid XHTML and be fully styled and formatted using CSS classes, while
+as valid HTML5 and be fully styled and formatted using CSS classes, while
 maintaining the power of Nagios Core for issuing system and node commands.
+Special attention has been paid to make sure VShell renders well on modern
+mobile devices.
 
 
 Installation
@@ -36,7 +38,7 @@ Clone this repo to your webroot
 git clone https://github.com/scottchiefbaker/nagiosvshell /usr/share/nagios/vshell
 ```
 
-Next, verify the values in config/vshell.conf are correct.
+Next, verify the values in `config/vshell.conf` are correct.
 
 Once the configuration values are verified finish install vshell:
 

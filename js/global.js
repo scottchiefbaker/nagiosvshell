@@ -71,12 +71,24 @@ function init_toggles() {
 			cmd = "DISABLE" + cmd;
 		}
 
+		var orig_obj = $(this);
+
 		var url = "ajax/ajax.php";
 		var options = {
 			data: { host: host, service: svc_name, command: cmd },
 			method: "POST",
-			success: function() {
-				console.log("Good to go");
+			success: function(e) {
+				var errors = e.errors;
+
+				if (errors !== 0) {
+					alert("An error occurred in the AJAX response. Check the console for more details");
+					console.log(e);
+
+					// Uncheck the thing we were trying to toggle
+					$(orig_obj).prop("checked", !checked);
+
+					return false;
+				}
 
 				if (checked == true) {
 					$(my_td).removeClass("disabled").addClass("enabled");

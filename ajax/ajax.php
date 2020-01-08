@@ -1,6 +1,6 @@
 <?php
 
-include(dirname(__FILE__) . '/../inc.inc.php');
+include('../include/inc.inc.php');
 
 $host  = trim(get_in($_POST,['host']));
 $svc   = trim(get_in($_POST,['service']));

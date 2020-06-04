@@ -99,7 +99,7 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 	</div>
 	' . clear_cache_link() . '
 
-	<div class="topnav no_mobile">
+	<div class="topnav">
 		' . $navlinks . '
 	</div>
 

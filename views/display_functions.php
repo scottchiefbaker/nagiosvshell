@@ -194,6 +194,13 @@ function build_nav_links() //build page links based on user's permission level
           <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=0">Process Info</a>
           <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=4">Performance Info</a>
           <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=7">Scheduling Queue</a>
+
+			<div class="dropdown-divider"></div>
+				<div class="dropdown-item mr-1 d-inline-block">
+					Notifications:
+					<button id="alert_status" class="btn btn-sm btn-primary border" style="width: 3em;">On</button>
+				</div>
+			</div>
       </li>
 
       <li class="nav-item dropdown">

@@ -81,15 +81,4 @@
 
 /* Tablet View */
 @media only screen and (min-width: 641px) and (max-width: 1023px) {
-	body {
-		/*background: yellow;*/
-	}
-
-	a.nav {
-		font-size: 10pt;
-	}
-
-	div.topnav {
-		height: 24px;
-	}
 }

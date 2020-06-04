@@ -155,6 +155,7 @@ function build_nav_links() //build page links based on user's permission level
         <a class="nav-link" href="?type=services">Services</a>
       </li>
 
+	<!--
       <li class="nav-item">
         <a class="nav-link" href="?type=hostgroups">Hostgroups</a>
       </li>
@@ -162,6 +163,7 @@ function build_nav_links() //build page links based on user's permission level
       <li class="nav-item">
         <a class="nav-link" href="?type=servicegroups">Servicegroups</a>
       </li>
+	-->
 
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

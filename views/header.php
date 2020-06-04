@@ -89,6 +89,7 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <script type="text/javascript" src="' . $header_js_path . '"></script>
 <script src="js/popper.min.js"></script>
 <script src="js/bootstrap.min.js"></script>
+' . $extra_js . '
 
 </head>
 <body class="container-fluid p-0">

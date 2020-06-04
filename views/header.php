@@ -73,11 +73,12 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <head profile="http://dublincore.org">
 <title>'.$page_title.'</title>
 
-<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
 <meta name="description" content="Nagios VShell" />
 <meta name="keywords" content="Nagios VShell" />
-<meta content="width=device-width, initial-scale=1" name="viewport" />
 <meta http-equiv="refresh" content="120">
+
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
 <link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
@@ -90,13 +91,17 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <script src="js/bootstrap.min.js"></script>
 
 </head>
-<body>
-	<div class="header">
-		<div id="logoDiv"><a href="index.php"><img src="views/images/vshell.png" /></a></div>
-		<div class="corelink text-right">
-			<a class="label" href="'.$coreurl.'" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
+<body class="container-fluid p-0">
+	<div class="header mb-2 d-none d-sm-flex row">
+	<div id="logoDiv" class="col">
+			<a href="index.php"><img src="views/images/vshell.png" /></a>
+		</div>
+
+		<div class="corelink text-right col">
+			<a class="label" href="' . $coreurl . '" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
 		</div>
 	</div>
+
 	' . clear_cache_link() . '
 
 	<div class="topnav">

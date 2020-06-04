@@ -115,10 +115,6 @@ a.sub-nav {
 	grid-template-columns: auto auto;
 }
 
-/* V-Shell Logo */
-#logoDiv {width: 225px; height: 50px; }
-#logoDiv img {border: none; }
-
 #clearcache {}
 
 #infodiv {

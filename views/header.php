@@ -93,8 +93,8 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <body>
 	<div class="header">
 		<div id="logoDiv"><a href="index.php"><img src="views/images/vshell.png" /></a></div>
-		<div class="corelink">
-			<a class="label" href="'.$coreurl.'" target="_blank" title="'.gettext('Access Nagios Core').'">'.gettext('Access Nagios Core').'</a>
+		<div class="corelink text-right">
+			<a class="label" href="'.$coreurl.'" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
 		</div>
 	</div>
 	' . clear_cache_link() . '

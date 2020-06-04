@@ -126,11 +126,6 @@ a.sub-nav {
 #logoDiv {width: 225px; height: 50px; }
 #logoDiv img {border: none; }
 
-div.corelink {
-	text-align: right;
-	padding: 16px 15px;
-}
-
 #clearcache {}
 
 #infodiv {
@@ -396,4 +391,8 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 table {
     border-spacing: 1px;
     border-collapse: separate;
+}
+
+.nagios_logo {
+	height: 50px;
 }

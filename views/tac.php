@@ -199,33 +199,60 @@ function features_table($tac_data)
 
 <!-- ///////////////////////FLAPPING//////////////////////////////// -->
 	<td class='green'>
-		{$tac_data['hostsFdHtml']}<br />
-		 {$tac_data['servicesFdHtml']}<br />
-		{$tac_data['hostsFlapHtml']}<br />
-		 {$tac_data['servicesFlapHtml']}<br />
+		<div>
+			{$tac_data['hostsFdHtml']}
+		</div>
+
+		<div>
+			{$tac_data['servicesFdHtml']}
+		</div>
+
+		<div>
+			{$tac_data['hostsFlapHtml']}
+		</div>
+
+		<div>
+			{$tac_data['servicesFlapHtml']}
+		</div>
 	</td>
 
 	<!-- /////////////////////////////NOTIFICATIONS/////////////////////////////// -->
 	<td class='green'>
-		{$tac_data['hostsNtfHtml']}<br />
-		 {$tac_data['servicesNtfHtml']}<br />
+		<div>
+			{$tac_data['hostsNtfHtml']}<br />
+		</div>
+		<div>
+			{$tac_data['servicesNtfHtml']}<br />
+		</div>
 	</td>
 
 	<!-- ///////////////////////////////EVENT HANDLERS///////////////////////////// -->
 	<td class='green'>
-		{$tac_data['hostsEhHtml']}<br />
-		 {$tac_data['servicesEhHtml']}<br />
+		<div>
+			{$tac_data['hostsEhHtml']}<br />
+		</div>
+		<div>
+			{$tac_data['servicesEhHtml']}<br />
+		</div>
 	</td>
 
 	<!-- /////////////////////////////////ACTIVE/PASSIVE CHECKS///////////////////////////	-->
 	<td class='green'>
-		{$tac_data['hostsAcHtml']}<br />
-		 {$tac_data['servicesAcHtml']}<br />
+		<div>
+			{$tac_data['hostsAcHtml']}<br />
+		</div>
+		<div>
+			{$tac_data['servicesAcHtml']}<br />
+		</div>
 	</td>
 
 	<td class='green'>
-		{$tac_data['hostsPcHtml']}<br />
-		 {$tac_data['servicesPcHtml']}<br />
+		<div>
+			{$tac_data['hostsPcHtml']}<br />
+		</div>
+		<div>
+			{$tac_data['servicesPcHtml']}<br />
+		</div>
 	</td>
 
 

@@ -1,2 +1,5 @@
 include/krumo/
+js/bootstrap*
+js/popper*
 js/jquery*
+css/bootstrap*

@@ -48,12 +48,6 @@ function showHide(id)
 
 
 }
-/*this function hides the grids and configuration tables that can be toggled*/
-function hide()
-{
-	//alert("this is a functional alert");
-	$(".hidden").hide();
-}
 
 function init_toggles() {
 	$(".input_toggle").on("click", function() {

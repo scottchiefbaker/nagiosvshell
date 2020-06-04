@@ -65,6 +65,7 @@ function build_nav_links() //build page links based on user's permission level
 	$base = BASEURL.'index.php?';
 
 	$navlinks = "";
+
 	//NAV LINKS	 are added to a floated <ul>
 	$navlinks .= '<ul class="nav">';
 	$navlinks .= '<li class="nav"><a href="index.php" class="nav" rel="internal">'.gettext('Tactical Overview').'</a></li>'; //default tactical overview link
@@ -130,15 +131,95 @@ function build_nav_links() //build page links based on user's permission level
 
 	$navlinks .= '</ul>'; //close main nav list
 
+	// Comment out this line to show the OLD menu
+	$navlinks = "";
 
-	//For future developments.....
-	/*
-	if(isset($keys['system_information']))
-	{
-		//make link
-		echo "system information is viewable";
-	}
-	*/
+	$navlinks .= '<nav class="navbar navbar-expand-lg border navbar-light bg-light py-0 px-3">
+		<a class="navbar-brand" href="./">
+		<svg style="width:32px;height:32px" viewBox="0 0 24 24">
+    <path fill="currentColor" d="M9,7L11,17H13L15,7H13L12,12L11,7H9M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3Z" />
+</svg>
+		</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+
+      <li class="nav-item">
+        <a class="nav-link" href="?type=hosts">Hosts</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?type=services">Services</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?type=hostgroups">Hostgroups</a>
+      </li>
+
+      <li class="nav-item">
+        <a class="nav-link" href="?type=servicegroups">Servicegroups</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Configurations
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="?type=object&objtype_filter=hosts_objs">Hosts</a>
+          <a class="dropdown-item" href="?type=object&objtype_filter=services_objs">Services</a>
+          <a class="dropdown-item" href="?type=object&objtype_filter=hostgroups_objs">Servicegroups</a>
+          <a class="dropdown-item" href="?type=object&objtype_filter=timeperiods">Timeperiods</a>
+          <a class="dropdown-item" href="?type=object&objtype_filter=contacts">Contacts</a>
+          <a class="dropdown-item" href="?type=object&objtype_filter=contactgroups">Contactgroups</a>
+
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="?type=object&objtype_filter=commands">Commands</a>
+        </div>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Commands
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=3">Comments</a>
+          <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=6">Downtime</a>
+          <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=0">Process Info</a>
+          <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=4">Performance Info</a>
+          <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=7">Scheduling Queue</a>
+      </li>
+
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+			Reports
+        </a>
+
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="' . CORECGI . 'avail.cgi">Availability</a>
+          <a class="dropdown-item" href="' . CORECGI . 'trends.cgi">Trends</a>
+          <a class="dropdown-item" href="' . CORECGI . 'history.cgi?host=all">Alert History</a>
+          <a class="dropdown-item" href="' . CORECGI . 'summary.cgi">Alert Summary</a>
+          <a class="dropdown-item" href="' . CORECGI . 'histogram.cgi">Alert Histogram</a>
+          <a class="dropdown-item" href="' . CORECGI . 'notifications.cgi?contact=all">Notifications</a>
+          <a class="dropdown-item" href="' . CORECGI . 'showlog.cgi">Event Log</a>
+      </li>
+
+
+    </ul>
+
+    <form class="form-inline my-2 my-lg-0" action="./index.php">
+      <input type="hidden" name="type" value="services"/>
+      <input class="form-control form-control-sm mr-sm-2" type="search" name="name_filter" placeholder="Search" aria-label="Find" />
+      <button class="btn btn-primary btn-sm my-2 my-sm-0" type="submit">Find</button>
+    </form>
+
+  </div>
+</nav>';
 
 	return $navlinks;
 }//end function

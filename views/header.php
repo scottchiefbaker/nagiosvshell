@@ -83,19 +83,11 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/mobile.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/slider.css" type="text/css" media="screen" />
-<style type="text/css">
-<!-- use external stylesheet to control page style -->
-</style>
 
 <script type="text/javascript" src="' . $jquery_path    . '"></script>
 <script type="text/javascript" src="' . $header_js_path . '"></script>
-' . $extra_js . '
-<script type="text/javascript">
-$(document).ready(function() {
-  // Handler for .ready() called.
-	hide();
-});
-</script>
+<script src="js/popper.min.js"></script>
+<script src="js/bootstrap.min.js"></script>
 
 </head>
 <body>

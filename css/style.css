@@ -83,16 +83,6 @@ td { background-color: #F8F8F8; }
 
 h3 {	text-align: center;  }
 
-/*class for top navigation bar with main links */
-div.topnav {
-	/*margin-top: 50px; */
-	height: 30px;
-	width: 100%;
-	background:  #333;
-	border-top: 1px #00A3FF solid;
-	border-bottom: 1px #00A3FF solid ;
-	z-index: 5;
-}
 a.nav {
 	display: block;
 	font-size: 15pt;

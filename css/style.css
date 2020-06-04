@@ -390,3 +390,20 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 .pointer {
 	cursor: pointer;
 }
+
+.font-125 {
+	font-size: 125%;
+}
+
+.font-150 {
+	font-size: 150%;
+}
+
+.font-200 {
+	font-size: 200%;
+}
+
+table {
+    border-spacing: 1px;
+    border-collapse: separate;
+}

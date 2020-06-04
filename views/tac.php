@@ -136,7 +136,7 @@ function hosts_table($tac_data)
 <!-- ########################HOSTS TABLE########################## -->
 <table class='tac'>
 	<tr>
-		<th colspan=\"3\"><h2><a href=\"index.php?type=hosts\">" . gettext('Hosts') . "</a> / <a href=\"?type=hosts&state_filter=PROBLEMS\">Problems</a></h2></th>
+		<th colspan=\"3\"><div class=\"text-center font-125\"><a href=\"index.php?type=hosts\">" . gettext('Hosts') . "</a> / <a href=\"?type=hosts&state_filter=PROBLEMS\">Problems</a></div></th>
 	</tr>
 	<tr>
 		<td class='ok tac_col'><a class='highlight' href='{$tac_data['hostlink']}UP'><div class='td'>{$tac_data['hostsUpTotal']} ".gettext('Up')."</div></a></td>
@@ -154,7 +154,7 @@ function services_table($tac_data)
 <!-- ######################SERVICES TABLE##################### -->
 <table class='tac'>
 	<tr>
-		<th colspan=\"3\"><h2><a href=\"?type=services\">" . gettext('Services') . "</a> / <a href=\"?type=services&state_filter=PROBLEMS\">Problems</a></h2></th>
+		<th colspan=\"3\"><div class=\"text-center font-125\"><a href=\"?type=services\">" . gettext('Services') . "</a> / <a href=\"?type=services&state_filter=PROBLEMS\">Problems</a></div></th>
 	</tr>
 
 	<tr>

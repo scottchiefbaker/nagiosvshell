@@ -79,6 +79,7 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 <meta content="width=device-width, initial-scale=1" name="viewport" />
 <meta http-equiv="refresh" content="120">
 
+<link rel="stylesheet" href="css/bootstrap.min.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/mobile.css" type="text/css" media="screen" />
 <link rel="stylesheet" href="css/slider.css" type="text/css" media="screen" />

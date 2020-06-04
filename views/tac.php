@@ -183,7 +183,7 @@ function search_box() {
 	</form>
 </div>
 ";
-	return $box;
+	return "";
 }
 
 function features_table($tac_data)

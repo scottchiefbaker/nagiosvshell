@@ -52,13 +52,6 @@
 
 */
 
-/* site-wide styles */
-* { margin: 0px; padding: 0px;  }
-
-body {
-	font-family: 'Open Sans', Verdana, sans-serif;
-}
-
 a:link, a:visited { color: #00A3FF; text-decoration: none;}
 
 a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }

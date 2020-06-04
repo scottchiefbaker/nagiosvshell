@@ -331,8 +331,10 @@ table.tac {
 
 .meterContainer {
 	margin-bottom: 15px;
-	display: flex;
+	/*display: flex;*/
+	display: none;
 }
+
 .h_container {
 	width: 20%;
 	background: #f8f8f8;

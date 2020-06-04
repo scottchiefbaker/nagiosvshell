@@ -134,6 +134,17 @@ function build_nav_links() //build page links based on user's permission level
 	// Comment out this line to show the OLD menu
 	$navlinks = "";
 
+	global $NagiosData;
+
+	$program               = $NagiosData->getProperty('program');
+	$notifications_enabled = $program['enable_notifications'] === "1";
+
+	if ($notifications_enabled) {
+		$notif_btn = '<button id="alert_status" class="notification-toggle btn btn-sm btn-primary border" style="width: 3em;">On</button>';
+	} else {
+		$notif_btn = '<button id="alert_status" class="notification-toggle btn btn-sm btn-light border" style="width: 3em;">Off</button>';
+	}
+
 	$navlinks .= '<nav class="navbar navbar-expand-lg border navbar-light bg-light py-0 px-3">
 		<a class="navbar-brand" href="./">
 		<svg style="width:32px;height:32px" viewBox="0 0 24 24">
@@ -196,9 +207,8 @@ function build_nav_links() //build page links based on user's permission level
           <a class="dropdown-item" href="' . CORECGI . 'extinfo.cgi?type=7">Scheduling Queue</a>
 
 			<div class="dropdown-divider"></div>
-				<div class="dropdown-item mr-1 d-inline-block">
-					Notifications:
-					<button id="alert_status" class="btn btn-sm btn-primary border" style="width: 3em;">On</button>
+				<div class="dropdown-item notification-menu mr-1 d-inline-block">
+					Notifications: ' . $notif_btn . '
 				</div>
 			</div>
       </li>

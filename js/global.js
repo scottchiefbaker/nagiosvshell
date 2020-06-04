@@ -1,5 +1,9 @@
 /*nav dropdown functions */
 
+$(document).ready(function() {
+	init_notification_toggle();
+});
+
 /* browser detection */
 if (document.layers) {
 	visible = "show";
@@ -102,6 +106,40 @@ function init_toggles() {
 				alert("An error occurred");
 			}
 		};
+
+		$.ajax(url,options);
+	});
+}
+
+function init_notification_toggle() {
+	$(".notification-menu").on('click', function(e) {
+		e.stopPropagation();
+	});
+
+	$(".notification-toggle").on("click", function() {
+		var is_enabled = $(this).hasClass('btn-primary');
+
+		var url = "ajax/ajax.php";
+		var options = {
+			data: {},
+			method: "POST",
+			success: function(e) {
+			},
+			error: function() {
+				alert("An error occurred");
+			}
+		};
+
+		if (is_enabled) {
+			$(this).html("Off");
+			$(this).removeClass('btn-primary').addClass('btn-light').blur().data("on", false);
+
+			options['data']['command'] = "DISABLE_NOTIFICATIONS";
+		} else {
+			$(this).html("On");
+			$(this).addClass('btn-primary').removeClass('btn-light').blur().data("on", true);;
+			options['data']['command'] = "ENABLE_NOTIFICATIONS";
+		}
 
 		$.ajax(url,options);
 	});

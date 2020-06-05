@@ -145,6 +145,12 @@ a.sub-nav {
 	background-color: #FFC45F;
 }
 
+.feature_warning {
+	margin        : 0 -4px;
+	padding       : 0 4px;
+	border-radius : 4px;
+}
+
 .problem { background-color: #FFC85F; }
 .pending { background-color: #C7C7C7; }
 .unhandled { background-color: #FF935B; }

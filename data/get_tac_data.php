@@ -245,18 +245,18 @@ function get_tac_data()
 	}
 
 	//process HTML variables for monitoring features table
-	if($tac_data['hostsFlappingDisabled']    > 0) $tac_data['hostsFdHtml']      = '<span class="red">'.$tac_data['hostsFlappingDisabled'].' Hosts disabled</span>';
-	if($tac_data['servicesFlappingDisabled'] > 0) $tac_data['servicesFdHtml']   = '<span class="red">'.$tac_data['servicesFlappingDisabled'].' Services disabled</span>';
-	if($tac_data['hostsFlapping']            > 0) $tac_data['hostsFlapHtml']    = '<span class="red">'.$tac_data['hostsFlapping'].' Hosts disabled</span>';
-	if($tac_data['servicesFlapping']         > 0) $tac_data['servicesFlapHtml'] = '<span class="red">'.$tac_data['servicesFlapping'].' Services disabled</span>';
-	if($tac_data['hostsNotificationsDisabled']    > 0) $tac_data['hostsNtfHtml']    = '<span class="red">'.$tac_data['hostsNotificationsDisabled'].' Hosts disabled</span>';
-	if($tac_data['servicesNotificationsDisabled'] > 0) $tac_data['servicesNtfHtml'] = '<span class="red">'.$tac_data['servicesNotificationsDisabled'].' Services disabled</span>';
-	if($tac_data['hostsEventHandlerDisabled']     > 0) $tac_data['hostsEhHtml']     = '<span class="red">'.$tac_data['hostsEventHandlerDisabled'].' Hosts disabled</span>';
-	if($tac_data['servicesEventHandlerDisabled']  > 0) $tac_data['servicesEhHtml']  = '<span class="red">'.$tac_data['servicesEventHandlerDisabled'].' Services disabled</span>';
-	if($tac_data['hostsActiveChecksDisabled']     > 0) $tac_data['hostsAcHtml']     = '<span class="red">'.$tac_data['hostsActiveChecksDisabled'].' Hosts disabled</span>';
-	if($tac_data['servicesActiveChecksDisabled']  > 0) $tac_data['servicesAcHtml']  = '<span class="red">'.$tac_data['servicesActiveChecksDisabled'].' Services disabled</span>';
-	if($tac_data['hostsPassiveChecksDisabled']    > 0) $tac_data['hostsPcHtml']     = '<span class="red">'.$tac_data['hostsPassiveChecksDisabled'].' Hosts disabled</span>';
-	if($tac_data['servicesPassiveChecksDisabled'] > 0) $tac_data['servicesPcHtml']  = '<span class="red">'.$tac_data['servicesPassiveChecksDisabled'].' Services disabled</span>';
+	if($tac_data['hostsFlappingDisabled']    > 0) $tac_data['hostsFdHtml']      = '<span class="red feature_warning">'.$tac_data['hostsFlappingDisabled'].' Hosts disabled</span>';
+	if($tac_data['servicesFlappingDisabled'] > 0) $tac_data['servicesFdHtml']   = '<span class="red feature_warning">'.$tac_data['servicesFlappingDisabled'].' Services disabled</span>';
+	if($tac_data['hostsFlapping']            > 0) $tac_data['hostsFlapHtml']    = '<span class="red feature_warning">'.$tac_data['hostsFlapping'].' Hosts disabled</span>';
+	if($tac_data['servicesFlapping']         > 0) $tac_data['servicesFlapHtml'] = '<span class="red feature_warning">'.$tac_data['servicesFlapping'].' Services disabled</span>';
+	if($tac_data['hostsNotificationsDisabled']    > 0) $tac_data['hostsNtfHtml']    = '<span class="red feature_warning">'.$tac_data['hostsNotificationsDisabled'].' Hosts disabled</span>';
+	if($tac_data['servicesNotificationsDisabled'] > 0) $tac_data['servicesNtfHtml'] = '<span class="red feature_warning">'.$tac_data['servicesNotificationsDisabled'].' Services disabled</span>';
+	if($tac_data['hostsEventHandlerDisabled']     > 0) $tac_data['hostsEhHtml']     = '<span class="red feature_warning">'.$tac_data['hostsEventHandlerDisabled'].' Hosts disabled</span>';
+	if($tac_data['servicesEventHandlerDisabled']  > 0) $tac_data['servicesEhHtml']  = '<span class="red feature_warning">'.$tac_data['servicesEventHandlerDisabled'].' Services disabled</span>';
+	if($tac_data['hostsActiveChecksDisabled']     > 0) $tac_data['hostsAcHtml']     = '<span class="red feature_warning">'.$tac_data['hostsActiveChecksDisabled'].' Hosts disabled</span>';
+	if($tac_data['servicesActiveChecksDisabled']  > 0) $tac_data['servicesAcHtml']  = '<span class="red feature_warning">'.$tac_data['servicesActiveChecksDisabled'].' Services disabled</span>';
+	if($tac_data['hostsPassiveChecksDisabled']    > 0) $tac_data['hostsPcHtml']     = '<span class="red feature_warning">'.$tac_data['hostsPassiveChecksDisabled'].' Hosts disabled</span>';
+	if($tac_data['servicesPassiveChecksDisabled'] > 0) $tac_data['servicesPcHtml']  = '<span class="red feature_warning">'.$tac_data['servicesPassiveChecksDisabled'].' Services disabled</span>';
 
 	//other misc totals
 	$tac_data['hostsUnhandledTotal']       = $tac_data['hostsDownUnhandled']         +$tac_data['hostsUnreachableUnhandled'];

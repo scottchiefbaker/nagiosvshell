@@ -96,10 +96,28 @@ function hosts_and_services_data($type, $state_filter=NULL, $name_filter=NULL,$h
 		$data = array_values($data);
 	}
 
+	// Sort the services by hostname first, and then by service description
+	usort($data, 'service_sort');
+
 	return $data;
 }
 
+// Do a "natural" sort on hostname/service description
+function service_sort($a, $b) {
+	$host_a = $a['host_name'];
+	$host_b = $b['host_name'];
 
+	$desc_a = $a['service_description'];
+	$desc_b = $b['service_description'];
+
+	// Sort by service description
+	if ($host_a === $host_b) {
+		return strcmp(strtolower($desc_a), strtolower($desc_b));
+	// Sort by hostname
+	} else {
+		return strcmp(strtolower($host_a), strtolower($host_b));
+	}
+}
 
 function host_and_service_detail_data($type, $name)
 {
@@ -155,5 +173,6 @@ function object_data($objtype_filter, $name_filter)
 			}
 		}
 	}
+
 	return $data;
 }

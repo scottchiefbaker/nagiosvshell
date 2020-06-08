@@ -70,14 +70,17 @@ function display_services($services,$start,$limit)
 	//VIEW / html output
 	$page='';
 	$st = services_table(get_tac_data()); //tac Summary table
-	$page .= "<div class='tacTable no_mobile mb-2'>$st</div>\n";
+	$page .= "<div class='tacTable mb-2'>$st</div>\n";
 
-	$page .="<div class='tableOptsWrapper no_mobile clearfix'>\n";
+	$page .="<div class='tableOptsWrapper clearfix'>\n";
 
 	//check if more than one page is needed
-	if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'services');
+	if ($doPagination) {
+		//$page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'services');
+	}
+
 	//creates notes for total results as well as form for setting page limits
-	$page .= do_result_notes($start,$limit,$resultsCount,'services');
+	//$page .= do_result_notes($start,$limit,$resultsCount,'services');
 	//moved result filter to display_functions.php and made into function
 	$page .=result_filter($name_filter,'service');
 	$page .= "\n</div> <!-- end tableOptsWrapper --> \n";
@@ -165,6 +168,7 @@ TABLEROW;
 	if($doPagination)
 	{
 		$page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'services');
+		$page .= do_result_notes($start,$limit,$resultsCount,'services');
 	}
 
 	return $page;

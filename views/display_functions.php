@@ -428,6 +428,7 @@ function do_result_notes($start,$limit,$resultsCount,$type)
 			<input type='submit' name='submitbutton' value='".gettext('Set Limit')."' />
 		</form>
 		</div><!-- end resultLimit --> \n\n";
+	
 	return $resultnotes;
 } //end do_result_notes()
 
@@ -444,8 +445,6 @@ function result_filter($name_filter="", $type='host')
 
 	///////////////////////////////build filterdiv
 	$resultFilter= "
-
-
 	<form id='resultfilterform' action='".$_SERVER['PHP_SELF']."' method='get'>
 		<div class='stateFilter'>
 			<input type='hidden' name='type' value=\"".$plType."\">
@@ -472,6 +471,35 @@ function result_filter($name_filter="", $type='host')
 	</form>
 
 ";
+
+	$filter = "<div class=\"\">
+            <input type=\"hidden\" name=\"type\" value=\"" . $plType . "\">
+            <label class=\"label note\" for=\"resultfilter\">" . gettext("Filter by State") . ": </label>
+            <select class=\"form-control\" id=\"resultfilter\" name=\"state_filter\" onChange=\"this.form.submit();\">
+";
+
+	foreach ($states as $val) {
+		$selected     = (isset($_GET['state_filter']) && $_GET['state_filter'] == $val) ? "selected='selected'" : '';
+		$display_val  = $val == '' ? 'None' : $val;
+		$filter      .= "\t\t\t<option value=\"$val\" $selected>$display_val</option>\n";
+	}
+
+	$filter .= "</select></div>";
+
+	$ret = "<form>
+	<div class=\"row\">
+		<div class=\"col-12 col-lg-6 col-xl-4\">$filter</div>
+		<div class=\"col-12 col-lg-6 col-xl-4\">
+            <label class=\"label note\" for=\"resultfilter\">Search by service:</label>
+			<div class=\"input-group\">
+			<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\">
+			<div class=\"input-group-append\">
+				<button class=\"btn btn-primary btn my-2 my-sm-0\" type=\"submit\">Find</button>
+			</div>
+		</div>
+	</div>
+</form>";
+	return $ret;
 
 	return $resultFilter;
 }//end function result_filter()

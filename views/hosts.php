@@ -69,10 +69,10 @@ function display_hosts($hosts, $start,$limit)
 	$ht = hosts_table(get_tac_data());  //tac host summary table
 	$page .= "<div class='tacTable no_mobile mb-2'>$ht</div>\n";
 
-	$page .="<div class='tableOptsWrapper no_mobile'>\n";
-	if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'hosts');
+	$page .="<div class='tableOptsWrapper'>\n";
+	//if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'hosts');
 	//creates notes for total results as well as form for setting page limits
-	$page .= do_result_notes($start,$limit,$resultsCount,'hosts');
+	//$page .= do_result_notes($start,$limit,$resultsCount,'hosts');
 	//moved result filter to display_functions.php and made into function
 	$page .=result_filter($name_filter,'host');
 	$page .= "\n</div> <!-- end tableOptsWrapper --> \n";
@@ -137,7 +137,10 @@ TABLEROW;
 	$page .= "</tbody></table></div><!--end statusTable div -->\n";
 
 	//check if more than one page is needed
-	if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'hosts');
+	if ($doPagination) {
+		$page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'hosts');
+		$page .= do_result_notes($start,$limit,$resultsCount,'hosts');
+	}
 
 	//print the page numbers here accordingly
 	return $page;

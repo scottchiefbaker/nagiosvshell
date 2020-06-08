@@ -190,11 +190,14 @@ function features_table($tac_data)
 {
 	$features_table = "
 <!-- #####################ENABLED FEATURES TABLE ####################-->
-<table class='tac no_mobile'>
+<table class='tac features no_mobile'>
 <tr><th class=\"text-center font-125\" colspan=\"5\">" . gettext('Monitoring Features') . "</th></tr>
 <tr>
-	<td>".gettext('Flap Detection')."</td><td>".gettext('Notifications')."</td><td>".gettext('Event Handlers')."</td>
-	<td>".gettext('Active Checks')."</td><td>".gettext('Passive Checks')."</td>
+	<td class=\"text-center\" style=\"width: 20%;\">" . gettext('Flap Detection') . "</td>
+	<td class=\"text-center\" style=\"width: 20%;\">" . gettext('Notifications')  . "</td>
+	<td class=\"text-center\" style=\"width: 20%;\">" . gettext('Event Handlers') . "</td>
+	<td class=\"text-center\" style=\"width: 20%;\">" . gettext('Active Checks')  . "</td>
+	<td class=\"text-center\" style=\"width: 20%;\">" . gettext('Passive Checks') . "</td>
 </tr><tr>
 
 <!-- ///////////////////////FLAPPING//////////////////////////////// -->

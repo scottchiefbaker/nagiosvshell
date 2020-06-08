@@ -145,7 +145,7 @@ function build_nav_links() //build page links based on user's permission level
 		$notif_btn = '<button id="alert_status" class="notification-toggle btn btn-sm btn-light border" style="width: 3em;">Off</button>';
 	}
 
-	$navlinks .= '<nav class="navbar navbar-expand-lg border navbar-light bg-light py-0 px-3">
+	$navlinks .= '<nav class="col navbar navbar-expand-lg border navbar-light bg-light py-0 px-3">
 		<a class="navbar-brand" href="./">
 		<svg style="width:32px;height:32px" viewBox="0 0 24 24">
     <path fill="currentColor" d="M9,7L11,17H13L15,7H13L12,12L11,7H9M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3Z" />

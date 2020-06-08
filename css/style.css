@@ -94,10 +94,6 @@ table a {
 					1px -1px 3px #fff;
 }
 
-.nav {
-	/*margin-top: 1px;*/
-}
-
 /*navigation lists */
 li.nav {
 	list-style: none;
@@ -108,11 +104,6 @@ li.nav {
 
 a.sub-nav {
 	font-size: 13pt;
-}
-
-.header {
-	display: grid;
-	grid-template-columns: auto auto;
 }
 
 #clearcache {}

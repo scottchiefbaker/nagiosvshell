@@ -72,7 +72,8 @@ function display_services($services,$start,$limit)
 	$st = services_table(get_tac_data()); //tac Summary table
 	$page .= "<div class='tacTable no_mobile'>$st</div>\n";
 
-	$page .="<div class='tableOptsWrapper no_mobile'>\n";
+	$page .="<div class='tableOptsWrapper no_mobile clearfix'>\n";
+
 	//check if more than one page is needed
 	if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'services');
 	//creates notes for total results as well as form for setting page limits

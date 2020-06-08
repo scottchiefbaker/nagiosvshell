@@ -92,20 +92,20 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 ' . $extra_js . '
 
 </head>
-<body class="container-fluid p-0">
-	<div class="header mb-2 d-none d-sm-flex row">
-	<div id="logoDiv" class="col">
-			<a href="index.php"><img src="views/images/vshell.png" /></a>
-		</div>
+<body class="container-fluid">
+	<div class="row">
+		<div id="logoDiv" class="col pl-0">
+				<a href="index.php"><img src="views/images/vshell.png" /></a>
+			</div>
 
-		<div class="corelink text-right col">
-			<a class="label" href="' . $coreurl . '" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
+			<div class="corelink text-right col pr-0">
+				<a class="label" href="' . $coreurl . '" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
+			</div>
 		</div>
-	</div>
 
 	' . clear_cache_link() . '
 
-	<div class="topnav">
+	<div class="topnav row">
 		' . $navlinks . '
 	</div>
 

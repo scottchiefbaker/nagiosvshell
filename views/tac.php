@@ -88,7 +88,7 @@ function overview_table($tac_data)
 {
 	global $NagiosUser;
 	$overview_table = "
-<table class='tac no_mobile hidden'>
+<table class='tac no_mobile hidden mb-3'>
 <tr><th><h2>".gettext('Tactical Monitoring Overview')."</h2></th></tr>
 	<tr>
 		<td class=\"center\">
@@ -134,7 +134,7 @@ function hosts_table($tac_data)
 {
 	$hosts_table ="
 <!-- ########################HOSTS TABLE########################## -->
-<table class='tac'>
+<table class='tac mb-3'>
 	<tr>
 		<th colspan=\"3\"><div class=\"text-center font-125\"><a href=\"index.php?type=hosts\">" . gettext('Hosts') . "</a> / <a href=\"?type=hosts&state_filter=PROBLEMS\">Problems</a></div></th>
 	</tr>
@@ -152,7 +152,7 @@ function services_table($tac_data)
 {
 	$services_table = "
 <!-- ######################SERVICES TABLE##################### -->
-<table class='tac'>
+<table class='tac mb-3'>
 	<tr>
 		<th colspan=\"3\"><div class=\"text-center font-125\"><a href=\"?type=services\">" . gettext('Services') . "</a> / <a href=\"?type=services&state_filter=PROBLEMS\">Problems</a></div></th>
 	</tr>

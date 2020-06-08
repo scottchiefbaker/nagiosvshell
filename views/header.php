@@ -94,11 +94,11 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 </head>
 <body class="container-fluid">
 	<div class="row">
-		<div id="logoDiv" class="col pl-0">
+		<div id="logoDiv" class="col pl-2">
 				<a href="index.php"><img src="views/images/vshell.png" /></a>
 			</div>
 
-			<div class="corelink text-right col pr-0">
+			<div class="corelink text-right col pr-1">
 				<a class="label" href="' . $coreurl . '" target="_blank" title="' . gettext('Access Nagios Core') . '"><img class="nagios_logo" title="Access Nagios Core" src="views/images/nagios_logo.png" /></a>
 			</div>
 		</div>

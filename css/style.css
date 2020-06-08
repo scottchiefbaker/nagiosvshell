@@ -116,12 +116,6 @@ a.sub-nav {
 
 .contentWrapper {width:80%; margin: auto; }
 
-/*main container div for all content */
-.main {
-	top      : 0px;
-	margin   : 10px;
-}
-
 /* ========== Formatting Classes ========== */
 .down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL {
 	background-color: #FF795F;
@@ -280,8 +274,6 @@ div.nameFilter {
 div.tableNotes {padding-left: 0px; padding-top:10px;  }
 div.pagenumbers {margin:0, padding: 0; }
 
-div.tacTable {padding-bottom: 5px; }
-
 div.statusTable, table.statusTable, table.serviceTable{
 	clear:both;
 	margin-top: 1em;
@@ -308,10 +300,6 @@ div.hidden { display:none;  }
 .tac td {
     font-weight: bold;
     font-size: 115%;
-}
-
-table.tac {
-	margin-bottom: 15px;
 }
 
 .meterContainer {

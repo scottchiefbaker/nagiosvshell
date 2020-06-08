@@ -67,7 +67,7 @@ function display_hosts($hosts, $start,$limit)
 	//begin html output / VIEW
 	$page = '';
 	$ht = hosts_table(get_tac_data());  //tac host summary table
-	$page .= "<div class='tacTable no_mobile'>$ht</div>\n";
+	$page .= "<div class='tacTable no_mobile mb-2'>$ht</div>\n";
 
 	$page .="<div class='tableOptsWrapper no_mobile'>\n";
 	if($doPagination) $page .= do_pagenumbers($pageCount,$start,$limit,$resultsCount,'hosts');

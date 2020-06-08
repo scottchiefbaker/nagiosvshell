@@ -70,7 +70,7 @@ function display_services($services,$start,$limit)
 	//VIEW / html output
 	$page='';
 	$st = services_table(get_tac_data()); //tac Summary table
-	$page .= "<div class='tacTable no_mobile'>$st</div>\n";
+	$page .= "<div class='tacTable no_mobile mb-2'>$st</div>\n";
 
 	$page .="<div class='tableOptsWrapper no_mobile clearfix'>\n";
 

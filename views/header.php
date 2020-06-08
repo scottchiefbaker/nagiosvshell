@@ -111,7 +111,7 @@ function display_header($page_title='Nagios Visual Shell', $notification_str = "
 
 	' . $notification_str . '
 
-<div class="main">
+<div class="main mt-3">
 
 ';
 	return $header;

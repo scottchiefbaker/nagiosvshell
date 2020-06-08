@@ -107,8 +107,8 @@ function service_sort($a, $b) {
 	$host_a = $a['host_name'];
 	$host_b = $b['host_name'];
 
-	$desc_a = $a['service_description'];
-	$desc_b = $b['service_description'];
+	$desc_a = get_in($a, ['service_description']);
+	$desc_b = get_in($b, ['service_description']);
 
 	// Sort by service description
 	if ($host_a === $host_b) {

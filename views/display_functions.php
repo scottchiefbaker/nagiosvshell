@@ -231,13 +231,13 @@ function build_nav_links() //build page links based on user's permission level
 
     </ul>
 
-	<form class="form-inline my-2 my-lg-0" action="./index.php">
+	<form class="my-2 my-lg-0" action="./index.php">
 		<input type="hidden" name="type" value="services" />
 
 		<div class="input-group">
 			<input class="form-control form-control-sm" type="search" name="name_filter" placeholder="Search" aria-label="Find" />
 			<div class="input-group-append">
-				<button class="btn btn-primary btn-sm my-2 my-sm-0" type="submit">Find</button>
+				<button class="btn btn-primary btn-sm" type="submit">Find</button>
 			</div>
 		</div>
 
@@ -494,7 +494,7 @@ function result_filter($name_filter="", $type='host')
 			<div class=\"input-group\">
 			<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\">
 			<div class=\"input-group-append\">
-				<button class=\"btn btn-primary btn my-2 my-sm-0\" type=\"submit\">Find</button>
+				<button class=\"btn btn-primary btn\" type=\"submit\">Find</button>
 			</div>
 		</div>
 	</div>

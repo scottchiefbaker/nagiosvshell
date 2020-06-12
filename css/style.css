@@ -342,11 +342,6 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 	border: 0px solid black;
 }
 
-.resultFilter > form > input {
-	width: 100%;
-	box-sizing: border-box;
-}
-
 .pointer {
 	cursor: pointer;
 }

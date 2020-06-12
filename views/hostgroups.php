@@ -61,16 +61,19 @@ function display_hostgroups($data)
 	$name_filter = isset($_GET['name_filter']) ? $_GET['name_filter'] : '';
 	$type = isset($_GET['type']) ? $_GET['type'] : '';
 
-	$page .= <<<FILTERDIV
-<div class='resultFilter'>
-	<form id='resultfilterform' action='{$_SERVER['PHP_SELF']}' method='get'>
-		<input type="hidden" name="type" value="$type">
-		<label class='label' for='name_filter'>Search Host Group Names</label>
-		<input type="text" name='name_filter' value="$name_filter"></input>
-		<input type='submit' name='submitbutton' value='Filter' />
+	$page .= "<div class=\"resultFilter mb-3\">
+	<form id=\"resultfilterform\" action=\"{$_SERVER["PHP_SELF"]}\" method=\"get\">
+		<input type=\"hidden\" name=\"type\" value=\"$type\">
+		<label class=\"label\" for=\"name_filter\">Search Host Group Names</label>
+
+		<div class=\"input-group\">
+			<input class=\"form-control\" type=\"text\" name=\"name_filter\" value=\"$name_filter\"></input>
+			<div class=\"input-group-append\">
+				<input class=\"btn btn-primary\" type=\"submit\" name=\"submitbutton\" value=\"Filter\" />
+			</div>
+		</div>
 	</form>
-</div>
-FILTERDIV;
+</div>";
 	
 	//$start_time = microtime(TRUE);
 	
@@ -132,4 +135,3 @@ FILTERDIV;
 	//fb($end_time - $start_time, "Elapsed time in hostgroups");
 	return $page;
 }
-?>

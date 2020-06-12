@@ -366,3 +366,9 @@ table {
 .nagios_logo {
 	height: 50px;
 }
+
+.service-status {
+	padding: 0 2px;
+	white-space: nowrap;
+	border-radius: 3px;
+}

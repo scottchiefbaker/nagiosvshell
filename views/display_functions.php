@@ -486,13 +486,15 @@ function result_filter($name_filter="", $type='host')
 
 	$filter .= "</select></div>";
 
+	$current_filter = get_in($_GET,['name_filter'], '');
+
 	$ret = "<form>
 	<div class=\"row\">
 		<div class=\"col-12 col-lg-6 col-xl-4\">$filter</div>
 		<div class=\"col-12 col-lg-6 col-xl-4\">
             <label class=\"label note\" for=\"resultfilter\">Search by service:</label>
 			<div class=\"input-group\">
-			<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\">
+			<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\" value=\"$current_filter\" />
 			<div class=\"input-group-append\">
 				<button class=\"btn btn-primary btn\" type=\"submit\">Find</button>
 			</div>

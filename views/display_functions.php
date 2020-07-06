@@ -494,9 +494,10 @@ function result_filter($name_filter="", $type='host')
 		<div class=\"col-12 col-lg-6 col-xl-4\">
             <label class=\"label note\" for=\"resultfilter\">Search by service:</label>
 			<div class=\"input-group\">
-			<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\" value=\"$current_filter\" />
-			<div class=\"input-group-append\">
-				<button class=\"btn btn-primary btn\" type=\"submit\">Find</button>
+				<input class=\"form-control form-control\" type=\"search\" name=\"name_filter\" placeholder=\"Service description\" aria-label=\"Find\" value=\"$current_filter\" />
+				<div class=\"input-group-append\">
+					<button class=\"btn btn-primary btn\" type=\"submit\">Find</button>
+				</div>
 			</div>
 		</div>
 	</div>

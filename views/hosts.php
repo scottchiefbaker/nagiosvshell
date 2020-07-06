@@ -92,6 +92,9 @@ function display_hosts($hosts, $start,$limit)
 				</tr>
 				</thead><tbody>' . "\n";
 
+	global $NagiosData;
+	$xhosts = $NagiosData->properties['hosts_objs'];
+
 	$i = 0;
 	foreach ($hostnames as $h) {
 		// Don't go past the end
@@ -105,7 +108,11 @@ function display_hosts($hosts, $start,$limit)
 			continue;
 		}
 
-		$host = $hosts[$h];
+
+		$host      = $hosts[$h];
+		$host_name = $host['host_name'];
+		$host_info = $xhosts[$host_name];
+		$host_addr = $host_info['address'];
 
 		//process remaining variables for display here
 		process_host_status_keys($host);
@@ -116,18 +123,15 @@ function display_hosts($hosts, $start,$limit)
 		//add function to fetch_icons
 		$icons = fetch_host_icons($host['host_name']); //returns all icons in one string
 
-		$pagerow = <<<TABLEROW
+		$pagerow = "<tr>
+			<td column-name=\"Hostname\" class=\"hostname\"><a href=\"{$url}\" title=\"Host Address: $host_addr\">{$host['host_name']}</a>{$icons}</td>
+			<td column-name=\"Status\" class=\"{$tr} status center\">{$host['current_state']}</td>
+			<td column-name=\"Duration\" class=\"hidden duration\">{$host['duration']}</td>
+			<td column-name=\"Attempt\" class=\"center attempt\">{$host['attempt']}</td>
+			<td column-name=\"Last Check\" class=\"hidden last_check\">{$host['last_check']}</td>
+			<td column-name=\"Output\" >{$host['plugin_output']}</td>
+		</tr>";
 
-		<tr>
-			<td column-name="Hostname" class="hostname"><a href="{$url}">{$host['host_name']}</a>{$icons}</td>
-			<td column-name="Status" class="{$tr} status center">{$host['current_state']}</td>
-			<td column-name="Duration" class="hidden duration">{$host['duration']}</td>
-			<td column-name="Attempt" class="center attempt">{$host['attempt']}</td>
-			<td column-name="Last Check" class="hidden last_check">{$host['last_check']}</td>
-			<td column-name="Output" >{$host['plugin_output']}</td>
-		</tr>
-
-TABLEROW;
 		$page .= $pagerow;
 
 		$i++;

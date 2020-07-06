@@ -124,7 +124,7 @@ function display_hosts($hosts, $start,$limit)
 		$icons = fetch_host_icons($host['host_name']); //returns all icons in one string
 
 		$pagerow = "<tr>
-			<td column-name=\"Hostname\" class=\"hostname\"><a href=\"{$url}\" title=\"Host Address: $host_addr\">{$host['host_name']}</a>{$icons}</td>
+			<td column-name=\"Hostname\" class=\"hostname d-flex\"><div class=\"flex-fill\"><a href=\"{$url}\" title=\"Host Address: $host_addr\">{$host['host_name']}</a></div><div class=\"d-flex status_icons align-items-center\">{$icons}</div></td>
 			<td column-name=\"Status\" class=\"{$tr} status center\">{$host['current_state']}</td>
 			<td column-name=\"Duration\" class=\"hidden duration\">{$host['duration']}</td>
 			<td column-name=\"Attempt\" class=\"center attempt\">{$host['attempt']}</td>

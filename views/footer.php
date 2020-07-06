@@ -52,12 +52,12 @@
 
 function display_footer()
 {
-	$footer = <<<FOOTER
+	$footer = '
 </div> <!--end of "main" div -->
 
 </body>
-</html>
-FOOTER;
+</html>';
+
 	return $footer;
 }
 

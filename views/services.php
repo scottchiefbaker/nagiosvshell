@@ -146,19 +146,15 @@ function display_services($services,$start,$limit)
 
 		//table data generation
 		//Using HEREDOC string syntax to print rows
-		$pagerow = <<<TABLEROW
-
-		<tr class='statustablerow'>
-			{$td1}
-			<td column-name="Service" class='service_description'><div class='service_description'><a href="{$url}">{$services[$i]['service_description']}</a> $serviceicons </div></td>
-			<td column-name="Status" class="{$tr} status center">{$services[$i]['current_state']}</td>
-			<td column-name="Duration" class='duration'>{$services[$i]['duration']}</td>
-			<td column-name="Attempt" class='attempt'>{$services[$i]['attempt']}</td>
-			<td column-name="Last Check" class='last_check'>{$services[$i]['last_check']}</td>
-			<td column-name="Output" class='plugin_output'><div class='plugin_output'>{$services[$i]['plugin_output']}</div></td>
-		</tr>
-
-TABLEROW;
+		$pagerow = "<tr class=\"statustablerow\">
+			$td1
+			<td column-name=\"Service\" class=\"service_description\"><div class=\"service_description d-flex\"><div class=\"flex-fill\"><a href=\"{$url}\">{$services[$i]["service_description"]}</a></div><div class=\"align-items-center d-flex status_icons\">$serviceicons</div></div></td>
+			<td column-name=\"Status\" class=\"{$tr} status center\">{$services[$i]["current_state"]}</td>
+			<td column-name=\"Duration\" class=\"duration\">{$services[$i]["duration"]}</td>
+			<td column-name=\"Attempt\" class=\"attempt\">{$services[$i]["attempt"]}</td>
+			<td column-name=\"Last Check\" class=\"last_check\">{$services[$i]["last_check"]}</td>
+			<td column-name=\"Output\" class=\"plugin_output\"><div class=\"plugin_output\">{$services[$i]["plugin_output"]}</div></td>
+		</tr>";
 
 		$page .= $pagerow;
 

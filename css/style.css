@@ -327,16 +327,6 @@ div.borderDiv {width: 95%; border: 2px solid #666; margin:2px auto;}
 	margin-bottom: 1em;
 }
 
-.header_warning {
-	text-align: center;
-	padding: 8px;
-	margin: 10px;
-	border-radius: 7px;
-	background: repeating-linear-gradient(-45deg, #FFD2D2, #FFD2D2 10px, #FFC8C8 10px, #FFC0C0 20px);
-	color: black;
-	text-shadow: 1px 1px 1px white;
-}
-
 .resultFilter {
 	width: 40%;
 	border: 0px solid black;

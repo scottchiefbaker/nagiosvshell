@@ -185,7 +185,7 @@ function mode_header($mode)
 	$notifications_enabled = $program['enable_notifications'] === "1";
 
 	if (!$notifications_enabled) {
-		$notification_str = "<div class=\"header_warning\"><b>Warning:</b> Notifications are disabled!</div>";
+		$notification_str = "<div class=\"text-center my-3 p-2 alert alert-danger\"><b>Warning:</b> Notifications are disabled!</div>";
 	} else {
 		$notification_str = "";
 	}

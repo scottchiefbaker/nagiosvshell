@@ -69,7 +69,8 @@ define('SERVICECOMMENT',6);
  */
 function parse_status_file($statusfile = STATUSFILE) {
 	if (!is_readable($statusfile)) {
-		die("Unable to read $statusfile. Is Nagios running?");
+		$msg = "Unable to read $statusfile. Is Nagios running?";
+		error_out($msg, 13247);
 	}
 
 	$file = fopen($statusfile, "r") or die("Unable to open '$statusfile' file!");

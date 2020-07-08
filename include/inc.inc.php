@@ -63,3 +63,19 @@ include("$base_dir/controllers/controllers.inc.php");
 include("$base_dir/views/views.inc.php");
 
 include("$base_dir/include/session.inc.php");
+
+function error_out($msg, $num) {
+	global $base_dir;
+
+	$tpl = "$base_dir/include/html5-template.html";
+	$str = file_get_contents($tpl);
+
+	$body  = "<h3 class=\"\">Oh no we got an error!</h3>";
+	$body .= "<div><b>Message:</b> $msg</div>";
+    $body .= "<div><b>Number:</b> #$num</div>";
+
+	$str = preg_replace("/\{\\\$title\}/", "Error #$num", $str);
+	$str = preg_replace("/\{\\\$body\}/", $body, $str);
+
+	die($str);
+}

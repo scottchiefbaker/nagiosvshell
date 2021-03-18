@@ -139,10 +139,13 @@ function build_nav_links() //build page links based on user's permission level
 	$program               = $NagiosData->getProperty('program');
 	$notifications_enabled = $program['enable_notifications'] === "1";
 
+	$on_class  = "btn-success";
+	$off_class = "btn-danger";
+
 	if ($notifications_enabled) {
-		$notif_btn = '<button id="alert_status" class="notification-toggle btn btn-sm btn-primary border" style="width: 3em;">On</button>';
+		$notif_btn = "<button id=\"alert_status\" class=\"notification-toggle btn btn-sm $on_class border\" style=\"width: 3em;\">On</button>";
 	} else {
-		$notif_btn = '<button id="alert_status" class="notification-toggle btn btn-sm btn-light border" style="width: 3em;">Off</button>';
+		$notif_btn = "<button id=\"alert_status\" class=\"notification-toggle btn btn-sm $off_class border\" style=\"width: 3em;\">Off</button>";
 	}
 
 	$navlinks .= '<nav class="col navbar navbar-expand-lg border navbar-light bg-light py-0 px-2">

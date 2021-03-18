@@ -116,8 +116,11 @@ function init_notification_toggle() {
 		e.stopPropagation();
 	});
 
+	var on_class  = "btn-success";
+	var off_class = "btn-danger";
+
 	$(".notification-toggle").on("click", function() {
-		var is_enabled = $(this).hasClass('btn-primary');
+		var is_enabled = $(this).hasClass(on_class);
 
 		var url = "ajax/ajax.php";
 		var options = {
@@ -132,12 +135,12 @@ function init_notification_toggle() {
 
 		if (is_enabled) {
 			$(this).html("Off");
-			$(this).removeClass('btn-primary').addClass('btn-light').blur().data("on", false);
+			$(this).removeClass(on_class).addClass(off_class).blur().data("on", false);
 
 			options['data']['command'] = "DISABLE_NOTIFICATIONS";
 		} else {
 			$(this).html("On");
-			$(this).addClass('btn-primary').removeClass('btn-light').blur().data("on", true);;
+			$(this).addClass(on_class).removeClass(off_class).blur().data("on", true);;
 			options['data']['command'] = "ENABLE_NOTIFICATIONS";
 		}
 

@@ -154,7 +154,7 @@ function services_table($tac_data)
 <!-- ######################SERVICES TABLE##################### -->
 <table class='tac mb-3'>
 	<tr>
-		<th colspan=\"3\"><div class=\"text-center font-125\"><a href=\"?type=services\">" . gettext('Services') . "</a> / <a href=\"?type=services&state_filter=PROBLEMS\">Problems</a></div></th>
+		<th colspan=\"4\"><div class=\"text-center font-125\"><a href=\"?type=services\">" . gettext('Services') . "</a> / <a href=\"?type=services&state_filter=PROBLEMS\">Problems</a></div></th>
 	</tr>
 
 	<tr>
@@ -166,6 +166,9 @@ function services_table($tac_data)
 		</td>
 		<td class='critical tac_col'>
 			<a class='highlight' href='{$tac_data['servlink']}CRITICAL'><div class='td'>{$tac_data['servicesCriticalTotal']} ".gettext('Critical')."</div></a>
+		</td>
+		<td class='unknown tac_col'>
+			<a class='highlight' href='{$tac_data['servlink']}UNKNOWN'><div class='td'>{$tac_data['servicesUnknownTotal']} ".gettext('Unknown')."</div></a>
 		</td>
 	</tr>
 </table>

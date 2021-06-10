@@ -167,7 +167,7 @@ table.resp th.duration, table.resp td.duration, table.resp th.last_check, table.
 }
 
 .tac td.tac_col {
-	width: 33.3333%;
+	width: 25%;
 	text-align: center;
 }
 

@@ -20,14 +20,14 @@ function get_host_details($dets)
 
 	<h3>" . gettext('Host Status Detail') . "</h3>
 	<div class='detailWrapper'>
-	<h4 id=\"host\" data-target=\"host\" data-value=\"" . $dets['Host']. "\">" . gettext('Host') . ": {$dets['Host']}</h4>
-	<h5 class=\"margin-bottomz\">" . gettext('Member of') . ": {$dets['MemberOf']}</h5>\n";
+	<h4 id=\"host\" data-target=\"host\" data-value=\"" . $dets['Host']. "\"><b>" . gettext('Host') . ":</b> {$dets['Host']}</h4>
+	<h5 class=\"\"><b>" . gettext('Member of') . ":</b> {$dets['MemberOf']}</h5>\n";
 
 	if (!empty($host_details['notes'])) {
-		$page .= "<h5 class=\"\">Notes: " . $host_details['notes'] . "</h5>\n";
+		$page .= "<h5 class=\"\"><b>Notes:</b> " . $host_details['notes'] . "</h5>\n";
 	}
 
-	$page .= "<h6 class=\"mt-3\"><a href='index.php?type=services&host_filter={$dets['Host']}' title='".gettext('See All Services For This Host')."'>".gettext('See All Services For This Host')."</a></h6>
+	$page .= "<h6 class=\"mt-3\"><a href='index.php?type=services&host_filter={$dets['Host']}' title='" . gettext('See All Services For This Host') . "'>" . gettext('See All Services For This Host') . "</a></h6>
 	<div class='detailcontainer'>
 	<fieldset class='hostdetails'>
 	<legend>".gettext('Advanced Details')."</legend>

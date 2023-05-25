@@ -12,7 +12,7 @@ $extra = intval(trim(get_in($_POST,['extra']))); # Force this to an int for now
 $time = time();
 
 if (!is_writable(CMDFILE)) {
-	return null;
+	send_json_error("Command file: " . CMDFILE . " is not writable", 27429);
 }
 
 // Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
@@ -49,3 +49,20 @@ header("Content-Type: application/json");
 
 print $json;
 exit;
+
+/////////////////////////////////////////////////////////////////////////////////////////
+
+function send_json_error($msg, $num) {
+	http_response_code(500);
+	header('Content-Type: application/json');
+
+	$x = [
+		'error'        => true,
+		'error_number' => $num,
+		'msg'          => $msg
+	];
+
+	print json_encode($x);
+
+	exit(9);
+}

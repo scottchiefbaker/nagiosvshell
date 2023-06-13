@@ -35,19 +35,19 @@ function coarse_time_calculation($duration)
     return $retval;
 }
 
-/* 	
+/*
 *	@author Ethan Galstad
 *	function modified from Ethan Galstad's original 'grab_request_var' function Nagios XI project
-*	basic cleaner function for request variables 
+*	basic cleaner function for request variables
 */
 function grab_request_var($varname,$default="")
-{	
+{
 	$v=$default;
-	if(isset($_REQUEST[$varname])) 
+	if(isset($_REQUEST[$varname]))
 	{
 		if(is_array($_REQUEST[$varname]))
 		{
-			@array_walk($_REQUEST[$varname],'htmlentities',ENT_QUOTES); 
+			@array_walk($_REQUEST[$varname],'htmlentities',ENT_QUOTES);
 			$v=$request[$varname];
 		}
 		else
@@ -63,7 +63,7 @@ function grab_request_var($varname,$default="")
 //
 function grab_array_var($arr,$varname,$default=""){
 	global $request;
-	
+
 	$v=$default;
 	if(is_array($arr)){
 		if(array_key_exists($varname,$arr))
@@ -71,16 +71,16 @@ function grab_array_var($arr,$varname,$default=""){
 		}
 	return $v;
 }
-	
-	
-	
+
+
+
 /*
 *	dumps a formatted array to the browser
 *	@author Mike Guthrie
-*/	
+*/
 function dump($array)
 {
-	print "<pre>".print_r($array,true)."</pre>"; 
+	print "<pre>".print_r($array,true)."</pre>";
 }
 
 
@@ -90,10 +90,10 @@ function dump($array)
 *	@return mixed $array string $key, string $value
 */
 function get_key_value($line) {
-	$strings = explode('=', $line,2);			
+	$strings = explode('=', $line,2);
 	$key = isset($strings[0]) ? trim($strings[0]) : '';
 	$value = isset($strings[1]) ? trim($strings[1]) : '';
-	return array($key,$value); 
+	return array($key,$value);
 
 }
 
@@ -107,25 +107,25 @@ function process_host_status_keys(&$data)
 {
 
 	static $hostindex = 1;
-		
+
 	$data['hostID'] = 'Host'.$hostindex++;
-	
+
 	$host_states = array( 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' );
 	if($data['current_state'] == 0 && $data['last_check'] == 0)//added conditions for pending state -MG
-	{ 
-		$data['current_state'] = 'PENDING'; 
+	{
+		$data['current_state'] = 'PENDING';
 		$data['plugin_output']="No data received yet";
 		$data['duration']="N/A";
 		$data['attempt']="N/A";
 		$data['last_check']="N/A";
-	} 
+	}
 	else {
-		$data['current_state'] = state_map($data['current_state'], $host_states); 
-	 	//display values 
+		$data['current_state'] = state_map($data['current_state'], $host_states);
+	 	//display values
 	 	$data['attempt'] = $data['current_attempt'].' / '.$data['max_attempts'];
 		$data['duration'] = calculate_duration($data['last_state_change']);
-		$data['last_check'] = date('M d H:i\:s\s Y', intval($data['last_check']));	
-	}	
+		$data['last_check'] = date('M d H:i\:s\s Y', intval($data['last_check']));
+	}
 	//return $processed_data;
 }
 
@@ -138,24 +138,24 @@ function process_service_status_keys(&$data)
 
 	static $serviceindex = 0;
 	//get_standard_values($data, array('host_name', 'plugin_output', 'scheduled_downtime_depth', 'service_description', 'problem_has_been_acknowledged'));
-	
+
 	$data['serviceID'] = 'service'.$serviceindex++;
 	//print "$serviceindex<br />";
 	$service_states = array( 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' );
 	if($data['current_state'] == 0 && $data['last_check'] == 0)//added conditions for pending state -MG
-	{ 
-		$data['current_state'] = 'PENDING'; 
+	{
+		$data['current_state'] = 'PENDING';
 		$data['plugin_output']="No data received yet";
 		$data['duration']="N/A";
 		$data['attempt']="N/A";
 		$data['last_check']="N/A";
 	}
 	else {
-		$data['current_state'] = state_map($data['current_state'], $service_states); 
-		//UI display values 	
+		$data['current_state'] = state_map($data['current_state'], $service_states);
+		//UI display values
 		$data['attempt'] = $data['current_attempt'].' / '.$data['max_attempts'];
 		$data['duration'] = calculate_duration($data['last_state_change']);
-		$data['last_check'] = date('M d H:i\:s\s Y', intval($data['last_check']));	
+		$data['last_check'] = date('M d H:i\:s\s Y', intval($data['last_check'] ?? 0));
 	}
 }
 
@@ -170,7 +170,7 @@ function state_map($cur_state, $states)
 	return array_key_exists($cur_state, $states) ? $states[$cur_state] : 'UNKNOWN';
 }
 
-//debugging function 
+//debugging function
 function array_dump($array) {
 	print "<pre>".print_r($array,true)."</pre>";
 }

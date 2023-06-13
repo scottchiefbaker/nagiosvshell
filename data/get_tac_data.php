@@ -208,20 +208,31 @@ function get_tac_data()
 	{
 		if(!$NagiosUser->is_authorized_for_service($s['host_name'],$s['service_description'])) continue;
 
+		//k($s);
+
+		$flap_detect           = $s['flap_detection_enabled'] ?? 0;
+		$is_flapping           = $s['is_flapping']            ?? 0;
+		$notify_enable         = $s['notifications_enabled']  ?? 0;
+		$event_handler_enable  = $s['event_handler_enabled']  ?? 0;
+		$active_checks_enable  = $s['active_checks_enabled']  ?? 0;
+		$passive_checks_enable = $s['passive_checks_enabled'] ?? 0;
+
 		//html specific data
-		if($s['flap_detection_enabled'] != 1) $tac_data['servicesFlappingDisabled']++;
-		if($s['is_flapping'] == 1)            $tac_data['servicesFlapping']++;
-		if($s['notifications_enabled'] == 0)  $tac_data['servicesNotificationsDisabled']++;
-		if($s['event_handler_enabled'] == 0)  $tac_data['servicesEventHandlerDisabled']++;
-		if($s['active_checks_enabled'] == 0)  $tac_data['servicesActiveChecksDisabled']++;
-		if($s['passive_checks_enabled'] == 0) $tac_data['servicesPassiveChecksDisabled']++;
+		if($flap_detect != 1)           $tac_data['servicesFlappingDisabled']++;
+		if($is_flapping == 1)           $tac_data['servicesFlapping']++;
+		if($notify_enable == 0)         $tac_data['servicesNotificationsDisabled']++;
+		if($event_handler_enable == 0)  $tac_data['servicesEventHandlerDisabled']++;
+		if($active_checks_enable == 0)  $tac_data['servicesActiveChecksDisabled']++;
+		if($passive_checks_enable == 0) $tac_data['servicesPassiveChecksDisabled']++;
 
 		//xml necessary for Nagios Fusion
 		//$current_host = $h_states[$s['host_name']];
-		$current_host = $hosts[$s['host_name']];
-		if($s['last_check'] == 0 && $s['active_checks_enabled'] == 1) { $tac_data['servicesPending']++; continue; } //pending
-		if($s['last_check'] == 0 && $s['active_checks_enabled'] == 0) { $tac_data['servicesPendingDisabled']++;  continue;  } //pending
-		if($s['active_checks_enabled'] == 0) $tac_data['servicesTotalDisabled']++;
+		$current_host   = $hosts[$s['host_name']];
+		$last_check     = $s['last_check'] ?? 0;
+
+		if($last_check == 0 && $active_checks_enable == 1) { $tac_data['servicesPending']++; continue; } //pending
+		if($last_check == 0 && $active_checks_enable == 0) { $tac_data['servicesPendingDisabled']++;  continue;  } //pending
+		if($active_checks_enable == 0) $tac_data['servicesTotalDisabled']++;
 
 		switch($s['current_state']) {
 			case 0:

@@ -190,6 +190,10 @@ function mode_header($mode)
 		$notification_str = "";
 	}
 
+	if (!is_writable(CMDFILE)) {
+		$notification_str .= "<div class=\"text-center mt-3 p-2 alert alert-warning\"><b>Warning:</b> Command file <code>" . CMDFILE . "</code> is not writable. Commands may not function.</div>";
+	}
+
 	$retval = '';
 	switch($mode)
 	{

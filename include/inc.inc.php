@@ -70,9 +70,8 @@ function error_out($msg, $num) {
 	$tpl = "$base_dir/include/html5-template.html";
 	$str = file_get_contents($tpl);
 
-	$body  = "<h3 class=\"\">Oh no we got an error!</h3>";
+	$body  = "<h3 class=\"\">VShell Error #$num</h3>";
 	$body .= "<div><b>Message:</b> $msg</div>";
-    $body .= "<div><b>Number:</b> #$num</div>";
 
 	$str = preg_replace("/\{\\\$title\}/", "Error #$num", $str);
 	$str = preg_replace("/\{\\\$body\}/", $body, $str);

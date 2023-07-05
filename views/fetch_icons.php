@@ -127,14 +127,16 @@ function fetch_service_icons($service_id)
 	$ace      = $service['active_checks_enabled']         ?? 0;
 	$pce      = $service['passive_checks_enabled']        ?? 0;
 	$phba     = $service['problem_has_been_acknowledged'] ?? 0;
+	$flap_det = $service['flap_detection_enabled']        ?? 0;
 
 	$icons = '';
-	$icons .= isset($service_obj['icon_image']) ? '<img class="tableIcon" border="0" title="" alt="" src="views/images/logos/'.$service_obj['icon_image'].'">' : '';
-	$icons.= comment_icon($service['host_name'], $service['service_description']); //comment icon and count, see function def below
-	$icons .= ($sdd > 0) ? '<img src="views/images/downtime.png" title="'.gettext('In Downtime').'" class="tableIcon" alt="DT" />' : ''; //scheduled downtime icon
-	$icons .= ($ne == 1) ? '' : '<img src="views/images/nonotifications.png" title="'.gettext('Notifications Disabled').'" class="tableIcon" alt="NO NTF" />'; //notifications enabled?
-	$icons .= ($flapping == 0) ? '' : '<img src="views/images/flapping.png" title="'.gettext('State Is Flapping').'" class="tableIcon" alt="FLAP" />'; //is flapping
-	$icons .= ($ace == 0 && $pce ==1) ? '<img src="views/images/passive.png" title="'.gettext('Passive Checks Enabled').'" class="tableIcon" alt="PC" />' : ''; //passive host
+	$icons .= isset($service_obj['icon_image'])             ? '<img class="tableIcon" border="0" title="" alt="" src="views/images/logos/'.$service_obj['icon_image'].'">' : '';
+	$icons .= comment_icon($service['host_name'], $service['service_description']); //comment icon and count, see function def below
+	$icons .= ($sdd > 0)                                    ? '<img src="views/images/downtime.png" title="'.gettext('In Downtime').'" class="tableIcon" alt="DT" />' : ''; //scheduled downtime icon
+	$icons .= (!$ne)                                        ? '<img src="views/images/nonotifications.png" title="'.gettext('Notifications Disabled').'" class="tableIcon" alt="NO NTF" />' : ''; //notifications enabled?
+	$icons .= ($flapping)                                   ? '<img src="views/images/flapping.png" title="'.gettext('State Is Flapping').'" class="tableIcon" alt="FLAP" />' : ''; //is flapping
+	$icons .= (!$flap_det)                                  ? '<img src="views/images/disable_small.gif" title="Flap detection disabled" class="tableIcon" alt="Flap detect disable" />' : ''; // flap detection is disabled
+	$icons .= ($ace == 0 && $pce ==1)                       ? '<img src="views/images/passive.png" title="'.gettext('Passive Checks Enabled').'" class="tableIcon" alt="PC" />' : ''; //passive host
 	$icons .= ($service['current_state'] != 0 && $phba > 0) ? '<img src="views/images/ack.png" title="'.gettext('Problem Has Been Acknowledged').'" class="tableIcon" alt="ACK" />' : ''; //acknowledged problem
 
 	return $icons;

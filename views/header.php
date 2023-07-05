@@ -53,7 +53,7 @@
 
 function display_header($page_title='Nagios Visual Shell', $notification_str = "")
 {
-	$jquery_path    = 'js/jquery-3.5.1.min.js';
+	$jquery_path    = 'js/jquery.min.js';
 	$header_js_path = 'js/global.js';
 	$navlinks       = build_nav_links();
 	$coreurl        = COREURL;

@@ -10,6 +10,23 @@ function hosts_and_services_data($type, $state_filter=NULL, $name_filter=NULL,$h
 	global $NagiosUser;
 	$data = $NagiosData->getProperty($type);
 
+	if ($type === "hosts") {
+		$host_states = array( 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' );
+
+		foreach ($data as &$x) {
+			$num            = $x['current_state'];
+			$x['state_str'] = $host_states[$num] ?? "HUH?";
+		}
+	}
+
+	if ($type === "services") {
+		$states = array( 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' );
+
+		foreach ($data as &$x) {
+			$num            = $x['current_state'];
+			$x['state_str'] = $states[$num] ?? "HUH?";
+		}
+	}
 
 	//add filter for user-level filtering
 	if(!$NagiosUser->is_admin()) {
@@ -27,6 +44,7 @@ function hosts_and_services_data($type, $state_filter=NULL, $name_filter=NULL,$h
 			$data = array_merge(get_by_state('UNKNOWN', $data_in), get_by_state('CRITICAL', $data_in),
 										get_by_state('WARNING', $data_in), get_by_state('UNREACHABLE', $data_in),
 										get_by_state('DOWN', $data_in));
+
 			if($state_filter == 'UNHANDLED') //filter down problem array
 			{
 				//loop and return array

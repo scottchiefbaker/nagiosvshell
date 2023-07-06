@@ -276,7 +276,12 @@ function get_tac_data()
 	$tac_data['servicesAcknowledgedTotal'] = $tac_data['servicesWarningAcknowledged']+$tac_data['servicesUnknownAcknowledged'] +$tac_data['servicesCriticalAcknowledged'];
 	$tac_data['servicesPendingTotal'] = $tac_data['servicesPending'] + $tac_data['servicesPendingDisabled'];
 
+	$program               = $NagiosData->getProperty('program');
+    $notifications_enabled = $program['enable_notifications'] === "1";
+
+	$tac_data['notifications_enabled'] = $notifications_enabled;
+	$tac_data['cmd_file']              = CMDFILE;
+	$tac_data['cmd_file_writable']     = is_writable(CMDFILE);
+
 	return $tac_data;
 } //end get_tac_data()
-
-?>

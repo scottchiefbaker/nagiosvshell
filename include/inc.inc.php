@@ -63,6 +63,7 @@ include("$base_dir/controllers/controllers.inc.php");
 include("$base_dir/views/views.inc.php");
 
 include("$base_dir/include/session.inc.php");
+include("$base_dir/include/sluz/sluz.class.php");
 
 function error_out($msg, $num) {
 	global $base_dir;
@@ -77,4 +78,52 @@ function error_out($msg, $num) {
 	$str = preg_replace("/\{\\\$body\}/", $body, $str);
 
 	die($str);
+}
+
+class vshell {
+
+	public $sluz       = null;
+	public $tac_data   = [];
+	public $start_time = 0;
+
+	function __construct() {
+		// Load language and other sitewide settings
+		init_vshell();
+
+		$this->start_time = microtime(1);
+
+		global $NagiosUser;
+
+		// Make sure we're logged in before showing any data
+		if (!$NagiosUser->get_username()) {
+			error_out("You must be logged in to view this page", 19313);
+		}
+
+		$this->sluz = new sluz;
+		$this->sluz->assign('tac_data', get_tac_data());
+	}
+
+	function fetch($tpl) {
+		$this->sluz->assign("__child_tpl", $tpl);
+
+		$total = microtime(1) - $this->start_time;
+		$total *= 1000;
+
+		$this->sluz->assign('query_time_ms', intval($total));
+
+		$skin = "tpls/skin.stpl";
+		$ret  = $this->sluz->fetch($skin);
+
+		if (!empty($_GET['debug'])) {
+			k($this->sluz->tpl_vars);
+		}
+
+		//kd([$skin, $tpl]);
+
+		return $ret;
+	}
+
+	function __destruct() {
+
+	}
 }

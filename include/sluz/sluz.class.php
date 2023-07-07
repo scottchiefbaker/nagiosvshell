@@ -58,7 +58,7 @@ class sluz {
 		} elseif (preg_match('/^\{if (.+?)\}(.+)\{\/if\}$/s', $str, $m)) {
 			$ret = $this->if_block($str, $m);
 		// Foreach {foreach $foo as $x}{/foreach}
-		} elseif (preg_match('/^\{foreach (\$\w[\w.]+) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
+		} elseif (preg_match('/^\{foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
 			$ret = $this->foreach_block($m);
 		// Include {include file='my.stpl' number='99'}
 		} elseif (preg_match('/^\{include.+?\}$/s', $str, $m)) {

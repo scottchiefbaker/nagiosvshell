@@ -168,10 +168,10 @@ function get_by_state($state, $data,$service=false)
 
 
 function get_by_name($name, $data, $field='host_name',$host_filter=false) {
-	//	$name = preg_quote($name, '/');
 	$newarray = array();
 	//bug fix for hosts that don't have any services -MG
-	if (!array_key_exists($field, $data) && htmlentities($_GET['type'],ENT_QUOTES) == 'hosts') {
+	$type = $_GET['type'] ?? "";
+	if (!array_key_exists($field, $data) && htmlentities($type, ENT_QUOTES) == 'hosts') {
 		$field = 'host_name';
 	}
 

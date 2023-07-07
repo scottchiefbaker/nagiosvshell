@@ -52,9 +52,9 @@
 
 */
 
-a:link, a:visited { color: #00A3FF; text-decoration: none;}
-
-a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }
+a:link, a:visited { text-decoration: none;}
+/*a:link, a:visited { color: #00A3FF; text-decoration: none;}*/
+/*a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }*/
 
 table {
 	font-size : 11pt;

@@ -17,15 +17,6 @@
 
 //////////////////////////////////////////////////////////////////////////////
 
-/**
-* Set the KRUMO_DIR constant up with the absolute path to Krumo files. If it is
-* not defined, include_path will be used. Set KRUMO_DIR only if any other module
-* or application has not already set it up.
-*/
-if (!defined('KRUMO_DIR')) {
-    define('KRUMO_DIR', dirname(__FILE__) . DIRECTORY_SEPARATOR);
-}
-
 if (!defined('KRUMO_RETURN')) {
     define('KRUMO_RETURN', '158bafa5-b505-4661-9904-46504e00a5bb');
 }
@@ -54,16 +45,16 @@ if (!defined('KRUMO_NO_SORT')) {
 */
 class Krumo
 {
+    const VERSION = '0.7.0';
+
     /**
      * Return Krumo version
      *
      * @return string
-     * @access public
-     * @static
      */
     public static function version()
     {
-        return trim(file_get_contents(__DIR__ . "/VERSION"));
+        return Krumo::VERSION;
     }
 
     protected static function getCharset()
@@ -74,8 +65,6 @@ class Krumo
     /**
      * Prints a debug backtrace
      *
-     * @access public
-     * @static
      */
     public static function backtrace()
     {
@@ -90,8 +79,6 @@ class Krumo
     /**
      * Prints a list of all currently declared classes.
      *
-     * @access public
-     * @static
      */
     public static function classes()
     {
@@ -108,8 +95,6 @@ class Krumo
     /**
      * Prints a list of all currently declared interfaces (PHP5 only).
      *
-     * @access public
-     * @static
      */
     public static function interfaces()
     {
@@ -127,8 +112,6 @@ class Krumo
     /**
      * Prints a list of all currently included (or required) files.
      *
-     * @access public
-     * @static
      */
     public static function includes()
     {
@@ -146,8 +129,6 @@ class Krumo
     /**
      * Prints a list of all currently declared functions.
      *
-     * @access public
-     * @static
      */
     public static function functions()
     {
@@ -165,8 +146,6 @@ class Krumo
     /**
      * Prints a list of all currently declared constants.
      *
-     * @access public
-     * @static
      */
     public static function defines()
     {
@@ -184,8 +163,6 @@ class Krumo
     /**
      * Prints a list of all currently loaded PHP extensions.
      *
-     * @access public
-     * @static
      */
     public static function extensions()
     {
@@ -203,8 +180,6 @@ class Krumo
     /**
      * Prints a list of all HTTP request headers.
      *
-     * @access public
-     * @static
      */
     public static function headers()
     {
@@ -222,8 +197,6 @@ class Krumo
     /**
      * Prints a list of the configuration settings read from <i>php.ini</i>
      *
-     * @access public
-     * @static
      */
     public static function phpini()
     {
@@ -245,8 +218,6 @@ class Krumo
     /**
      * Prints a list of all your configuration settings.
      *
-     * @access public
-     * @static
      */
     public static function conf()
     {
@@ -264,8 +235,6 @@ class Krumo
     /**
      * Prints a list of the specified directories under your <i>include_path</i> option.
      *
-     * @access public
-     * @static
      */
     public static function path()
     {
@@ -283,8 +252,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_REQUEST</i> array.
      *
-     * @access public
-     * @static
      */
     public static function request()
     {
@@ -302,8 +269,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_GET</i> array.
      *
-     * @access public
-     * @static
      */
     public static function get()
     {
@@ -321,8 +286,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_POST</i> array.
      *
-     * @access public
-     * @static
      */
     public static function post()
     {
@@ -340,8 +303,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_SERVER</i> array.
      *
-     * @access public
-     * @static
      */
     public static function server()
     {
@@ -359,8 +320,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_COOKIE</i> array.
      *
-     * @access public
-     * @static
      */
     public static function cookie()
     {
@@ -378,8 +337,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_ENV</i> array.
      *
-     * @access public
-     * @static
      */
     public static function env()
     {
@@ -397,8 +354,6 @@ class Krumo
     /**
      * Prints a list of all the values from the <i>$_SESSION</i> array.
      *
-     * @access public
-     * @static
      */
     public static function session()
     {
@@ -418,8 +373,6 @@ class Krumo
      *
      * @param string $ini_file
      * @return bool
-     * @access public
-     * @static
      */
     public static function ini($ini_file)
     {
@@ -482,8 +435,6 @@ class Krumo
      * Dump information about a variable
      *
      * @param mixed $data,...
-     * @access public
-     * @static
      * @return bool
      */
     public static function dump($data, $second = '')
@@ -548,8 +499,12 @@ class Krumo
         $_ = debug_backtrace();
         while ($d = array_pop($_)) {
             $callback = static::$lineNumberTestCallback;
-            $function = strToLower($d['function']);
-            if (in_array($function, array("krumo","k","kd")) || (strToLower(@$d['class']) == 'krumo') || (is_callable($callback) && call_user_func($callback, $d))) {
+
+            $class         = strtolower($d['class']    ?? '');
+            $function      = strtolower($d['function'] ?? '');
+            $is_krumo_func = in_array($function, array('krumo','k','kd'));
+
+            if ($is_krumo_func || $class == 'krumo' || (is_callable($callback) && call_user_func($callback, $d))) {
                 break;
             }
         }
@@ -584,7 +539,7 @@ class Krumo
             }
 
             if ($showVersion) {
-                $version = static::version();
+                $version = Krumo::VERSION;
                 print "<span class=\"krumo-version\" style=\"white-space:nowrap;\">\n";
                 print "<strong class=\"krumo-version-number\">Krumo version $version</strong> | <a href=\"$krumoUrl\" target=\"_blank\">$krumoUrl</a>\n";
                 print "</span>\n";
@@ -622,7 +577,28 @@ class Krumo
         return true;
     } // End of dump()
 
+    /**
+    * Return the dump information about a variable
+    * @param mixed $data,...
+    * @return string
+    */
+    static function fetch($data)
+    {
+        // disabled ?
+        //
+        if (!self::_debug())
+        {
+            return false;
+        }
 
+        ob_start();
+        call_user_func_array(
+            array(get_called_class(), 'dump'),
+            func_get_args()
+            );
+
+        return ob_get_clean();
+    }
 
     /**
       * Configuration array.
@@ -637,12 +613,10 @@ class Krumo
      * @param mixed $fallback
      * @return mixed
      *
-     * @access private
-     * @static
      */
     private static function _config($group, $name, $fallback=null)
     {
-        $krumo_ini = KRUMO_DIR . 'krumo.ini';
+        $krumo_ini = __DIR__ . '/krumo.ini';
 
         // The config isn't loaded yet
         if (empty(static::$_config) && is_readable($krumo_ini)) {
@@ -694,8 +668,6 @@ class Krumo
      *   To reset, simply call this function with no arguments.
      *
      * @param array $cascade Cascading information
-     * @access public
-     * @static
      */
     public static function cascade(array $cascade = null)
     {
@@ -740,8 +712,6 @@ class Krumo
      * Calculate the relative path of a given absolute URL
      *
      * @return string
-     * @access public
-     * @static
      * @param $file string The file to calculate the relative path of
      * @param $returnDir bool If set to true, only return the dirname
      */
@@ -771,8 +741,6 @@ class Krumo
      * Print the skin (CSS)
      *
      * @return boolean
-     * @access private
-     * @static
      */
     private static function _css()
     {
@@ -788,7 +756,7 @@ class Krumo
 
         // custom selected skin
         $rel_css_file = "skins/{$skin}/skin.css";
-        $css_file = KRUMO_DIR . $rel_css_file;
+        $css_file = __DIR__ . "/" . $rel_css_file;
         if (is_readable($css_file)) {
             $css = file_get_contents($css_file);
         }
@@ -797,7 +765,7 @@ class Krumo
         if (!$css && ($skin != 'default')) {
             $skin         = 'stylish';
             $rel_css_file = "skins/$skin/skin.css";
-            $css_file     = KRUMO_DIR . $rel_css_file;
+            $css_file     = __DIR__ . "/" . $rel_css_file;
             $css          = file_get_contents($css_file);
         }
 
@@ -825,8 +793,8 @@ class Krumo
             // the JS
             print "<script type=\"text/javascript\">\n";
 
-            $js_min_file = KRUMO_DIR . "/js/krumo.min.js";
-            $js_file     = KRUMO_DIR . "/js/krumo.js";
+            $js_min_file = __DIR__ . "/js/krumo.min.js";
+            $js_file     = __DIR__ . "/js/krumo.js";
 
             if (is_readable($js_min_file)) {
                 $js_text = file_get_contents($js_min_file);
@@ -848,8 +816,6 @@ class Krumo
      * Enable Krumo
      *
      * @return boolean
-     * @access public
-     * @static
      */
     public static function enable()
     {
@@ -860,8 +826,6 @@ class Krumo
      * Disable Krumo
      *
      * @return boolean
-     * @access public
-     * @static
      */
     public static function disable()
     {
@@ -873,8 +837,6 @@ class Krumo
      *
      * @param boolean $state
      * @return boolean
-     * @access private
-     * @static
      */
     private static function _debug($state = null)
     {
@@ -914,8 +876,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _dump(&$data, $name = '&hellip;')
     {
@@ -968,8 +928,6 @@ class Krumo
      *
      * @param string $name
      * @return string
-     * @access private
-     * @static
      */
     private static function _null($name)
     {
@@ -989,8 +947,6 @@ class Krumo
      * and objects in order to detect recursions
      *
      * @return string
-     * @access private
-     * @static
      */
     private static function _marker()
     {
@@ -1010,8 +966,6 @@ class Krumo
      * @param mixed &$bee either array or object, not a scalar value
      * @return array all the bees
      *
-     * @access private
-     * @static
      */
     private static $objectRecursionProtection = null;
     private static function &_hive(&$bee)
@@ -1055,8 +1009,6 @@ class Krumo
      * Render a dump for the properties of an array or objeect
      *
      * @param mixed &$data
-     * @access private
-     * @static
      */
     private static function _vars(&$data)
     {
@@ -1139,17 +1091,33 @@ class Krumo
             // keys
             $keys = array_keys($data);
 
+            $limit = (int) static::_config('display', 'truncate_array_length', 0);
+            $truncated = 0;
+
             // iterate
-            foreach ($keys as $k) {
+            foreach ($keys as $i => $k) {
                 // skip marker
                 if ($k === $_recursion_marker) {
                     continue;
                 }
 
-                // get real value
-                $v =& $data[$k];
+                // skip items beyond the limit, if any
+                if ( $i >= $limit && $limit > 0 ) {
+                    $truncated++;
+                    continue;
+                }
 
+                // get real value and dump
+                $v =& $data[$k];
                 static::_dump($v, $k);
+            }
+
+            if ( $truncated > 0 ) {
+                print "\n<li class=\"krumo-child\">";
+                print "<div class=\"krumo-element \" ";
+                print "onMouseOver=\"krumo.over(this);\" onMouseOut=\"krumo.out(this);\">";
+                print "<a class=\"krumo-name\">Array output truncated ($truncated items not shown)</a>";
+                print "</div></li>\n";
             }
         }
 
@@ -1161,8 +1129,6 @@ class Krumo
     /**
      * Render a block that detected recursion
      *
-     * @access private
-     * @static
      */
     private static function _recursion()
     {
@@ -1191,8 +1157,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _array($data, $name)
     {
@@ -1280,8 +1244,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _object(&$data, $name)
     {
@@ -1337,8 +1299,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _resource($data, $name)
     {
@@ -1359,8 +1319,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _boolean($data, $name)
     {
@@ -1388,8 +1346,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _integer($data, $name)
     {
@@ -1412,8 +1368,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _float($data, $name)
     {
@@ -1474,7 +1428,7 @@ class Krumo
     private static function is_datetime($name, $value)
     {
         // If the name contains date or time, and the value looks like a unixtime
-        if (preg_match("/date|time/i", $name) && ($value > 10000000 && $value < 4000000000)) {
+        if (preg_match("/date|time/i", $name) && (is_numeric($value) && $value > 10000000 && $value < 4000000000)) {
             $ret = date("r", $value);
 
             return $ret;
@@ -1489,8 +1443,6 @@ class Krumo
      *
      * @param mixed $data
      * @param string $name
-     * @access private
-     * @static
      */
     private static function _string($data, $name)
     {
@@ -1506,8 +1458,8 @@ class Krumo
         $_ = $data;
 
         // Get the truncate length from the config, or default to 100
-        $truncate_length = static::_config('display', 'truncate_length', 100);
-        $display_cr      = static::_config('display', 'carriage_returns', true);
+        $truncate_length = static::_config('display', 'truncate_string_length', 100);
+        $display_cr      = static::_config('display', 'show_carriage_returns', true);
 
         $strlen = strlen($data);
         if (function_exists('mb_strlen')) {
@@ -1553,15 +1505,17 @@ class Krumo
 
         // Check for and highlight any leading or trailing spaces/tabs
         if (preg_match("/^([ \t]+)|([ \t]+)$/", $data)) {
-            $has_leading  = preg_match("/^([ \t]s+)/", $data);
+            $has_leading  = preg_match("/^([ \t]+)/", $data);
             $has_trailing = preg_match("/([ \t]+)$/", $data);
 
             if ($has_leading && $has_trailing) {
-                $title  = "Note: String contains trailing and leading whitespace";
+                $title = "Note: String contains trailing and leading whitespace";
             } elseif ($has_leading) {
-                $title  = "Note: String contains leading whitespace";
+                $title = "Note: String contains leading whitespace";
             } elseif ($has_trailing) {
-                $title  = "Note: String contains trailing whitespace";
+                $title = "Note: String contains trailing whitespace";
+            } else {
+                $title = "";
             }
 
             $icon = static::get_icon("information", $title);
@@ -1657,11 +1611,11 @@ class Krumo
         }
 
         foreach ($args as $i) {
-            $out = var_export($i);
+            $out = var_export($i) ?? '';
             print trim($out);
 
             if (sizeof($args) >= 1) {
-                $version = static::version();
+                $version = Krumo::VERSION;
                 print "\n\nCalled from $file, line $line  (Krumo version $version)\n$bar\n";
             }
         }

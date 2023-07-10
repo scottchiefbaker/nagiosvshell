@@ -1,0 +1,34 @@
+{include file='status_search.stpl'}
+
+<div class="statusTable">
+	<table class="statusTable resp">
+		<thead>
+			<tr>
+				<th class="hostname">Host Name</th>
+				<th class="status">Status</th>
+				<th class="hidden">Duration</th>
+				<th class="attempt">Attempt</th>
+				<th class="hidden">Last Check</th>
+				<th>Status Information</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach $host_info as $x}
+			<tr>
+				<td class="hostname d-flex"><a href="hostdetail.php?name_filter={$x.host_name}" class="flex-fill">{$x.host_name}</a>
+					<div class="d-flex">
+						<a href="services.php?host_filter={$x.host_name}" title="View all services for this host">
+							{$icons.HOST_SVCS}
+						</a>
+					</div>
+				</td>
+				<td class="status {$x.state_str|strtolower} text-center">{$x.state_str}</td>
+				<td class="hidden">???</td>
+				<td class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+				<td class="hidden">{$x.last_check}</td>
+				<td>{$x.plugin_output}</td>
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+</div>

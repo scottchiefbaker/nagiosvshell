@@ -1,0 +1,139 @@
+<div class="">
+	<h3 class="text-start">Service: <span id="service" data-value="{$svc_name}">{$svc_name}</span></h3>
+	<h4 class="text-start">Host: <span id="host" data-value="{$host_name}">{$host_name}</span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.HOST_SVCS}</a></h4>
+
+	<div class="d-lg-flex mt-3">
+		<div class="flex-fill me-lg-4">
+			<h5 class="alert alert-secondary p-2">Advanced details</h5>
+
+			<table class="mt-2">
+				<tr><td class="servicedetail_key">Service State</td><td class="{$svc_info.state_str}">{$svc_info.state_str}</td></tr>
+				<tr><td class="servicedetail_key">Check Command</td><td>{$svc_info.check_command}</td></tr>
+				<tr><td class="servicedetail_key">Plugin Output</td><td>{$svc_info.plugin_output}</td></tr>
+				<tr><td class="servicedetail_key">State Type</td><td>{if $svc_info.state_type == 0}Soft{elseif $svc_info.state_type == 1}Hard{else}Unknown{/if}</td></tr>
+				<tr><td class="servicedetail_key">Current Check</td><td>{$svc_info.current_attempt} of {$svc_info.max_attempts}</td></tr>
+				<tr title="{$svc_info.next_check|v_date_format}"><td class="servicedetail_key">Next Check</td><td>{$svc_info.next_check|human_time_diff}</td></tr>
+				<tr><td class="servicedetail_key">Check Type</td><td>{if $svc_info.active_checks_enabled}Active{else}Passive{/if}</td></tr>
+				<tr title="{$svc_info.last_check|v_date_format}"><td class="servicedetail_key">Last Check</td><td>{$svc_info.last_check|human_time_diff}</td></tr>
+				<tr title="{$svc_info.last_state_change|v_date_format}"><td class="servicedetail_key">Last State Change</td><td>{$svc_info.last_state_change|human_time_diff}</td></tr>
+				<tr title="{$svc_info.last_notification|v_date_format}"><td class="servicedetail_key">Last Notification</td><td>{if $svc_info.last_notification}{$svc_info.last_notification|human_time_diff}{else}Never{/if}</td></tr>
+				<tr><td class="servicedetail_key">Check Latency</td><td>{$svc_info.check_latency} seconds</td></tr>
+				<tr><td class="servicedetail_key">Execution Time</td><td>{$svc_info.check_execution_time} seconds</td></tr>
+				<tr><td class="servicedetail_key">State Change</td><td>{$svc_info.percent_state_change}%</td></tr>
+				<tr><td class="servicedetail_key">Performance Data</td><td>{$svc_info.performance_data}</td></tr>
+			</table>
+		</div>
+
+		<div class="flex-fill ms-lg-4 mt-3 mt-lg-0">
+			<h5 class="alert alert-secondary p-2">Service Attributes</h5>
+
+			<div class="mb-3">
+				<table>
+					<tr>
+						<td class="{if $svc_info.active_checks_enabled}enabled{else}disabled{/if}">Active Checks: {if $svc_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="center">
+							<div class="">
+								<label class="switch">
+									<input data-cmd="_SVC_CHECK" type="checkbox" class="input_toggle" {if $svc_info.active_checks_enabled}checked{/if}/>
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="{if $svc_info.passive_checks_enabled}enabled{else}disabled{/if}">Passive Checks: {if $svc_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="center">
+							<div class="">
+								<label class="switch">
+									<input data-cmd="_PASSIVE_SVC_CHECKS" type="checkbox" class="input_toggle" {if $svc_info.passive_checks_enabled}checked{/if} />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</td>
+					</tr>
+
+					<!--
+						<tr>
+						<td class="enabled">Obsession: Enabled</td>
+						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host=rgnet&amp;service=Ping"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
+						</tr>
+					-->
+
+					<tr>
+						<td class="{if $svc_info.notifications_enabled}enabled{else}disabled{/if}">Notifications: {if $svc_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="center">
+							<div class="">
+								<label class="switch">
+									<input data-cmd="_SVC_NOTIFICATIONS" type="checkbox" class="input_toggle" {if $svc_info.notifications_enabled}checked{/if} />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</td>
+					</tr>
+					<tr>
+						<td class="{if $svc_info.flap_detection_enabled}enabled{else}disabled{/if}">Flap Detection: {if $svc_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="center">
+							<div class="">
+								<label class="switch">
+									<input data-cmd="_SVC_FLAP_DETECTION" type="checkbox" class="input_toggle" {if $svc_info.flap_detection_enabled}checked{/if} />
+									<span class="slider round"></span>
+								</label>
+							</div>
+						</td>
+					</tr>
+				</table>
+			</div>
+
+			<!-- Nagios Core Command Table -->
+			<h5 class="alert alert-secondary p-2">Core Commands</h5>
+			<table>
+				<tr>
+					<td>Send custom notification</td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host=rgnet&amp;service=Ping" title="Send Custom Notification"><img src="views/images/notification.gif" class="iconLink" alt="Notification" /></a></td>
+				</tr>
+				<tr>
+					<td>Schedule downtime</td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host=rgnet&amp;service=Ping" title="Schedule Downtime"><img src="views/images/downtime.png" class="iconLink" alt="Downtime" /></a></td></tr>
+				<tr>
+					<td>Check Immediately</td>
+					<td class="center"><img src="views/images/schedulecheck.png" class="pointer recheck_now iconLink" alt="Recheck now" /></td>
+				</tr>
+				<tr>
+					<td>Acknowledge Problem</td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host=rgnet&amp;service=Ping" title="Acknowledge Problem"><img src="views/images/ack.png" class="iconLink" alt="Acknowledge" /></a></td>
+				</tr>
+			</table>
+
+			<div class="" style="margin-top: 0.5em;">
+				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host=rgnet&amp;service=Ping" title="View this service in Nagios Core">View this service in Nagios Core</a>
+			</div>
+		</div>
+	</div>
+
+	<hr />
+
+	<div class="text-center" style="font-size: 75%;">
+		<a href="{$cmd_api}cmd_typ=3&host={$host_name}&service={$svc_name}">Add a comment</a>
+	</div>
+	<table class="table table-sm table-striped">
+		<thead class="table-dark">
+			<tr>
+				<th class="w-25 text-center">Author</th>
+				<th class="w-50 text-center">Comment</th>
+				<th class="w-25 text-center">Action</th>
+			</tr>
+		</thead>
+		<tbody class="">
+	{foreach $comments as $x}
+			<tr>
+				<td title="{$x.entry_time|v_date_format}">{$x.entry_time|human_time_diff} by <b>{$x.author}</b></td>
+				<td>{$x.comment_data}</td>
+				<td class="text-center">
+					<a href="{$cmd_api}cmd_typ=4&amp;com_id={$x.comment_id}" title="Delete Comment">
+					<img class="iconLink" src="views/images/delete.png" alt="Delete" width="15" height="15"></a>
+				</td>
+			</tr>
+	{/foreach}
+		</tbody>
+	</table>
+</div>

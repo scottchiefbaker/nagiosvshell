@@ -1,0 +1,39 @@
+{include file='status_search.stpl'}
+
+<table class="statusTable servicetable resp">
+	<thead>
+		<tr>
+			<th class="hostname">Host Name</th>
+			<th class="service_description">Service</th>
+			<th class="status">Status</th>
+			<th class="duration">Duration</th>
+			<th class="attempt">Attempt</th>
+			<th class="last_check">Last Check</th>
+			<th class="plugin_output">Status Information</th>
+		</tr>
+	</thead>
+	<tbody>
+	{foreach $service_info as $w}
+		{foreach $w as $idx => $x}
+		<tr class="statustablerow">
+			{if $idx === 0}
+			<td column-name="Hostname" class="{$x.x_host_state_str}">
+				<div class="hostname d-flex">
+					<a class="highlight flex-fill" href="host_details.php?host_name={$x.host_name}" title="Host address: ???">{$x.host_name}</a>
+					<a href="?host_filter={$x.host_name}" title="See all services for this host"><span class="">{$icons.HOST_SVCS}</span></a>
+				</div>
+			</td>
+			{else}
+			<td column-name="Hostname" class=""></td>
+			{/if}
+			<td column-name="Service" class="service_description"><div class="service_description d-flex"><div class="flex-fill"><a href="service_details.php?host_name={$x.host_name}&amp;svc_name={$x.service_description|urlencode}">{$x.service_description}</a></div><div class="align-items-center d-flex status_icons"></div></div></td>
+			<td column-name="Status" class="{$x.state_str} status center">{$x.state_str}</td>
+			<td column-name="Duration" class="duration">???</td>
+			<td column-name="Attempt" class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+			<td column-name="Last Check" class="last_check">{$x.last_check}</td>
+			<td column-name="Output" class="plugin_output"><div class="plugin_output">{$x.plugin_output}</div></td>
+		</tr>
+		{/foreach}
+	{/foreach}
+	</tbody>
+</table>

@@ -1,0 +1,120 @@
+<div class="topnav row mb-3">
+	<nav class="col navbar navbar-expand-lg border navbar-light bg-light py-0 px-2">
+		<a class="navbar-brand" href="./" title="VShell Dashboard">
+			<svg style="width:32px;height:32px" viewBox="0 0 24 24">
+				<path fill="currentColor" d="M9,7L11,17H13L15,7H13L12,12L11,7H9M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3Z" />
+			</svg>
+		</a>
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+			<span class="navbar-toggler-icon"></span>
+		</button>
+
+		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+			<ul class="navbar-nav me-auto">
+
+				<li class="nav-item">
+					<a class="nav-link" href="hosts.php">Hosts</a>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" href="services.php">Services</a>
+				</li>
+
+				<!--
+					<li class="nav-item">
+					<a class="nav-link" href="?type=hostgroups">Hostgroups</a>
+					</li>
+
+					<li class="nav-item">
+					<a class="nav-link" href="?type=servicegroups">Servicegroups</a>
+					</li>
+				-->
+
+				<li class="nav-item dropdown d-none">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Configurations
+					</a>
+
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=hosts_objs">Hosts</a>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=services_objs">Services</a>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=hostgroups_objs">Servicegroups</a>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=timeperiods">Timeperiods</a>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=contacts">Contacts</a>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=contactgroups">Contactgroups</a>
+
+						<div class="dropdown-divider"></div>
+						<a class="dropdown-item" href="config.php?type=object&objtype_filter=commands">Commands</a>
+					</div>
+				</li>
+
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Commands
+					</a>
+
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=3">Comments</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=6">Downtime</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=0">Process Info</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=4">Performance Info</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=7">Scheduling Queue</a>
+
+						<div class="dropdown-divider"></div>
+						<div class="dropdown-item notification-menu mr-1 d-inline-block">
+							{if $tac_data.notifications_enabled}
+							Notifications: <button id="alert_status" class="notification-toggle btn btn-sm btn-success border" style="width: 3em;">On</button>
+							{else}
+							Notifications: <button id="alert_status" class="notification-toggle btn btn-sm btn-danger border" style="width: 3em;">Off</button>
+							{/if}
+						</div>
+					</div>
+				</li>
+
+				<li class="nav-item dropdown">
+					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+						Reports
+					</a>
+
+					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/avail.cgi">Availability</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/trends.cgi">Trends</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/history.cgi?host=all">Alert History</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/summary.cgi">Alert Summary</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/histogram.cgi">Alert Histogram</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/notifications.cgi?contact=all">Notifications</a>
+						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/showlog.cgi">Event Log</a>
+					</div>
+				</li>
+
+				<li class="nav-item">
+					<a class="nav-link" title="Access Nagios Core interface" href="https://nagios.web-ster.com/nagios/">Nagios Core</a>
+				</li>
+
+			</ul>
+
+			<form class="my-2 my-lg-0" action="services.php">
+				<input type="hidden" name="type" value="services" />
+
+				<div class="input-group">
+					<input class="form-control form-control-sm" type="search" name="name_filter" placeholder="Search" aria-label="Find" />
+					<button class="btn btn-primary btn-sm" type="submit">Find</button>
+				</div>
+
+			</form>
+
+		</div>
+	</nav>
+</div>
+
+{if !$tac_data.notifications_enabled}
+<div class="alert alert-danger text-center mb-3">
+	<b>Warning:</b> Notifications are disabled!
+</div>
+{/if}
+
+{if !$tac_data.cmd_file_writable}
+<div class="alert alert-warning text-center mb-3">
+	<b>Warning:</b> Command file <code>{$cmd_file}</code> is not writable. Commands may not function.
+</div>
+{/if}

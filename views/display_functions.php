@@ -351,6 +351,21 @@ function get_service_comments($host, $service)
 	return $comments;
 }
 
+function get_service_comments_raw($host, $service)
+{
+	global $NagiosData;
+	$ret = [];
+	$servicecomments = $NagiosData->getProperty('servicecomments');
+
+	foreach($servicecomments as $comment) {
+		if ($comment['host_name'] == $host && $comment['service_description'] == $service) {
+			$ret[] = $comment;
+		}
+	}
+
+	return $ret;
+}
+
 
 
 

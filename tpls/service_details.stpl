@@ -1,6 +1,6 @@
 <div class="">
 	<h3 class="text-start">Service: <span id="service" data-value="{$svc_name}">{$svc_name}</span></h3>
-	<h4 class="text-start">Host: <span id="host" data-value="{$host_name}">{$host_name}</span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.HOST_SVCS}</a></h4>
+	<h4 class="text-start">Host: <span id="host" data-value="{$host_name}">{$host_name}</span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.list}</a></h4>
 
 	<div class="d-lg-flex mt-3">
 		<div class="flex-fill me-lg-4">
@@ -89,18 +89,18 @@
 			<table>
 				<tr>
 					<td>Send custom notification</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host=rgnet&amp;service=Ping" title="Send Custom Notification"><img src="views/images/notification.gif" class="iconLink" alt="Notification" /></a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host=rgnet&amp;service=Ping" title="Send Custom Notification">{$icons.bell}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host=rgnet&amp;service=Ping" title="Schedule Downtime"><img src="views/images/downtime.png" class="iconLink" alt="Downtime" /></a></td></tr>
+					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host=rgnet&amp;service=Ping" title="Schedule Downtime">{$icons.calendar_add}</a></td></tr>
 				<tr>
 					<td>Check Immediately</td>
-					<td class="center"><img src="views/images/schedulecheck.png" class="pointer recheck_now iconLink" alt="Recheck now" /></td>
+					<td class="center recheck_now"><a href="#">{$icons.clock}</a></td>
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host=rgnet&amp;service=Ping" title="Acknowledge Problem"><img src="views/images/ack.png" class="iconLink" alt="Acknowledge" /></a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host=rgnet&amp;service=Ping" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
 
@@ -130,7 +130,8 @@
 				<td>{$x.comment_data}</td>
 				<td class="text-center">
 					<a href="{$cmd_api}cmd_typ=4&amp;com_id={$x.comment_id}" title="Delete Comment">
-					<img class="iconLink" src="views/images/delete.png" alt="Delete" width="15" height="15"></a>
+						{$icons.trash}
+					</a>
 				</td>
 			</tr>
 	{/foreach}

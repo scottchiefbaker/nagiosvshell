@@ -57,7 +57,7 @@ a:link, a:visited { text-decoration: none;}
 /*a:hover, a:active, a.highlight:hover, a.highlight:active { color: #89D5FF; }*/
 
 table {
-	font-size : 11pt;
+	/*font-size : 11pt;*/
 	width     : 100%;
 }
 
@@ -78,7 +78,7 @@ h3 {	text-align: center;  }
 
 a.nav {
 	display: block;
-	font-size: 15pt;
+	/*font-size: 15pt;*/
 }
 
 a.highlight {
@@ -103,7 +103,7 @@ li.nav {
 }
 
 a.sub-nav {
-	font-size: 13pt;
+	/*font-size: 13pt;*/
 }
 
 #clearcache {}
@@ -238,7 +238,7 @@ div.commentTable { padding-top: 20px; }
 div.td_maxwidth{ overflow:auto; }
 
 /*used for toggle label on group and config pages */
-.label {font-size: .8em;}
+/*.label {font-size: .8em;}*/
 
 img.label {border: none;}
 
@@ -283,7 +283,7 @@ div.statusTable, table.statusTable, table.serviceTable{
 
 /* expandable configuration list */
 ul.configlist, li.configlist {
-	font-size: 8pt;
+	/*font-size: 8pt;*/
 	margin: 1px;
 	padding: 0px;
 	list-style:none;
@@ -299,7 +299,7 @@ div.hidden { display:none;  }
 
 .tac td {
     font-weight: bold;
-    font-size: 115%;
+    /*font-size: 115%;*/
 }
 
 .meterContainer {
@@ -311,7 +311,7 @@ div.hidden { display:none;  }
 .h_container {
 	width: 20%;
 	background: #f8f8f8;
-	font-size: 9pt;
+	/*font-size: 9pt;*/
 	border: 2px solid #AAA;
 	text-align:center;
 	margin: auto;

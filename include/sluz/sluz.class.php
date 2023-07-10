@@ -282,10 +282,16 @@ class sluz {
 		$inc_tpl   = $this->extract_include_file($input_str);
 
 		// Extra variables to include sub templates
-		if (preg_match_all("/(\w+)='(.+?)'/", $input_str, $m)) {
+		if (preg_match_all("/(\w+)=(['\"](.+?)['\"])/", $input_str, $m)) {
 			for ($i = 0; $i < count($m[0]); $i++) {
 				$key = $m[1][$i] ?? "";
 				$val = $m[2][$i] ?? "";
+
+				// We skip the file='header.stpl' option
+				if ($key === 'file') { continue; }
+
+				$val = $this->convert_variables_in_string($val);
+				$val = $this->peval($val);
 
 				$this->assign($key, $val);
 			}
@@ -301,9 +307,13 @@ class sluz {
 	}
 
 	function extract_include_file($str) {
-		// We're looking for either {include "foo.stpl"} or {include file="foo.stpl"}
-		if (preg_match("/(file=)?(['\"].+?['\"])/", $str, $m)) {
+		// {include file='foo.stpl'}
+		if (preg_match("/\s(file=)(['\"].+?['\"])/", $str, $m)) {
 			$xstr = $this->convert_variables_in_string($m[2]);
+			$file = $this->peval($xstr);
+		// {include 'foo.stpl'} - unofficial
+		} elseif (preg_match("/\s(['\"].+?['\"])/", $str, $m)) {
+			$xstr = $this->convert_variables_in_string($m[1]);
 			$file = $this->peval($xstr);
 		} else {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
@@ -696,12 +706,17 @@ class sluz {
 
 	// Parse an include block
 	private function include_block($str) {
+		// Include blocks may modify tpl vars, so we save them here
+		$save = $this->tpl_vars;
+
 		$callback = [$this, 'include_callback']; // Object callback syntax
 		$inc_str  = preg_replace_callback("/\{include.+?\}/", $callback, $str);
 
 		$blocks   = $this->get_blocks($inc_str);
 		$ret      = $this->process_blocks($blocks);
 
+		// Restore the TPL vars to pre 'include' state
+		$this->tpl_vars     = $save;
 		$this->inc_tpl_file = null; // Clear temp override
 
 		return $ret;

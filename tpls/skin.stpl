@@ -65,7 +65,5 @@
 	{/if}
 
 	{include file="tpls/$__child_tpl"}
-
-	<footer class="mt-2 text-end" style="font-size: 70%;">Render time: {$query_time_ms} ms</footer>
 </body>
 </html>

@@ -188,8 +188,6 @@ class vshell {
 			k($this->sluz->tpl_vars);
 		}
 
-		//kd([$skin, $tpl]);
-
 		return $ret;
 	}
 

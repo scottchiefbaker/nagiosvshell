@@ -23,7 +23,7 @@
 		{/if}
 
 	</head>
-<body class="container-fluid">
+<body class="container-fluid pb-2">
 	{include file='tpls/top_nav.stpl'}
 
 	<!-- ########################HOSTS TABLE########################## -->

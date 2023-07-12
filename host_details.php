@@ -1,6 +1,6 @@
 <?php
 
-require('include/inc.inc.php');
+require('include/vshell.class.php');
 
 $v = new vshell;
 $v->sluz->assign('js_files', ["js/host_details.js"]);

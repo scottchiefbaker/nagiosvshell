@@ -60,6 +60,3 @@ include("$base_dir/data/data.inc.php");
 include("$base_dir/controllers/controllers.inc.php");
 include("$base_dir/views/views.inc.php");
 include("$base_dir/include/session.inc.php");
-
-// This is the new class based sluz implementation
-include("$base_dir/include/vshell.class.php");

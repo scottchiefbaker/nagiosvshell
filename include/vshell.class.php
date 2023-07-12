@@ -1,5 +1,11 @@
 <?php
 
+$base_dir = dirname(__FILE__) . "/../";
+$base_dir = realpath($base_dir) . "/";
+
+// Include the old include file to get most of the pieces
+require_once("$base_dir/include/inc.inc.php");
+
 require_once("$base_dir/include/krumo/class.krumo.php");
 require_once("$base_dir/include/global-functions.php");
 require_once("$base_dir/include/sluz/sluz.class.php");

@@ -1,6 +1,6 @@
 <?php
 
-require('include/inc.inc.php'); //master include file
+require('include/vshell.class.php'); //master include file
 
 $v = new vshell;
 $debug = $_GET['debug'] ?? 0;

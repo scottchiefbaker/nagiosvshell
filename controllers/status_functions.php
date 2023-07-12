@@ -177,7 +177,8 @@ function get_by_name($name, $data, $field='host_name',$host_filter=false) {
 
 	if ($host_filter) {//match exact hostname
 		foreach($data as $d) {
-			if ($host_filter == $d[$field]) {
+			$cmp = $d[$field] ?? "";
+			if ($host_filter == $cmp) {
 				$newarray[] = $d;
 			}
 		}

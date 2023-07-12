@@ -325,6 +325,21 @@ function get_host_comments($host)
 	return $comments;
 }
 
+function get_host_comments_raw($host) {
+	global $NagiosData;
+
+	$x   = $NagiosData->getProperty('hostcomments');
+	$ret = [];
+
+	foreach($x as $comment) {
+		if($comment['host_name'] == $host) {
+			$ret[] = $comment;
+		}
+	}
+
+	return $ret;
+}
+
 /** expecting a host name
  * used on host details page
  * @TODO replace CORECMD link with a call to core_command_link(...)
@@ -450,7 +465,7 @@ function do_result_notes($start,$limit,$resultsCount,$type)
 			<input type='submit' name='submitbutton' value='".gettext('Set Limit')."' />
 		</form>
 		</div><!-- end resultLimit --> \n\n";
-	
+
 	return $resultnotes;
 } //end do_result_notes()
 

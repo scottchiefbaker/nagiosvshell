@@ -1,6 +1,6 @@
-<div class="">
-	<h3 class="text-start">Service: <span id="service" data-value="{$svc_name}">{$svc_name}</span></h3>
-	<h4 class="text-start">Host: <span id="host" data-value="{$host_name}">{$host_name}</span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.list}</a></h4>
+<div class="" style="margin: 0 13em;">
+	<h3 class="text-start"><b>Service:</b> <span id="service" data-value="{$svc_name}">{$svc_name}</span></h3>
+	<h4 class="text-start"><b>Host:</b> <span id="host" data-value="{$host_name}"><a href="host_details.php?host_name={$host_name}">{$host_name}</a></span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.list}</a></h4>
 
 	<div class="d-lg-flex mt-3">
 		<div class="flex-fill me-lg-4">
@@ -55,7 +55,7 @@
 					<!--
 						<tr>
 						<td class="enabled">Obsession: Enabled</td>
-						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host=rgnet&amp;service=Ping"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
+						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host={$host_name}&amp;service=Ping"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
 						</tr>
 					-->
 
@@ -89,23 +89,24 @@
 			<table>
 				<tr>
 					<td>Send custom notification</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host=rgnet&amp;service=Ping" title="Send Custom Notification">{$icons.bell}</a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host={$host_name}&amp;service=Ping" title="Send Custom Notification">{$icons.bell}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host=rgnet&amp;service=Ping" title="Schedule Downtime">{$icons.calendar_add}</a></td></tr>
+					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host={$host_name}&amp;service=Ping" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+				</tr>
 				<tr>
 					<td>Check Immediately</td>
 					<td class="center recheck_now"><a href="#">{$icons.clock}</a></td>
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host=rgnet&amp;service=Ping" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host={$host_name}&amp;service=Ping" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
 
 			<div class="" style="margin-top: 0.5em;">
-				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host=rgnet&amp;service=Ping" title="View this service in Nagios Core">View this service in Nagios Core</a>
+				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host={$host_name}&amp;service=Ping" title="View this service in Nagios Core">View this service in Nagios Core</a>
 			</div>
 		</div>
 	</div>
@@ -124,7 +125,7 @@
 			</tr>
 		</thead>
 		<tbody class="">
-	{foreach $comments as $x}
+			{foreach $comments as $x}
 			<tr>
 				<td title="{$x.entry_time|v_date_format}">{$x.entry_time|human_time_diff} by <b>{$x.author}</b></td>
 				<td>{$x.comment_data}</td>
@@ -134,7 +135,7 @@
 					</a>
 				</td>
 			</tr>
-	{/foreach}
+			{/foreach}
 		</tbody>
 	</table>
 </div>

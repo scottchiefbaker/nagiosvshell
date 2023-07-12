@@ -276,59 +276,21 @@ class sluz {
 		return $ret;
 	}
 
-	// The callback to do the include string replacement stuff
-	private function include_callback(array $m) {
-		$input_str = $m[0];
-		$inc_tpl   = $this->extract_include_file($input_str);
-
-		// Extra variables to include sub templates
-		if (preg_match_all("/(\w+)=(['\"](.+?)['\"])/", $input_str, $m)) {
-			for ($i = 0; $i < count($m[0]); $i++) {
-				$key = $m[1][$i] ?? "";
-				$val = $m[2][$i] ?? "";
-
-				// We skip the file='header.stpl' option
-				if ($key === 'file') { continue; }
-
-				$val = $this->convert_variables_in_string($val);
-				$val = $this->peval($val);
-
-				$this->assign($key, $val);
-			}
-		}
-
-		if (is_file($inc_tpl) && is_readable($inc_tpl)) {
-			$ext_str = file_get_contents($inc_tpl);
-			return $ext_str;
-		} else {
-			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
-			return $this->error_out("Unable to load include template <code>$inc_tpl</code> in <code>$file</code> on line #$line", 18485);
-		}
-	}
-
 	function extract_include_file($str) {
 		// {include file='foo.stpl'}
 		if (preg_match("/\s(file=)(['\"].+?['\"])/", $str, $m)) {
 			$xstr = $this->convert_variables_in_string($m[2]);
-			$file = $this->peval($xstr);
+			$ret  = $this->peval($xstr);
 		// {include 'foo.stpl'} - unofficial
 		} elseif (preg_match("/\s(['\"].+?['\"])/", $str, $m)) {
 			$xstr = $this->convert_variables_in_string($m[1]);
-			$file = $this->peval($xstr);
+			$ret  = $this->peval($xstr);
 		} else {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unable to find a file in include block <code>$str</code> in <code>$file</code> on line #$line", 68493);
 		}
 
-		$this->inc_tpl_file = $file;
-
-		// Include TPL path is *relative* to the main TPL
-		$tpl_path = dirname($this->tpl_file ?? "");
-		if (!$tpl_path) {
-			$tpl_path = "tpls/";
-		}
-
-		$ret = "$tpl_path/$file";
+		$this->inc_tpl_file = $ret;
 
 		return $ret;
 	}
@@ -707,13 +669,34 @@ class sluz {
 	// Parse an include block
 	private function include_block($str) {
 		// Include blocks may modify tpl vars, so we save them here
-		$save = $this->tpl_vars;
+		$save    = $this->tpl_vars;
+		$inc_tpl = $this->extract_include_file($str);
 
-		$callback = [$this, 'include_callback']; // Object callback syntax
-		$inc_str  = preg_replace_callback("/\{include.+?\}/", $callback, $str);
+		// Extra variables to include sub templates
+		if (preg_match_all("/(\w+)=(['\"](.+?)['\"])/", $str, $m)) {
+			for ($i = 0; $i < count($m[0]); $i++) {
+				$key = $m[1][$i] ?? "";
+				$val = $m[2][$i] ?? "";
 
-		$blocks   = $this->get_blocks($inc_str);
-		$ret      = $this->process_blocks($blocks);
+				// We skip the file='header.stpl' option
+				if ($key === 'file') { continue; }
+
+				$val = $this->convert_variables_in_string($val);
+				$val = $this->peval($val);
+
+				$this->assign($key, $val);
+			}
+		}
+
+		if (!is_file($inc_tpl) || !is_readable($inc_tpl)) {
+			$this->inc_tpl_file = null; // Clear temp override so this error displays correctly
+			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
+			return $this->error_out("Unable to load include template <code>$inc_tpl</code> in <code>$file</code> on line #$line", 18485);
+		}
+
+		$str    = file_get_contents($inc_tpl);
+		$blocks = $this->get_blocks($str);
+		$ret    = $this->process_blocks($blocks);
 
 		// Restore the TPL vars to pre 'include' state
 		$this->tpl_vars     = $save;
@@ -740,12 +723,29 @@ class sluz {
 			$src = [];
 		}
 
-		$ret = '';
+		// Save the current values so we can restore them later
+		$save = $this->tpl_vars;
+
+		$ret  = '';
+		$idx  = 0;
+		$last = count($src) - 1;
 		// Temp set a key/val so when we process this section it's correct
 		foreach ($src as $key => $val) {
-			// Save the current values so we can restore them later
-			$prevk = $this->tpl_vars[$okey] ?? null;
-			$prevv = $this->tpl_vars[$oval] ?? null;
+			// Set if we're on the FIRST iteration
+			if ($idx === 0) {
+				$this->tpl_vars['__FOREACH_FIRST'] = true;
+			} else {
+				$this->tpl_vars['__FOREACH_FIRST'] = false;
+			}
+
+			// Set if we're on the LAST iteration
+			if ($idx === $last) {
+				$this->tpl_vars['__FOREACH_LAST'] = true;
+			} else {
+				$this->tpl_vars['__FOREACH_LAST'] = false;
+			}
+
+			$this->tpl_vars['__FOREACH_INDEX'] = $idx;
 
 			// This is a key/val pair: foreach $key => $val
 			if ($oval) {
@@ -758,10 +758,11 @@ class sluz {
 
 			$ret .= $this->process_blocks($blocks);
 
-			// Restore the previous value
-			$this->tpl_vars[$okey] = $prevk;
-			$this->tpl_vars[$oval] = $prevv;
+			$idx++;
 		}
+
+		// Restore the TPL vars to the version before the {foreach} started
+		$this->tpl_vars = $save;
 
 		return $ret;
 	}

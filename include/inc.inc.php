@@ -81,7 +81,7 @@ function error_out($msg, $num) {
 }
 
 function v_date_format($ut) {
-	$ret = date("Y-m-d g:i:s a");
+	$ret = date("Y-m-d g:i:s a", $ut);
 
 	return $ret;
 }

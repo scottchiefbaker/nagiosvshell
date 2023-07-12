@@ -24,7 +24,7 @@
 
 	</head>
 <body class="container-fluid">
-	{include file='top_nav.stpl'}
+	{include file='tpls/top_nav.stpl'}
 
 	<!-- ########################HOSTS TABLE########################## -->
 	{if $show_host_table}
@@ -64,7 +64,7 @@
 	</table>
 	{/if}
 
-	{include file="$__child_tpl"}
+	{include file="tpls/$__child_tpl"}
 
 	<footer class="mt-2 text-end" style="font-size: 70%;">Render time: {$query_time_ms} ms</footer>
 </body>

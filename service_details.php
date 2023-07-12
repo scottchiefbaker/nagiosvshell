@@ -15,23 +15,11 @@ $v->sluz->assign('js_files', ["js/service_details.js"]);
 
 ////////////////////////////////////////////////////////
 
-// Get ALL hosts
-$host_info = hosts_and_services_data("hosts");
-$host_info = group_hosts($host_info);
-$host_info = $host_info[$host_name] ?? [];
-
-// Get services after filtering
-$svcs_info = hosts_and_services_data("services", $state_filter, $name_filter, $host_filter);
-$svcs_info = group_services($svcs_info);
-
-$svc_info = get_svc_details($svcs_info, $host_name, $svc_name);
-$comments = get_service_comments_raw($host_name, $svc_name);
+$svc_info = $v->get_service_details($host_name, $svc_name);
 
 $v->sluz->assign("svc_name" , $svc_name);
 $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("svc_info" , $svc_info);
-$v->sluz->assign("host_info", $host_info);
-$v->sluz->assign("comments" , $comments);
 
 $v->sluz->assign("cmd_api"  , CORECMD);
 $v->sluz->assign("core_cgi" , CORECGI);

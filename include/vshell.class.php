@@ -111,6 +111,30 @@ class vshell {
 		return $ret;
 	}
 
+	function get_service_details($host_name, $svc_name) {
+		$ret      = [];
+		$comments = get_service_comments_raw($host_name, $svc_name);
+
+		// Get all the services for this host
+		$x = $this->get_all_services('', '', $host_name);
+
+		// Loop through each service until we find the right one
+		foreach ($x as $y) {
+			// It's two layers deep
+			foreach ($y as $z) {
+				$name = $z['service_description'] ?? "";
+
+				if ($name === $svc_name) {
+					$z['comments'] = $comments;
+					$ret           = $z;
+					break;
+				}
+			}
+		}
+
+		return $ret;
+	}
+
 	function get_host_data($name) {
 		global $NagiosData;
 

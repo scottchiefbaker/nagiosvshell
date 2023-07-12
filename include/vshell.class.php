@@ -150,4 +150,29 @@ class vshell {
 
 		return $ret;
 	}
+
+	// Get the raw configuration data as a hash
+	// Note: This is a potential security leak so it's disabled for now
+	function get_config_data() {
+		return [];
+
+		$types = [
+			'hosts_objs',
+			'services_objs',
+			'hostgroups_objs',
+			'servicegroups_objs',
+			'timeperiods',
+			'contacts',
+			'contactgroups',
+			'commands',
+		];
+
+		$ret = [];
+		foreach ($types as $x) {
+			$ret[$x] = object_data($x, '');
+		}
+
+		return $ret;
+	}
+
 }

@@ -145,8 +145,35 @@ class vshell {
 
 		$ret = array_merge($one, $two);
 
-		$comments        = get_host_comments_raw($name);
-		$ret['comments'] = $comments;
+		$comments              = get_host_comments_raw($name);
+		$ret['comments']       = $comments;
+		$ret['host_groups']    = $this->get_host_groups($name);
+		$ret['host_group_str'] = join(", ", $ret['host_groups']);
+
+		return $ret;
+	}
+
+	function get_host_groups($host_filter = '') {
+		global $NagiosData;
+		$ret = [];
+
+		// Get all the groups and their children
+		$groups = $NagiosData->getProperty('hostgroups') ?? [];
+
+		// Loop through looking for a matching hostname
+		if ($host_filter) {
+			foreach ($groups as $name => $x) {
+				foreach ($x as $host) {
+					if ($host === $host_filter) {
+						$ret[] = $name;
+					}
+				}
+			}
+		} else {
+			$ret = $groups;
+		}
+
+		sort($ret);
 
 		return $ret;
 	}

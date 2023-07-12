@@ -72,11 +72,11 @@ class vshell {
 
 	}
 
-	function get_all_hosts() {
+	function get_all_hosts($state_filter = "", $name_filter = "", $host_filter = "") {
 		global $NagiosData;
 
 		// The host data comes from two places so we have to merge them
-		$hosts = hosts_and_services_data("hosts");
+		$hosts = hosts_and_services_data("hosts", $state_filter, $name_filter, $host_filter);
 		$props = $NagiosData->properties['hosts_objs'];
 
 		foreach ($hosts as $x) {
@@ -91,7 +91,7 @@ class vshell {
 		return $ret;
 	}
 
-	function get_all_services($state_filter, $name_filter, $host_filter) {
+	function get_all_services($state_filter = "", $name_filter = "", $host_filter = "") {
 		$svcs  = hosts_and_services_data("services", $state_filter, $name_filter, $host_filter);
 		$hosts = $this->get_all_hosts();
 
@@ -147,13 +147,13 @@ class vshell {
 
 		$comments              = get_host_comments_raw($name);
 		$ret['comments']       = $comments;
-		$ret['host_groups']    = $this->get_host_groups($name);
+		$ret['host_groups']    = $this->get_hostgroups($name);
 		$ret['host_group_str'] = join(", ", $ret['host_groups']);
 
 		return $ret;
 	}
 
-	function get_host_groups($host_filter = '') {
+	function get_hostgroups($host_filter = '') {
 		global $NagiosData;
 		$ret = [];
 
@@ -173,7 +173,19 @@ class vshell {
 			$ret = $groups;
 		}
 
-		sort($ret);
+		ksort($ret);
+
+		return $ret;
+	}
+
+	function get_hostgroup_members($name) {
+		global $NagiosData;
+		$ret = [];
+
+		// Get all the groups and their children
+		$groups = $NagiosData->getProperty('hostgroups') ?? [];
+
+		$ret = $groups[$name] ?? [];
 
 		return $ret;
 	}

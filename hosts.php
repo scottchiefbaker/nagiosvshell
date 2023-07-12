@@ -10,12 +10,10 @@ $host_filter  = $_GET['host_filter']  ?? "";
 
 ////////////////////////////////////////////////////////
 
-$host_info = hosts_and_services_data("hosts", $state_filter, $name_filter, $host_filter);
+$host_info = $v->get_all_hosts();
 
 print $v->sluz->assign("show_host_table", true);
 print $v->sluz->assign("host_info", $host_info);
-
-print $v->sluz->assign("foo", 'host');
 
 print $v->fetch("hosts.stpl");
 

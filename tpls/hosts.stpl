@@ -15,7 +15,7 @@
 		<tbody>
 		{foreach $host_info as $x}
 			<tr>
-				<td class="hostname d-flex"><a href="host_details.php?name_filter={$x.host_name}" class="flex-fill">{$x.host_name}</a>
+				<td class="hostname d-flex"><a href="host_details.php?host_name={$x.host_name}" title="Address: {$x.address}" class="flex-fill">{$x.host_name}</a>
 					<div class="d-flex px-1">
 						<a href="services.php?host_filter={$x.host_name}" title="View all services for this host">
 							{$icons.list}

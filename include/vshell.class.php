@@ -72,6 +72,45 @@ class vshell {
 
 	}
 
+	function get_all_hosts() {
+		global $NagiosData;
+
+		// The host data comes from two places so we have to merge them
+		$hosts = hosts_and_services_data("hosts");
+		$props = $NagiosData->properties['hosts_objs'];
+
+		foreach ($hosts as $x) {
+			$hn = $x['host_name'] ?? "";
+
+			$prop = $props[$hn] ?? [];
+			$y    = array_merge($prop, $x);
+
+			$ret[$hn] = $y;
+		}
+
+		return $ret;
+	}
+
+	function get_all_services($state_filter, $name_filter, $host_filter) {
+		$svcs  = hosts_and_services_data("services", $state_filter, $name_filter, $host_filter);
+		$hosts = $this->get_all_hosts();
+
+		$ret = [];
+		foreach ($svcs as $x) {
+			$hn = $x['host_name'] ?? "";
+
+			// Find the host associated with this service
+			$y  = $hosts[$hn] ?? [];
+
+			$x['x_host_state_str'] = $y['state_str'] ?? "";
+			$x['x_host_address']   = $y['address']   ?? '';
+
+			$ret[$hn][] = $x;
+		}
+
+		return $ret;
+	}
+
 	function get_host_data($name) {
 		global $NagiosData;
 

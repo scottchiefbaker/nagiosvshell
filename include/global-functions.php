@@ -50,3 +50,72 @@ function qw($str,$return_hash = false) {
 		return $words;
 	}
 }
+
+function error_out($msg, $num) {
+	global $base_dir;
+
+	$tpl = "$base_dir/include/html5-template.html";
+	$str = file_get_contents($tpl);
+
+	$body  = "<h3 class=\"\">VShell Error #$num</h3>";
+	$body .= "<div><b>Message:</b> $msg</div>";
+
+	$str = preg_replace("/\{\\\$title\}/", "Error #$num", $str);
+	$str = preg_replace("/\{\\\$body\}/", $body, $str);
+
+	die($str);
+}
+
+function v_date_format($ut, $format = "Y-m-d g:i:s a") {
+	$ut  = intval($ut);
+	$ret = date($format, $ut);
+
+	return $ret;
+}
+
+function human_time_diff($ut) {
+	$ut = intval($ut);
+
+	$seconds   = time() - $ut;
+	$in_future = ($seconds < 0);
+	$seconds   = abs($seconds);
+
+	$num  = 0;
+	$unit = "";
+
+	if ($seconds < 60) {
+		$ret = "$seconds seconds";
+	} elseif ($seconds < 3600) {
+		$num  = intval($seconds / 60);
+		$unit = "minute";
+	} elseif ($seconds < 86400) {
+		$num  = intval($seconds / 3600);
+		$unit = "hour";
+	} elseif ($seconds < 86400 * 30) {
+		$num  = intval($seconds / 86400);
+		$unit = "day";
+	} elseif ($seconds < (86400 * 365)) {
+		$num  = intval($seconds / (86400 * 30));
+		$unit = "month";
+	} else {
+		$num  = intval($seconds / (86400 * 365));
+		$unit = "year";
+	}
+
+	if ($num > 1) {
+		$unit .= "s";
+	}
+
+	if ($unit) {
+		$ret = "$num $unit";
+	}
+
+	if ($in_future) {
+		$ret = "In $ret";
+	} else {
+		$ret = "$ret ago";
+	}
+
+	return $ret;
+}
+

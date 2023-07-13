@@ -135,13 +135,17 @@ class vshell {
 		return $ret;
 	}
 
-	function get_host_data($name) {
+	function get_host_data($name, $include_svcs = false) {
 		global $NagiosData;
 
 		$one = $NagiosData->properties['hosts_objs'][$name];
 
 		$two = hosts_and_services_data("hosts", '', '', $name);
 		$two = $two[0] ?? [];
+
+		if (!$include_svcs) {
+			unset($two['services']);
+		}
 
 		$ret = array_merge($one, $two);
 

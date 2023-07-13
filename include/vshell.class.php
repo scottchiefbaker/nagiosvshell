@@ -116,15 +116,18 @@ class vshell {
 
 	function get_service_details($host_name, $svc_name) {
 		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
-		$one = $x['service'][$host_name][$svc_name]        ?? [];
+		$one = $x['service'][$host_name][$svc_name] ?? [];
 
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
-		$two = $y['servicestatus'][$host_name][$svc_name]  ?? [];
+		$two = $y['servicestatus'][$host_name][$svc_name] ?? [];
 
 		$comments = $y['servicecomment'][$host_name][$svc_name] ?? [];
 
 		$ret = array_merge($one, $two);
 		$ret['comments'] = $comments;
+
+		$state_id         = $ret['current_state'] ?? -1;
+		$ret['state_str'] = $this->svc_state_map[$state_id];
 
 		return $ret;
 	}

@@ -1,0 +1,38 @@
+{include file='tpls/status_search.stpl'}
+
+<div class="statusTable">
+	<table class="statusTable resp">
+		<thead>
+			<tr>
+				<th class="hostname">Hostgroup Name</th>
+				<th class="hostname">Hostname</th>
+				<th class="status">Status</th>
+				<th class="hidden">Duration</th>
+				<th class="attempt">Attempt</th>
+				<th class="hidden">Last Check</th>
+				<th>Status Information</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach $host_groups as $group => $host_name}
+			{foreach $host_name as $x}
+			<tr>
+				<td class="hostname">{if $__FOREACH_FIRST}<a href="services.php?host_group={$group}">{$group}</a>{/if}</td>
+				<td class="status d-flex">
+					<div class="flex-fill">
+						<a href="services.php?host_filter={$x.host_name}" title="View all services for this host">
+						{$x.host_name}
+						</a>
+					</div>
+				</td>
+				<td class="status {$x.state_str|strtolower} text-center">{$x.state_str}</td>
+				<td class="hidden">???</td>
+				<td class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+				<td class="hidden">{$x.last_check}</td>
+				<td>{$x.plugin_output}</td>
+			</tr>
+			{/foreach}
+		{/foreach}
+		</tbody>
+	</table>
+</div>

@@ -17,6 +17,10 @@
 				</li>
 
 				<li class="nav-item">
+					<a class="nav-link" href="hostgroups.php">Hostgroups</a>
+				</li>
+
+				<li class="nav-item">
 					<a class="nav-link" href="services.php">Services</a>
 				</li>
 

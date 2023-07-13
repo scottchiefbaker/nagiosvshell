@@ -79,6 +79,7 @@ class vshell {
 		$hosts = hosts_and_services_data("hosts", $state_filter, $name_filter, $host_filter);
 		$props = $NagiosData->properties['hosts_objs'];
 
+		$ret = [];
 		foreach ($hosts as $x) {
 			$hn = $x['host_name'] ?? "";
 
@@ -163,6 +164,7 @@ class vshell {
 
 		// Get all the groups and their children
 		$groups = $NagiosData->getProperty('hostgroups') ?? [];
+		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
 
 		// Loop through looking for a matching hostname
 		if ($host_filter) {
@@ -177,10 +179,27 @@ class vshell {
 			$ret = $groups;
 		}
 
-		ksort($ret);
+		return $ret;
+	}
+
+	function get_hostgroups_details() {
+		global $NagiosData;
+		$ret = [];
+
+		// Get all the groups and their children
+		$groups = $NagiosData->getProperty('hostgroups') ?? [];
+		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
+
+		foreach ($groups as $group_name => $x) {
+			foreach ($x as $host_name) {
+				$details                      = $this->get_host_data($host_name);
+				$ret[$group_name][$host_name] = $details;
+			}
+		}
 
 		return $ret;
 	}
+
 
 	function get_hostgroup_members($name) {
 		global $NagiosData;
@@ -188,6 +207,7 @@ class vshell {
 
 		// Get all the groups and their children
 		$groups = $NagiosData->getProperty('hostgroups') ?? [];
+		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
 
 		$ret = $groups[$name] ?? [];
 

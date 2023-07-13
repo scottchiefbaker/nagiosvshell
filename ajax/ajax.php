@@ -2,10 +2,10 @@
 
 include('../include/inc.inc.php');
 
-$host  = trim(get_in($_POST,['host']));
-$svc   = trim(get_in($_POST,['service']));
-$cmd   = trim(get_in($_POST,['command']));
-$extra = intval(trim(get_in($_POST,['extra']))); # Force this to an int for now
+$host  = trim($_POST['host']         ?? "");
+$svc   = trim($_POST['service']      ?? "");
+$cmd   = trim($_POST['command']      ?? "");
+$extra = intval(trim($_POST['extra'] ?? 0)); # Force this to an int for now
 
 ////////////////////////////////////////////////////////////////////////
 

@@ -12,9 +12,11 @@ require_once("$base_dir/include/sluz/sluz.class.php");
 
 class vshell {
 
-	public $sluz       = null;
-	public $tac_data   = [];
-	public $start_time = 0;
+	public $sluz           = null;
+	public $tac_data       = [];
+	public $start_time     = 0;
+	public $host_state_map = [ 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
+	public $svc_state_map  = [ 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
 
 	function __construct() {
 		// Load language and other sitewide settings
@@ -139,45 +141,60 @@ class vshell {
 	function get_host_data($name, $include_svcs = false) {
 		global $NagiosData;
 
-		$one = $NagiosData->properties['hosts_objs'][$name];
-
-		$two = hosts_and_services_data("hosts", '', '', $name);
-		$two = $two[0] ?? [];
-
-		if (!$include_svcs) {
-			unset($two['services']);
-		}
+		// Merge the current status and the config data
+		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$one = $x['host'][$name] ?? [];
+		$y   = $this->parse_nagios_status_file(STATUSFILE);
+		$two = $y['hoststatus'][$name] ?? [];
 
 		$ret = array_merge($one, $two);
 
-		$comments              = get_host_comments_raw($name);
+		// Get the comments for this host
+		$comments              = $y['hostcomment'][$name] ?? [];
 		$ret['comments']       = $comments;
+
+		// Get the groups this host is in
 		$ret['host_groups']    = $this->get_hostgroups($name);
 		$ret['host_group_str'] = join(", ", $ret['host_groups']);
+
+		// Human string for the state
+		$state_id         = $ret['current_state'] ?? -1;
+		$ret['state_str'] = $this->host_state_map[$state_id];
 
 		return $ret;
 	}
 
 	function get_hostgroups($host_filter = '') {
-		global $NagiosData;
 		$ret = [];
 
 		// Get all the groups and their children
-		$groups = $NagiosData->getProperty('hostgroups') ?? [];
-		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
+		$z   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$raw = $z['hostgroup'];
 
-		// Loop through looking for a matching hostname
+		// Loop through the list
+		foreach ($raw as $x) {
+			$name  = $x['hostgroup_name'] ?? "";
+			$ret[] = $name;
+		}
+
+		// Loop through the above and find all the groups that contain that host
 		if ($host_filter) {
-			foreach ($groups as $name => $x) {
-				foreach ($x as $host) {
-					if ($host === $host_filter) {
-						$ret[] = $name;
-					}
+			$data = $ret;
+			$ret  = [];
+
+			foreach ($raw as $x) {
+				$name       = $x['hostgroup_name'] ?? "";
+				$member_str = $x['members'] ?? "";
+				$members    = preg_split("/,/", $member_str);
+				$in_group   = in_array($host_filter, $members);
+
+				if ($in_group) {
+					$ret[] = $name;
 				}
 			}
-		} else {
-			$ret = $groups;
 		}
+
+		ksort($ret, SORT_FLAG_CASE | SORT_NATURAL);
 
 		return $ret;
 	}

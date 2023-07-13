@@ -238,4 +238,79 @@ class vshell {
 		return $ret;
 	}
 
+	function parse_nagios_status_file($file) {
+		$fp = fopen($file, 'r');
+
+		if (!$fp) {
+			error_out("Unable to open '$file' for reading");
+		}
+
+		// Basic memoizing to save time on repeat calls
+		static $cache;
+		if (!empty($cache[$file])) {
+			return $cache[$file];
+		}
+
+		// Return object
+		$ret     = [];
+		// Section subheader
+		$type  = '';
+
+		while ($line = fgets($fp)) {
+			$first_char = $line[0];
+			$line       = trim($line);
+
+			// If the line is a comment or blank skip it
+			if ($first_char === "#" || !$line) {
+				continue;
+			}
+
+			// Start of a section: hoststatus {
+			if (preg_match("/(\w+) \{/", $line, $m)) {
+				$type = $m[1];
+				// Key/value: version=4.4.10
+			} elseif (preg_match("/(\w+)[=\s](.*)/", $line, $m)) {
+				$key = $m[1];
+				$val = $m[2];
+
+				$obj[$key] = $val;
+				// End of a section
+			} elseif (str_contains("}", $line)) {
+				// Build a hash with appropriate sections
+				if (in_array($type, ["hoststatus", "host"])) {
+					$hn = $obj['host_name'];
+					$ret[$type][$hn] = $obj;
+				} elseif ($type === "hostcomment") {
+					$hn = $obj['host_name'];
+					$ret[$type][$hn][] = $obj;
+				} elseif ($type === "servicecomment") {
+					$hn = $obj['host_name'];
+					$sn = $obj['service_description'];
+					$ret[$type][$hn][$sn][] = $obj;
+				} elseif (in_array($type, ["servicestatus", "service"])) {
+					$hn = $obj['host_name'];
+					$sn = $obj['service_description'];
+					$ret[$type][$hn][$sn] = $obj;
+					// These each have a single section only
+				} elseif (in_array($type, ["info", "programstatus"])) {
+					$ret[$type] = $obj;
+				} else {
+					// Store this object
+					$ret[$type][] = $obj;
+				}
+
+				// Reset object for next loop
+				$obj = [];
+			} else {
+				// Bees?
+			}
+		}
+
+		$cache[$file] = $ret;
+
+		return $ret;
+	}
+
 }
+
+// vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

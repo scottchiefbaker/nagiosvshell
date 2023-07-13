@@ -115,25 +115,16 @@ class vshell {
 	}
 
 	function get_service_details($host_name, $svc_name) {
-		$ret      = [];
-		$comments = get_service_comments_raw($host_name, $svc_name);
+		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$one = $x['service'][$host_name][$svc_name]        ?? [];
 
-		// Get all the services for this host
-		$x = $this->get_all_services('', '', $host_name);
+		$y   = $this->parse_nagios_status_file(STATUSFILE);
+		$two = $y['servicestatus'][$host_name][$svc_name]  ?? [];
 
-		// Loop through each service until we find the right one
-		foreach ($x as $y) {
-			// It's two layers deep
-			foreach ($y as $z) {
-				$name = $z['service_description'] ?? "";
+		$comments = $y['servicecomment'][$host_name][$svc_name] ?? [];
 
-				if ($name === $svc_name) {
-					$z['comments'] = $comments;
-					$ret           = $z;
-					break;
-				}
-			}
-		}
+		$ret = array_merge($one, $two);
+		$ret['comments'] = $comments;
 
 		return $ret;
 	}

@@ -339,7 +339,7 @@ class vshell {
 		$cache[$file] = $ret;
 
 		if (!empty($_GET['debug'])) {
-			printf("Total %d ms for $file<br />", (microtime(1) - $start) * 1000);
+			printf("New: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);
 		}
 
 		return $ret;

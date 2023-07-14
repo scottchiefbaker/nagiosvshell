@@ -3,7 +3,9 @@
 	{if $host_info.host_group_str}
 	<h4 class="text-start"><b>Member of:</b> {$host_info.host_group_str}</h4>
 	{/if}
+	{if $host_info.notes}
 	<h4 class="text-start"><b>Notes:</b> {$host_info.notes}</h4>
+	{/if}
 
 	<div class="d-lg-flex mt-3">
 		<div class="flex-fill me-lg-4">

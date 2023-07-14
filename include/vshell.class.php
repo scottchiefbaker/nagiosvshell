@@ -277,16 +277,18 @@ class vshell {
 				continue;
 			}
 
-			// Start of a section: hoststatus {
-			if (preg_match("/(\w+) \{/", $line, $m)) {
-				$type = $m[1];
-				// Key/value: version=4.4.10
-			} elseif (preg_match("/(\w+)[=\s](.*)/", $line, $m)) {
+			// Key/value: version=4.4.10
+			if (!str_contains($line, '{') && preg_match("/(\w+)[=\s](.*)/", $line, $m)) {
+				//kd($line, $file);
 				$key = $m[1];
 				$val = $m[2];
 
 				$obj[$key] = $val;
-				// End of a section
+			// Start of a section: hoststatus {
+			} elseif (preg_match("/(\w+) \{/", $line, $m)) {
+				//kd($line, $file);
+				$type = $m[1];
+			// End of a section
 			} elseif (str_contains("}", $line)) {
 				// Build a hash with appropriate sections
 				if (in_array($type, ["hoststatus", "host"])) {

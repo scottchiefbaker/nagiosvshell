@@ -250,7 +250,8 @@ class vshell {
 	}
 
 	function parse_nagios_status_file($file) {
-		$fp = fopen($file, 'r');
+		$start = microtime(1);
+		$fp    = fopen($file, 'r');
 
 		if (!$fp) {
 			error_out("Unable to open '$file' for reading");
@@ -318,6 +319,10 @@ class vshell {
 		}
 
 		$cache[$file] = $ret;
+
+		if (!empty($_GET['debug'])) {
+			printf("Total %d ms for $file<br />", (microtime(1) - $start) * 1000);
+		}
 
 		return $ret;
 	}

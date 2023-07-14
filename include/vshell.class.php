@@ -75,43 +75,87 @@ class vshell {
 	}
 
 	function get_all_hosts($state_filter = "", $name_filter = "", $host_filter = "") {
-		global $NagiosData;
+		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$one = $x['host'] ?? [];
+		$y   = $this->parse_nagios_status_file(STATUSFILE);
+		$two = $y['hoststatus'] ?? [];
 
-		// The host data comes from two places so we have to merge them
-		$hosts = hosts_and_services_data("hosts", $state_filter, $name_filter, $host_filter);
-		$props = $NagiosData->properties['hosts_objs'];
-
+		// Loop through all the hosts and merge in the config data
 		$ret = [];
-		foreach ($hosts as $x) {
-			$hn = $x['host_name'] ?? "";
+		foreach ($two as $x) {
+			$hn       = $x['host_name'] ?? "";
+			$state_id = $x['current_state'] ?? -1;
 
-			$prop = $props[$hn] ?? [];
-			$y    = array_merge($prop, $x);
+			$x['state_str'] = $this->host_state_map[$state_id];
+
+			// Find the config data for this host and merge it in
+			$tmp = $one[$hn] ?? [];
+			$y   = array_merge($tmp, $x);
 
 			$ret[$hn] = $y;
+		}
+
+		$has_filters = ($state_filter || $name_filter || $host_filter);
+		if ($has_filters) {
+			$ret = $this->filter_results($ret, $state_filter, $name_filter, $host_filter);
+		}
+
+		return $ret;
+	}
+
+	function filter_results($data, $state_filter, $name_filter, $host_filter) {
+		$no_filters = (!$state_filter && !$name_filter && !$host_filter);
+
+		if ($no_filters) {
+			return $data;
+		}
+
+		$ret = [];
+		foreach ($data as $x) {
+			$state_str = $x['state_str']           ?? "";
+			$host_name = $x['host_name']           ?? "";
+			$svc_name  = $x['service_description'] ?? "";
+
+			// Apply various filters
+			if ($state_filter && ($state_filter === $state_str)) {
+				$ret[$host_name] = $x;
+			} elseif ($host_filter && ($host_filter === $host_name)) {
+				$ret[$host_name] = $x;
+			} elseif ($name_filter && (preg_match("/$name_filter/", $host_name) || preg_match("/$name_filter/", $svc_name))) {
+				$ret[$host_name] = $x;
+			}
 		}
 
 		return $ret;
 	}
 
 	function get_all_services($state_filter = "", $name_filter = "", $host_filter = "") {
-		$svcs  = hosts_and_services_data("services", $state_filter, $name_filter, $host_filter);
+		$raw  = $this->parse_nagios_status_file(STATUSFILE);
+		$svcs = $raw['servicestatus'] ?? [];
 		$hosts = $this->get_all_hosts();
 
-		$ret = [];
-		foreach ($svcs as $x) {
-			$hn = $x['host_name'] ?? "";
+		// We need to add a couple things from the host table so we loop through and pull em out
+		foreach ($svcs as $host_name => $svc) {
+			foreach ($svc as $x) {
+				$hn = $x['host_name'] ?? "";
+				$sn = $x['service_description'] ?? "";
 
-			// Find the host associated with this service
-			$y  = $hosts[$hn] ?? [];
+				// Find the host associated with this service
+				$y = $hosts[$hn] ?? [];
 
-			$x['x_host_state_str'] = $y['state_str'] ?? "";
-			$x['x_host_address']   = $y['address']   ?? '';
-
-			$ret[$hn][] = $x;
+				$state_id                            = $x['current_state'] ?? -1;
+				$svcs[$hn][$sn]['state_str']        = $this->svc_state_map[$state_id];
+				$svcs[$hn][$sn]['x_host_state_str'] = $y['state_str'] ?? '';
+				$svcs[$hn][$sn]['x_host_address']   = $y['address']   ?? '';
+			}
 		}
 
-		return $ret;
+		$has_filters = ($state_filter || $name_filter || $host_filter);
+		if ($has_filters) {
+			$svcs = $this->filter_results($svcs, $state_filter, $name_filter, $host_filter);
+		}
+
+		return $svcs;
 	}
 
 	function get_service_details($host_name, $svc_name) {

@@ -16,7 +16,7 @@
 	{foreach $service_info as $w}
 		{foreach $w as $idx => $x}
 		<tr class="statustablerow">
-			{if $idx === 0}
+			{if $__FOREACH_FIRST}
 			<td column-name="Hostname" class="{$x.x_host_state_str}">
 				<div class="hostname d-flex px-1">
 					<a class="highlight flex-fill" href="host_details.php?host_name={$x.host_name}" title="Host address: {$x.x_host_address}">{$x.host_name}</a>

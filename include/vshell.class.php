@@ -133,8 +133,6 @@ class vshell {
 	}
 
 	function get_host_data($name, $include_svcs = false) {
-		global $NagiosData;
-
 		// Merge the current status and the config data
 		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
 		$one = $x['host'][$name] ?? [];
@@ -162,11 +160,11 @@ class vshell {
 		$ret = [];
 
 		// Get all the groups and their children
-		$z   = $this->parse_nagios_status_file(OBJECTSFILE);
-		$raw = $z['hostgroup'];
+		$x  = $this->parse_nagios_status_file(OBJECTSFILE);
+		$hg = $x['hostgroup'] ?? [];
 
 		// Loop through the list
-		foreach ($raw as $x) {
+		foreach ($hg as $x) {
 			$name  = $x['hostgroup_name'] ?? "";
 			$ret[] = $name;
 		}
@@ -176,7 +174,7 @@ class vshell {
 			$data = $ret;
 			$ret  = [];
 
-			foreach ($raw as $x) {
+			foreach ($hg as $x) {
 				$name       = $x['hostgroup_name'] ?? "";
 				$member_str = $x['members'] ?? "";
 				$members    = preg_split("/,/", $member_str);
@@ -194,13 +192,23 @@ class vshell {
 	}
 
 	function get_hostgroups_details() {
-		global $NagiosData;
 		$ret = [];
 
-		// Get all the groups and their children
-		$groups = $NagiosData->getProperty('hostgroups') ?? [];
-		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
+		// Get the raw data
+		$x      = $this->parse_nagios_status_file(OBJECTSFILE);
+		$hg     = $x['hostgroup'] ?? [];
+		$groups = [];
 
+		// Pull out each group and get the members
+		foreach ($hg as $y) {
+			$name    = $y['hostgroup_name'] ?? "";
+			$raw     = $y['members']        ?? "";
+			$members = preg_split("/,/", $raw);
+
+			$groups[$name] = $members;
+		}
+
+		// Get the details for each individual host
 		foreach ($groups as $group_name => $x) {
 			foreach ($x as $host_name) {
 				$details                      = $this->get_host_data($host_name);
@@ -211,14 +219,22 @@ class vshell {
 		return $ret;
 	}
 
-
 	function get_hostgroup_members($name) {
-		global $NagiosData;
 		$ret = [];
 
-		// Get all the groups and their children
-		$groups = $NagiosData->getProperty('hostgroups') ?? [];
-		ksort($groups, SORT_FLAG_CASE | SORT_NATURAL);
+		// Get the raw data
+		$x      = $this->parse_nagios_status_file(OBJECTSFILE);
+		$hg     = $x['hostgroup'] ?? [];
+		$groups = [];
+
+		// Pull out each group and get the members
+		foreach ($hg as $y) {
+			$host_name = $y['hostgroup_name'] ?? "";
+			$raw       = $y['members']        ?? "";
+			$members   = preg_split("/,/", $raw);
+
+			$groups[$host_name] = $members;
+		}
 
 		$ret = $groups[$name] ?? [];
 

@@ -75,26 +75,15 @@ class vshell {
 	}
 
 	function get_all_hosts($state_filter = "", $name_filter = "", $host_filter = "") {
-		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
-		$one = $x['host'] ?? [];
-		$y   = $this->parse_nagios_status_file(STATUSFILE);
-		$two = $y['hoststatus'] ?? [];
+		$ret = $this->get_host_data_raw();
 
-		$ret = [];
-		foreach ($two as $x) {
-			$hn       = $x['host_name'] ?? "";
+		foreach ($ret as $x) {
+			$hn       = $x['host_name']     ?? "";
 			$state_id = $x['current_state'] ?? -1;
 
-			$x['state_str'] = $this->host_state_map[$state_id];
-
-			// Find the config data for this host and merge it in
-			$tmp = $one[$hn] ?? [];
-			$y   = array_merge($tmp, $x);
-
-			$ret[$hn] = $y;
+			$ret[$hn]['state_str'] = $this->host_state_map[$state_id];
 		}
 
-		$x = $this->get_host_data_raw();
 
 		$has_filters = ($state_filter || $name_filter || $host_filter);
 		if ($has_filters) {

@@ -119,4 +119,15 @@ function human_time_diff($ut) {
 	return $ret;
 }
 
+// Increment a variable (E_NOTICE compatible)
+function increment(&$i,$value = 1) {
+	// If the value is already there add to it
+	if (isset($i)) {
+		$i += $value;
+		// If the value isn't there, just set it initially
+	} else {
+		$i = $value;
+	}
+}
+
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

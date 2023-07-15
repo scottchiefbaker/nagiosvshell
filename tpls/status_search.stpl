@@ -4,7 +4,23 @@
             <input type="hidden" name="type" value="services">
             <label class="label note mb-0" for="resultfilter">Filter by State:</label>
 
-            <select class="form-control" id="resultfilter" name="state_filter" onChange="this.form.submit();">
+			{if $filter_type === 'host'}
+			<!-- Service list -->
+            <select class="form-select" id="resultfilter" name="state_filter" onChange="this.form.submit();">
+				<option value="" {if !$state_filter}selected{/if}>None</option>
+				<option value="UP" {if $state_filter === "UP"}selected{/if}>UP</option>
+				<option value="DOWN" {if $state_filter === "DOWN"}selected{/if}>DOWN</option>
+				<option value="UNREACHABLE" {if $state_filter === "UNREACHABLE"}selected{/if}>UNREACHABLE</option>
+				<option value="PENDING" {if $state_filter === "PENDING"}selected{/if}>PENDING</option>
+				<option value="PROBLEMS" {if $state_filter === "PROBLEMS"}selected{/if}>PROBLEMS</option>
+				<option value="UNHANDLED" {if $state_filter === "UNHANDLED"}selected{/if}>UNHANDLED</option>
+				<option value="ACKNOWLEDGED" {if $state_filter === "ACKNOWLEDGED"}selected{/if}>ACKNOWLEDGED</option>
+			</select>
+			{/if}
+
+			{if $filter_type === 'service'}
+			<!-- Host list -->
+            <select class="form-select" id="resultfilter" name="state_filter" onChange="this.form.submit();">
 				<option value="" {if !$state_filter}selected{/if}>None</option>
 				<option value="OK" {if $state_filter === "OK"}selected{/if}>OK</option>
 				<option value="WARNING" {if $state_filter === "WARNING"}selected{/if}>WARNING</option>
@@ -15,6 +31,7 @@
 				<option value="UNHANDLED" {if $state_filter === "UNHANDLED"}selected{/if}>UNHANDLED</option>
 				<option value="ACKNOWLEDGED" {if $state_filter === "ACKNOWLEDGED"}selected{/if}>ACKNOWLEDGED</option>
 			</select>
+			{/if}
 		</div>
 		<div class="col-12 col-lg-6 col-xl-4">
             <label class="label note mb-0" for="resultfilter">Search by service:</label>

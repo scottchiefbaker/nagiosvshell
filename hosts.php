@@ -26,6 +26,7 @@ if ($host_group) {
 
 $v->sluz->assign("show_host_table", true);
 $v->sluz->assign("host_info", $host_info);
+$v->sluz->assign("filter_type", "host");
 
 print $v->fetch("hosts.stpl");
 

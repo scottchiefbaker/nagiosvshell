@@ -32,6 +32,10 @@
 						<a href="service_details.php?host_name={$x.host_name}&amp;svc_name={$x.service_description|urlencode}">{$x.service_description}</a>
 					</div>
 					<div class="align-items-center d-flex">
+						{if !$x.flap_detection_enabled}
+						<span class="me-2" title="Flap detection">{$icons.arrow_up_down}</span>
+						{/if}
+
 						{if !$x.active_checks_enabled}
 						<span class="me-2" title="Active checks disabled">{$icons.circle_slash}</span>
 						{/if}

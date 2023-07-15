@@ -17,6 +17,10 @@
 			<tr>
 				<td class="hostname d-flex"><a href="host_details.php?host_name={$x.host_name}" title="Address: {$x.address}" class="flex-fill">{$x.host_name}</a>
 					<div class="d-flex px-1">
+						{if !$x.flap_detection_enabled}
+						<span class="me-2" title="Flap detection">{$icons.arrow_up_down}</span>
+						{/if}
+
 						{if !$x.active_checks_enabled}
 						<span class="me-2" title="Active checks disabled">{$icons.circle_slash}</span>
 						{/if}

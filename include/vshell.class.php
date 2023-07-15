@@ -15,8 +15,8 @@ class vshell {
 	public $sluz           = null;
 	public $tac_data       = [];
 	public $start_time     = 0;
-	public $host_state_map = [ 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
-	public $svc_state_map  = [ 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
+	public $host_state_map = [ -1 => 'Bees?', 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
+	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
 
 	function __construct() {
 		// Load language and other sitewide settings
@@ -80,7 +80,6 @@ class vshell {
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
 		$two = $y['hoststatus'] ?? [];
 
-		// Loop through all the hosts and merge in the config data
 		$ret = [];
 		foreach ($two as $x) {
 			$hn       = $x['host_name'] ?? "";
@@ -95,15 +94,17 @@ class vshell {
 			$ret[$hn] = $y;
 		}
 
+		$x = $this->get_host_data_raw();
+
 		$has_filters = ($state_filter || $name_filter || $host_filter);
 		if ($has_filters) {
-			$ret = $this->filter_results($ret, $state_filter, $name_filter, $host_filter);
+			$ret = $this->filter_host_results($ret, $state_filter, $name_filter, $host_filter);
 		}
 
 		return $ret;
 	}
 
-	function filter_results($data, $state_filter, $name_filter, $host_filter) {
+	function filter_host_results($data, $state_filter, $name_filter, $host_filter) {
 		$no_filters = (!$state_filter && !$name_filter && !$host_filter);
 
 		if ($no_filters) {
@@ -129,9 +130,37 @@ class vshell {
 		return $ret;
 	}
 
+	function filter_service_results($data, $state_filter, $name_filter, $host_filter) {
+		$no_filters = (!$state_filter && !$name_filter && !$host_filter);
+
+		if ($no_filters) {
+			return $data;
+		}
+
+		$ret = [];
+		foreach ($data as $host_name => $svc) {
+			foreach ($svc as $x) {
+				$state_str = $x['state_str']           ?? "";
+				$host_name = $x['host_name']           ?? "";
+				$svc_name  = $x['service_description'] ?? "";
+
+				// Apply various filters
+				if ($state_filter && ($state_filter === $state_str)) {
+					$ret[$host_name][$svc_name] = $x;
+				} elseif ($host_filter && ($host_filter === $host_name)) {
+					$ret[$host_name][$svc_name] = $x;
+				} elseif ($name_filter && (preg_match("/$name_filter/", $host_name) || preg_match("/$name_filter/", $svc_name))) {
+					$ret[$host_name][$svc_name] = $x;
+				}
+			}
+		}
+
+		return $ret;
+	}
+
 	function get_all_services($state_filter = "", $name_filter = "", $host_filter = "") {
-		$raw  = $this->parse_nagios_status_file(STATUSFILE);
-		$svcs = $raw['servicestatus'] ?? [];
+		$raw   = $this->parse_nagios_status_file(STATUSFILE);
+		$svcs  = $raw['servicestatus'] ?? [];
 		$hosts = $this->get_all_hosts();
 
 		// We need to add a couple things from the host table so we loop through and pull em out
@@ -152,23 +181,45 @@ class vshell {
 
 		$has_filters = ($state_filter || $name_filter || $host_filter);
 		if ($has_filters) {
-			$svcs = $this->filter_results($svcs, $state_filter, $name_filter, $host_filter);
+			$svcs = $this->filter_service_results($svcs, $state_filter, $name_filter, $host_filter);
 		}
 
 		return $svcs;
 	}
 
-	function get_service_details($host_name, $svc_name) {
+	function get_service_details_raw() {
 		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
-		$one = $x['service'][$host_name][$svc_name] ?? [];
-
+		$one = $x['service'] ?? [];
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
-		$two = $y['servicestatus'][$host_name][$svc_name] ?? [];
+		$two = $y['servicestatus'] ?? [];
 
-		$comments = $y['servicecomment'][$host_name][$svc_name] ?? [];
+		$ret = [];
+		foreach ($one as $host_name => $obj) {
+			$obj    = $one[$host_name] ?? [];
+			$status = $two[$host_name] ?? [];
 
-		$ret = array_merge($one, $two);
-		$ret['comments'] = $comments;
+			$ret[$host_name] = array_merge($obj, $status);
+		}
+
+		$all_comments = $y['servicecomment'] ?? [];
+
+		// Loop through each service and put in the comments
+		foreach ($ret as $host_name => $svc) {
+			foreach ($svc as $x) {
+				$svc_name     = $x['service_description'];
+				$svc_comments = $all_comments[$host_name][$svc_name] ?? [];
+
+				$ret[$host_name][$svc_name]['comments'] = $svc_comments;
+			}
+
+		}
+
+		return $ret;
+	}
+
+	function get_service_details($host_name, $svc_name) {
+		$raw = $this->get_service_details_raw();
+		$ret = $raw[$host_name][$svc_name] ?? [];
 
 		$state_id         = $ret['current_state'] ?? -1;
 		$ret['state_str'] = $this->svc_state_map[$state_id];
@@ -176,18 +227,36 @@ class vshell {
 		return $ret;
 	}
 
-	function get_host_data($name, $include_svcs = false) {
+	function get_host_data_raw() {
 		// Merge the current status and the config data
 		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
-		$one = $x['host'][$name] ?? [];
+		$one = $x['host'] ?? [];
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
-		$two = $y['hoststatus'][$name] ?? [];
+		$two = $y['hoststatus'] ?? [];
 
-		$ret = array_merge($one, $two);
+		$ret = [];
+		foreach ($one as $host_name => $obj) {
+			$obj    = $one[$host_name] ?? [];
+			$status = $two[$host_name] ?? [];
+
+			$ret[$host_name] = array_merge($obj, $status);
+		}
 
 		// Get the comments for this host
-		$comments              = $y['hostcomment'][$name] ?? [];
-		$ret['comments']       = $comments;
+		$all_comments = $y['hostcomment'] ?? [];
+
+		// Loop through each host comments and put them in the return array
+		foreach ($ret as $host_name => $x) {
+			$host_comments = $all_comments[$host_name] ?? [];
+			$ret[$host_name]['comments'] = $host_comments;
+		}
+
+		return $ret;
+	}
+
+	function get_host_data($name) {
+		$raw = $this->get_host_data_raw();
+		$ret = $raw[$name] ?? [];
 
 		// Get the groups this host is in
 		$ret['host_groups']    = $this->get_hostgroups($name);

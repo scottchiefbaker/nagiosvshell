@@ -32,12 +32,17 @@
 						<a href="service_details.php?host_name={$x.host_name}&amp;svc_name={$x.service_description|urlencode}">{$x.service_description}</a>
 					</div>
 					<div class="align-items-center d-flex">
-					{if !$x.notifications_enabled}
-					<span class="me-2" title="Notifications disabled">{$icons.no_bell}</span>
-					{/if}
-					{if $x.comments}
-					<span class="me-2" title="Service has comments">{$icons.speech_bubble}</span>
-					{/if}
+						{if !$x.active_checks_enabled}
+						<span class="me-2" title="Active checks disabled">{$icons.circle_slash}</span>
+						{/if}
+
+						{if !$x.notifications_enabled}
+						<span class="me-2" title="Notifications disabled">{$icons.no_bell}</span>
+						{/if}
+
+						{if $x.comments}
+						<span class="me-2" title="Service has comments">{$icons.speech_bubble}</span>
+						{/if}
 					</div>
 				</div>
 			</td>

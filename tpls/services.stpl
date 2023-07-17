@@ -33,7 +33,7 @@
 					</div>
 					<div class="align-items-center d-flex">
 						{if !$x.flap_detection_enabled}
-						<span class="me-2" title="Flap detection">{$icons.arrow_up_down}</span>
+						<span class="me-2" title="Flap detection disabled">{$icons.arrow_up_down}</span>
 						{/if}
 
 						{if !$x.active_checks_enabled}

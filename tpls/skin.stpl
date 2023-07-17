@@ -28,40 +28,48 @@
 
 	<!-- ########################HOSTS TABLE########################## -->
 	{if $show_host_table}
-	<table class="tac mb-3">
-		<tr>
-			<th colspan="3"><div class="text-center"><a href="hosts.php">Hosts</a> / <a href="hosts.php?state_filter=PROBLEMS">Problems</a></div></th>
-		</tr>
-		<tr>
-			<td class="ok tac_col"><a class="highlight" href="hosts.php?state_filter=UP"><div class="td">{$tac_data.host.state.UP} Up</div></a></td>
-			<td class="down tac_col"><a class="highlight" href="hosts.php?state_filter=DOWN"><div class="td">{$tac_data.host.state.DOWN} Down</div></a></td>
-			<td class="unreachable tac_col"><a class="highlight" href="hosts.php?state_filter=UNREACHABLE"><div class="td">{$tac_data.host.state.UNREACHABLE} Unreachable</div></a></td>
-		</tr>
-	</table>
+	<h4 class="text-center tac_header_bg mb-1 p-1 border text_shadow">
+		<a href="hosts.php">Hosts</a> / <a href="hosts.php?state_filter=PROBLEMS">Problems</a>
+	</h4>
+
+	<div class="container-fluid mb-3 text_shadow">
+		<div class="text-center row">
+			<div class="ok border col-lg me-1 p-1 mb-1 mb-lg-0">
+				<a class="highlight" href="hosts.php?state_filter=UP"><div class="td">{$tac_data.host.state.UP} Up</div></a>
+			</div>
+			<div class="down border col-lg me-1 p-1 mb-1 mb-lg-0">
+				<a class="highlight" href="hosts.php?state_filter=DOWN"><div class="td">{$tac_data.host.state.DOWN} Down</div></a>
+			</div>
+			<div class="unreachable col-lg border p-1 mb-1 mb-lg-0">
+				<a class="highlight" href="hosts.php?state_filter=UNREACHABLE"><div class="td">{$tac_data.host.state.UNREACHABLE} Unreachable</div></a>
+			</div>
+		</div>
+	</div>
+
 	{/if}
 
 	<!-- ######################SERVICES TABLE##################### -->
 	{if $show_service_table}
-	<table class="tac mb-3">
-		<tr>
-			<th colspan="4"><div class="text-center"><a href="services.php">Services</a> / <a href="services.php?state_filter=PROBLEMS">Problems</a></div></th>
-		</tr>
+	<h4 class="text-center tac_header_bg mb-1 border p-1 text_shadow">
+		<a href="services.php">Services</a> / <a href="services.php?state_filter=PROBLEMS">Problems</a>
+	</h4>
 
-		<tr>
-			<td class="ok tac_col">
+	<div class="container-fluid mb-3 text_shadow">
+		<div class="text-center row">
+			<div class="ok col-lg border me-1 p-1 mb-1 mb-lg-0">
 				<a class="highlight" href="services.php?state_filter=OK"><div class="td">{$tac_data.service.state.OK} Ok</div></a>
-			</td>
-			<td class="warning tac_col">
+			</div>
+			<div class="warning col-lg border me-1 p-1 mb-1 mb-lg-0">
 				<a class="highlight" href="services.php?state_filter=WARNING"><div class="td">{$tac_data.service.state.WARNING} Warning</div></a>
-			</td>
-			<td class="critical tac_col">
+			</div>
+			<div class="critical col-lg border me-1 p-1 mb-1 mb-lg-0">
 				<a class="highlight" href="services.php?state_filter=CRITICAL"><div class="td">{$tac_data.service.state.CRITICAL} Critical</div></a>
-			</td>
-			<td class="unknown tac_col">
-				<a class="highlight" href="services.php?state_filter=UNKNOWN"><div class="td">{$tac_data.service.state.UNKNOWN} Unknown</div></a>
-			</td>
-		</tr>
-	</table>
+			</div>
+			<div class="unreachable col-lg border p-1 mb-1 mb-lg-0">
+				<a class="highlight" href="hosts.php?state_filter=UNREACHABLE"><div class="td">{$tac_data.host.state.UNREACHABLE} Unreachable</div></a>
+			</div>
+		</div>
+	</div>
 	{/if}
 
 	{include file="tpls/$__child_tpl"}

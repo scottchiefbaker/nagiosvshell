@@ -1,6 +1,9 @@
 <!-- #####################ENABLED FEATURES TABLE ####################-->
-<table class="tac features no_mobile">
-<tr><th class="text-center font-125" colspan="5">Monitoring Features</th></tr>
+<h4 class="text-center tac_header_bg mb-1 border p-1 text_shadow d-none d-md-block">
+	Monitoring Features
+</h4>
+
+<table class="tac features d-none d-md-table">
 <tr>
 	<td class="text-center" style="width: 20%;">Flap Detection</td>
 	<td class="text-center" style="width: 20%;">Notifications</td>

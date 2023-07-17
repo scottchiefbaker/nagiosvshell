@@ -83,7 +83,7 @@ a.highlight {
 	color: #097AC7;
 }
 
-table a {
+table a, .text_shadow {
 	/*text-shadow: 0 0 3px #ccfdff;*/
 
 	text-shadow:	-1px  1px 3px #fff,
@@ -359,4 +359,8 @@ table {
 	padding: 0 2px;
 	white-space: nowrap;
 	border-radius: 3px;
+}
+
+.tac_header_bg {
+	background: lightgray;
 }

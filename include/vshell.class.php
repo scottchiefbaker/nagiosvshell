@@ -24,10 +24,9 @@ class vshell {
 
 		$this->start_time = microtime(1);
 
-		global $NagiosUser;
-
 		// Make sure we're logged in before showing any data
-		if (!$NagiosUser->get_username()) {
+		$username = $_SERVER['REMOTE_USER'] ?? "";
+		if (!$username) {
 			error_out("You must be logged in to view this page", 19313);
 		}
 

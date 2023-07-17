@@ -51,21 +51,6 @@ function qw($str,$return_hash = false) {
 	}
 }
 
-function error_out($msg, $num) {
-	global $base_dir;
-
-	$tpl = "$base_dir/include/html5-template.html";
-	$str = file_get_contents($tpl);
-
-	$body  = "<h3 class=\"\">VShell Error #$num</h3>";
-	$body .= "<div><b>Message:</b> $msg</div>";
-
-	$str = preg_replace("/\{\\\$title\}/", "Error #$num", $str);
-	$str = preg_replace("/\{\\\$body\}/", $body, $str);
-
-	die($str);
-}
-
 function v_date_format($ut, $format = "Y-m-d g:i:s a") {
 	$ut  = intval($ut);
 	$ret = date($format, $ut);

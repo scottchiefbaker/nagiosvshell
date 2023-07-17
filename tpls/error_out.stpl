@@ -1,0 +1,17 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<!-- Required meta tags -->
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+		<!-- Bootstrap CSS -->
+		<link rel="stylesheet" href="css/bootstrap5.min.css" />
+		<title>{$title}</title>
+	</head>
+
+	<body class="m-3">
+		<h3 class="alert alert-danger p-2">V-Shell Error #{$err_num}</h3>
+		<div><b>Message:</b> {$err_msg}</div>
+	</body>
+</html>

@@ -9,6 +9,7 @@ require_once("$base_dir/include/sluz/sluz.class.php");
 class vshell {
 
 	public $version        = "3.0.1";
+	public $base_dir       = "";
 	public $sluz           = null;
 	public $tac_data       = [];
 	public $start_time     = 0;
@@ -17,11 +18,12 @@ class vshell {
 
 	function __construct() {
 		$this->start_time = microtime(1);
+		$this->base_dir   = dirname(__FILE__) . "/../";
 
 		// Make sure we're logged in before showing any data
 		$username = $_SERVER['REMOTE_USER'] ?? "";
 		if (!$username) {
-			error_out("You must be logged in to view this page", 19313);
+			$this->error_out("You must be logged in to view this page", 19313);
 		}
 
 		$this->sluz = new sluz;
@@ -118,7 +120,7 @@ class vshell {
 		} elseif (is_readable("/etc/vshell.conf")) {
 			$ini_array = parse_ini_file("/etc/vshell.conf");
 		} else {
-			error_out("Missing configuration. Unable to load <code>config/vshell.conf</code>", 19023);
+			$this->error_out("Missing configuration. Unable to load <code>config/vshell.conf</code>", 19023);
 		}
 
 		//nagios core locations
@@ -495,7 +497,7 @@ class vshell {
 		$fp    = fopen($file, 'r');
 
 		if (!$fp) {
-			error_out("Unable to open '$file' for reading");
+			$this->error_out("Unable to open '$file' for reading");
 		}
 
 		// Basic memoizing to save time on repeat calls
@@ -568,6 +570,16 @@ class vshell {
 		//}
 
 		return $ret;
+	}
+
+	function error_out($err_msg, $err_num) {
+		$tpl = $this->base_dir . "/tpls/error_out.stpl";
+
+		$this->sluz->assign("err_msg", $err_msg);
+		$this->sluz->assign("err_num", $err_num);
+
+		print $this->sluz->fetch($tpl);
+		exit(7);
 	}
 
 }

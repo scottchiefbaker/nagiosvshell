@@ -1,4 +1,4 @@
-# Nagios VShell 3.x
+# Nagios V-Shell 3.x
 
 This document describes how to install and setup the Nagios V-Shell or **Visual**
 Shell for Nagios Core and Nagios XI installations.
@@ -17,8 +17,8 @@ Overview
 
 V-Shell is an updated web interface written in PHP and HTML5. It is styled
 and formatted using CSS, to have a modern appearance. Special attention has
-been paid to make sure VShell renders well on modern mobile devices. To put
-it simply: VShell is a modern, mobile friendly, frontend for the Nagios Core
+been paid to make sure V-Shell renders well on modern mobile devices. To put
+it simply: V-Shell is a modern, mobile friendly, frontend for the Nagios Core
 backend.
 
 Installation
@@ -40,7 +40,7 @@ git clone https://github.com/scottchiefbaker/nagiosvshell /usr/share/nagios/vshe
 
 Verify the values in `config/vshell.conf` are correct. You *may* need to
 update your Apache config with `config/vshell_apache.conf` to route web traffic
-to your VShell installation.
+to your V-Shell installation.
 
 Configuration
 --------------

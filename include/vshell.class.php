@@ -19,9 +19,6 @@ class vshell {
 	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
 
 	function __construct() {
-		// Load language and other sitewide settings
-		init_vshell();
-
 		$this->start_time = microtime(1);
 
 		// Make sure we're logged in before showing any data
@@ -31,10 +28,100 @@ class vshell {
 		}
 
 		$this->sluz = new sluz;
-		$this->sluz->assign('tac_data', get_tac_data());
 
 		$icons = $this->get_icons();
 		$this->sluz->assign('icons', $icons);
+		$this->sluz->assign('global', $this->get_global_vars());
+	}
+
+	function get_tac_data() {
+		$hosts = $this->get_all_hosts();
+		$svcs  = $this->get_all_services();
+
+		$ret = [];
+
+		//////////////////////////////////////////////////////////////////////
+
+		$ret['host']['state']['UP']          = 0;
+		$ret['host']['state']['DOWN']        = 0;
+		$ret['host']['state']['UNREACHABLE'] = 0;
+
+		$count = 0;
+		foreach ($hosts as $x) {
+			// Process the state of all the hosts
+			$state = $x['state_str'];
+			increment($ret['host']['state'][$state], 1);
+
+			// Look for specific modifiers for each host
+			$types = ['is_flapping', 'active_checks_enabled', 'passive_checks_enabled', 'event_handler_enabled', 'flap_detection_enabled', 'notifications_enabled'];
+			foreach ($types as $type) {
+				$val = $x[$type];
+
+				increment($ret['host'][$type], $val);
+			}
+
+			$count++;
+		}
+		$ret['host']['total_count'] = $count;
+
+		//////////////////////////////////////////////////////////////////////
+
+		$ret['service']['state']['OK']       = 0;
+		$ret['service']['state']['WARNING']  = 0;
+		$ret['service']['state']['CRITICAL'] = 0;
+		$ret['service']['state']['UNKNOWN']  = 0;
+
+		$count = 0;
+		foreach ($svcs as $host_name) {
+			foreach ($host_name as $svc_name => $x) {
+				// Count the svc states
+				$state = $x['state_str'];
+				increment($ret['service']['state'][$state], 1);
+
+				// Lookup individual metrics
+				$types = ['active_checks_enabled', 'event_handler_enabled', 'flap_detection_enabled', 'notifications_enabled', 'passive_checks_enabled'];
+				foreach ($types as $type) {
+					$val = $x[$type] ?? 0;
+
+					increment($ret['service'][$type], $val);
+				}
+
+				$count++;
+			}
+		}
+		$ret['service']['total_count'] = $count;
+
+		//////////////////////////////////////////////////////////////////////
+
+		$htotal = $ret['host']['total_count'];
+		$stotal = $ret['service']['total_count'];
+
+		$ret["servicesFlappingDisabled"]      = $stotal - $ret['service']['flap_detection_enabled'];
+		$ret["servicesNotificationsDisabled"] = $stotal - $ret['service']['notifications_enabled'];
+		$ret["servicesEventHandlerDisabled"]  = $stotal - $ret['service']['event_handler_enabled'];
+		$ret["servicesActiveChecksDisabled"]  = $stotal - $ret['service']['active_checks_enabled'];
+		$ret["servicesPassiveChecksDisabled"] = $stotal - $ret['service']['passive_checks_enabled'];
+
+		$ret["hostsFlappingDisabled"]         = $htotal - $ret['host']['flap_detection_enabled'];
+		$ret["hostsNotificationsDisabled"]    = $htotal - $ret['host']['notifications_enabled'];
+		$ret["hostsEventHandlerDisabled"]     = $htotal - $ret['host']['event_handler_enabled'];
+		$ret["hostsActiveChecksDisabled"]     = $htotal - $ret['host']['active_checks_enabled'];
+		$ret["hostsPassiveChecksDisabled"]    = $htotal - $ret['host']['passive_checks_enabled'];
+
+		return $ret;
+	}
+
+	function get_global_vars() {
+		$raw = $this->parse_nagios_status_file(STATUSFILE);
+
+		$program = $raw['programstatus'] ?? [];
+		$ne      = ($program['enable_notifications'] === "1");
+
+		$ret['notifications_enabled'] = $ne;
+		$ret['cmd_file']              = CMDFILE;
+		$ret['cmd_file_writable']     = is_writable(CMDFILE);
+
+		return $ret;
 	}
 
 	function get_icons() {

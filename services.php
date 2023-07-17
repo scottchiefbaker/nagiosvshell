@@ -31,6 +31,7 @@ $v->sluz->assign("service_info", $svc_info);
 $v->sluz->assign("name_filter", $name_filter);
 $v->sluz->assign("state_filter", $state_filter);
 $v->sluz->assign("filter_type", "service");
+$v->sluz->assign("tac_data", $v->get_tac_data());
 
 print $v->fetch("services.stpl");
 

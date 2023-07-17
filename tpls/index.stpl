@@ -30,7 +30,7 @@
 
 		<div>
 			{if $tac_data.hostsFlapping}
-			<span class="red feature_warning">{$tac_data.hostsFlapping} hosts flapping</span>
+			<span class="red feature_warning">{$tac_data.host.is_flapping} hosts flapping</span>
 			{else}
 			No hosts currently flapping
 			{/if}
@@ -38,7 +38,7 @@
 
 		<div>
 			{if $tac_data.servicesFlapping}
-			<span class="red feature_warning">{$tac_data.servicesFlapping} services flapping</span>
+			<span class="red feature_warning">{$tac_data.service.is_flapping} services flapping</span>
 			{else}
 			No services currently flapping
 			{/if}

@@ -11,6 +11,7 @@ $hosts = $v->get_hostgroups_details();
 
 $v->sluz->assign("show_host_table", true);
 $v->sluz->assign("host_groups", $hosts);
+$v->sluz->assign("tac_data", $v->get_tac_data());
 
 print $v->fetch("hostgroups.stpl");
 

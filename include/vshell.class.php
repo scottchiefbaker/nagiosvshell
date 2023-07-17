@@ -8,6 +8,7 @@ require_once("$base_dir/include/sluz/sluz.class.php");
 
 class vshell {
 
+	public $VERSION        = "3.0.1";
 	public $sluz           = null;
 	public $tac_data       = [];
 	public $start_time     = 0;
@@ -515,7 +516,7 @@ class vshell {
 				continue;
 			}
 
-			// Key/value: version=4.4.10
+			// Key/value: entry_time=1689262170
 			if (!str_contains($line, '{') && preg_match("/(\w+)[=\s](.*)/", $line, $m)) {
 				//kd($line, $file);
 				$key = $m[1];

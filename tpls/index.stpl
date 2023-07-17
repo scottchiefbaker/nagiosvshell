@@ -3,121 +3,122 @@
 	Monitoring Features
 </h4>
 
-<table class="tac features d-none d-md-table">
-<tr>
-	<td class="text-center" style="width: 20%;">Flap Detection</td>
-	<td class="text-center" style="width: 20%;">Notifications</td>
-	<td class="text-center" style="width: 20%;">Event Handlers</td>
-	<td class="text-center" style="width: 20%;">Active Checks</td>
-	<td class="text-center" style="width: 20%;">Passive Checks</td>
-</tr>
+<div class="container-fluid">
+	<div class="row">
+		<div class="border p-2 col green me-1">
+			<h5>Flap Detection</h5>
+			<div>
+				{if $tac_data.hostsFlappingDisabled}
+				<span class="red feature_warning">{$tac_data.hostsFlappingDisabled} hosts disabled</span>
+				{else}
+				All hosts enabled
+				{/if}
+			</div>
 
-<!-- ///////////////////////FLAPPING//////////////////////////////// -->
-<tr>
-	<td class="green">
-		<div>
-			{if $tac_data.hostsFlappingDisabled}
-			<span class="red feature_warning">{$tac_data.hostsFlappingDisabled} hosts disabled</span>
-			{else}
-			All hosts enabled
-			{/if}
+			<div>
+				{if $tac_data.servicesFlappingDisabled}
+				<span class="red feature_warning">{$tac_data.servicesFlappingDisabled} services disabled</span>
+				{else}
+				All services Enabled
+				{/if}
+			</div>
+
+			<div>
+				{if $tac_data.hostsFlapping}
+				<span class="red feature_warning">{$tac_data.host.is_flapping} hosts flapping</span>
+				{else}
+				No hosts currently flapping
+				{/if}
+			</div>
+
+			<div>
+				{if $tac_data.servicesFlapping}
+				<span class="red feature_warning">{$tac_data.service.is_flapping} services flapping</span>
+				{else}
+				No services currently flapping
+				{/if}
+			</div>
 		</div>
 
-		<div>
-			{if $tac_data.servicesFlappingDisabled}
-			<span class="red feature_warning">{$tac_data.servicesFlappingDisabled} services disabled</span>
-			{else}
-			All services Enabled
-			{/if}
+		<!-- Column separation -->
+
+		<div class="col border p-2 green me-1">
+			<h5>Notifications</h5>
+			<div>
+				{if $tac_data.hostsNotificationsDisabled}
+				<span class="red feature_warning">{$tac_data.hostsNotificationsDisabled} hosts disabled</span>
+				{else}
+				All hosts enabled
+				{/if}
+			</div>
+			<div>
+				{if $tac_data.servicesNotificationsDisabled}
+				<span class="red feature_warning">{$tac_data.servicesNotificationsDisabled} services disabled</span>
+				{else}
+				All services enabled
+				{/if}
+			</div>
 		</div>
 
-		<div>
-			{if $tac_data.hostsFlapping}
-			<span class="red feature_warning">{$tac_data.host.is_flapping} hosts flapping</span>
-			{else}
-			No hosts currently flapping
-			{/if}
+		<!-- Column separation -->
+
+		<div class="col border p-2 green me-1">
+			<h5>Event Handlers</h5>
+			<div>
+				{if $tac_data.hostsEventHandlerDisabled}
+				<span class="red feature_warning">{$tac_data.hostsEventHandlerDisabled} hosts disabled</span>
+				{else}
+				All hosts enabled
+				{/if}
+			</div>
+			<div>
+				{if $tac_data.servicesEventHandlerDisabled}
+				<span class="red feature_warning">{$tac_data.servicesEventHandlerDisabled} services disabled</span>
+				{else}
+				All services enabled
+				{/if}
+			</div>
 		</div>
 
-		<div>
-			{if $tac_data.servicesFlapping}
-			<span class="red feature_warning">{$tac_data.service.is_flapping} services flapping</span>
-			{else}
-			No services currently flapping
-			{/if}
-		</div>
-	</td>
+		<!-- Column separation -->
 
-	<!-- /////////////////////////////NOTIFICATIONS/////////////////////////////// -->
-	<td class="green">
-		<div>
-			{if $tac_data.hostsNotificationsDisabled}
-			<span class="red feature_warning">{$tac_data.hostsNotificationsDisabled} hosts disabled</span>
-			{else}
-			All hosts enabled
-			{/if}
+		<div class="col border p-2 green me-1">
+			<h5>Active Checks</h5>
+			<div>
+				{if $tac_data.hostsActiveChecksDisabled}
+				<span class="red feature_warning">{$tac_data.hostsActiveChecksDisabled} hosts disabled</span>
+				{else}
+				All hosts enabled
+				{/if}
+			</div>
+			<div>
+				{if $tac_data.servicesActiveChecksDisabled}
+				<span class="red feature_warning">{$tac_data.servicesActiveChecksDisabled} services disabled</span>
+				{else}
+				All services enabled
+				{/if}
+			</div>
 		</div>
-		<div>
-			{if $tac_data.servicesNotificationsDisabled}
-			<span class="red feature_warning">{$tac_data.servicesNotificationsDisabled} services disabled</span>
-			{else}
-			All services enabled
-			{/if}
-		</div>
-	</td>
 
-	<!-- ///////////////////////////////EVENT HANDLERS///////////////////////////// -->
-	<td class="green">
-		<div>
-			{if $tac_data.hostsEventHandlerDisabled}
-			<span class="red feature_warning">{$tac_data.hostsEventHandlerDisabled} hosts disabled</span>
-			{else}
-			All hosts enabled
-			{/if}
-		</div>
-		<div>
-			{if $tac_data.servicesEventHandlerDisabled}
-			<span class="red feature_warning">{$tac_data.servicesEventHandlerDisabled} services disabled</span>
-			{else}
-			All services enabled
-			{/if}
-		</div>
-	</td>
+		<!-- Column separation -->
 
-	<!-- /////////////////////////////////ACTIVE/PASSIVE CHECKS///////////////////////////	-->
-	<td class="green">
-		<div>
-			{if $tac_data.hostsActiveChecksDisabled}
-			<span class="red feature_warning">{$tac_data.hostsActiveChecksDisabled} hosts disabled</span>
-			{else}
-			All hosts enabled
-			{/if}
-		</div>
-		<div>
-			{if $tac_data.servicesActiveChecksDisabled}
-			<span class="red feature_warning">{$tac_data.servicesActiveChecksDisabled} services disabled</span>
-			{else}
-			All services enabled
-			{/if}
-		</div>
-	</td>
+		<div class="col border p-2 green">
+			<h5>Passive Checks</h5>
 
-	<td class="green">
-		<div>
-			{if $tac_data.hostsPassiveChecksDisabled}
-			<span class="red feature_warning">{$tac_data.hostsPassiveChecksDisabled} hosts disabled</span>
-			{else}
-			All hosts enabled
-			{/if}
+			<div>
+				{if $tac_data.hostsPassiveChecksDisabled}
+				<span class="red feature_warning">{$tac_data.hostsPassiveChecksDisabled} hosts disabled</span>
+				{else}
+				All hosts enabled
+				{/if}
+			</div>
+			<div>
+				{if $tac_data.servicesPassiveChecksDisabled}
+				<span class="red feature_warning">{$tac_data.servicesPassiveChecksDisabled} services disabled</span>
+				{else}
+				All services enabled
+				{/if}
+			</div>
 		</div>
-		<div>
-			{if $tac_data.servicesPassiveChecksDisabled}
-			<span class="red feature_warning">{$tac_data.servicesPassiveChecksDisabled} services disabled</span>
-			{else}
-			All services enabled
-			{/if}
-		</div>
-	</td>
-
-</tr>
-</table>
+	</div>
+</div>

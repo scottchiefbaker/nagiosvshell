@@ -118,7 +118,7 @@ class vshell {
 		} elseif (is_readable("/etc/vshell.conf")) {
 			$ini_array = parse_ini_file("/etc/vshell.conf");
 		} else {
-			error_out("Unable to load vshell.conf", 19023);
+			error_out("Missing configuration. Unable to load <code>config/vshell.conf</code>", 19023);
 		}
 
 		//nagios core locations

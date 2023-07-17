@@ -1,14 +1,10 @@
 # Nagios V-Shell 3.x
 
-This document describes how to install and setup the Nagios V-Shell or **Visual**
-Shell for Nagios Core and Nagios XI installations.
-
-
 Target Audience
 ---------------
 
-This document is intended for use by Nagios XI and Nagios Core Administrators,
-and assumes that Nagios Core is already installed and function on the target
+This document is intended for use by Nagios XI and Nagios Core administrators,
+and assumes that Nagios Core is already installed and functional on the target
 system.
 
 

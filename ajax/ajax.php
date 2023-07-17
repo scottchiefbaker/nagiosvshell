@@ -1,6 +1,7 @@
 <?php
 
-include('../include/inc.inc.php');
+require('../include/vshell.class.php');
+$v = new vshell;
 
 $host  = trim($_POST['host']         ?? "");
 $svc   = trim($_POST['service']      ?? "");

@@ -97,6 +97,12 @@
 
 			</ul>
 
+			<div class="mx-2">
+				<a class="text-dark" href="https://github.com/scottchiefbaker/nagiosvshell" title="VShell v{$VSHELL_VERSION} is on Github!">
+				{$icons.github}
+				</a>
+			</div>
+
 			<form class="my-2 my-lg-0" action="services.php">
 				<input type="hidden" name="type" value="services" />
 
@@ -104,7 +110,6 @@
 					<input class="form-control form-control-sm" type="search" name="name_filter" placeholder="Search" aria-label="Find" />
 					<button class="btn btn-primary btn-sm" type="submit">Find</button>
 				</div>
-
 			</form>
 
 		</div>

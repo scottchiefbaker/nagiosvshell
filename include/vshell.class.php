@@ -231,8 +231,12 @@ class vshell {
 			$host_name = $x['host_name']           ?? "";
 			$svc_name  = $x['service_description'] ?? "";
 
+			// If we're looking for a specific state we catch it here
+			// "PROBLEMS" is a specific case where anything that is not "UP" is flagged
+			$state_filter_match = ($state_filter === $state_str) || (($state_filter === "PROBLEMS") && ($state_str !== "UP"));
+
 			// Apply various filters
-			if ($state_filter && ($state_filter === $state_str)) {
+			if ($state_filter && $state_filter_match) {
 				$ret[$host_name] = $x;
 			} elseif ($host_filter && ($host_filter === $host_name)) {
 				$ret[$host_name] = $x;

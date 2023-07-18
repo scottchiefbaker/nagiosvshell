@@ -8,14 +8,14 @@
 				<th class="status">Status</th>
 				<th class="hidden">Duration</th>
 				<th class="attempt">Attempt</th>
-				<th class="hidden">Last Check</th>
+				<th class="d-none">Last Check</th>
 				<th>Status Information</th>
 			</tr>
 		</thead>
 		<tbody>
 		{foreach $host_info as $x}
 			<tr>
-				<td class="hostname d-flex"><a href="host_details.php?host_name={$x.host_name}" title="Address: {$x.address}" class="flex-fill">{$x.host_name}</a>
+				<td class="hostname d-flex {$x.state_str}" column-name="Hostname"><a href="host_details.php?host_name={$x.host_name}" title="Address: {$x.address}" class="flex-fill">{$x.host_name}</a>
 					<div class="d-flex px-1">
 						{if !$x.flap_detection_enabled}
 						<span class="me-2" title="Flap detection disabled">{$icons.arrow_up_down}</span>
@@ -38,11 +38,11 @@
 						</a>
 					</div>
 				</td>
-				<td class="status {$x.state_str|strtolower} text-center">{$x.state_str}</td>
-				<td class="hidden">???</td>
-				<td class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
-				<td class="hidden">{$x.last_check}</td>
-				<td>{$x.plugin_output}</td>
+				<td class="status {$x.state_str|strtolower} text-md-center" column-name="Status">{$x.state_str}</td>
+				<td class="hidden" column-name="Last change">{$x.last_state_change|human_time_diff}</td>
+				<td class="attempt" column-name="Attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+				<td class="d-none" column-name="Last check">{$x.last_check|v_date_format}</td>
+				<td column-name="Output">{$x.plugin_output}</td>
 			</tr>
 		{/foreach}
 		</tbody>

@@ -18,7 +18,7 @@
 		<tr class="statustablerow">
 			{if $__FOREACH_FIRST}
 			<td column-name="Hostname" class="{$x.x_host_state_str}">
-				<div class="hostname d-flex px-1">
+				<div class="hostname d-flex px-md-1">
 					<a class="highlight flex-fill" href="host_details.php?host_name={$x.host_name}" title="Host address: {$x.x_host_address}">{$x.host_name}</a>
 					<a href="?host_filter={$x.host_name}" title="See all services for this host"><span class="">{$icons.list}</span></a>
 				</div>

@@ -1,11 +1,13 @@
-/* Mobile interface */
-@media screen and (max-width: 640px) {
-	body {
-		/*background: red;*/
-	}
+/* Phone version aka Bootstrap small */
+@media screen and (max-width: 767px) {
+	/*body { background: red; }*/
 
 	table.resp, table.resp thead, table.resp, table.resp tbody, table.resp th, table.resp td, table.resp tr {
 		display: block;
+	}
+
+	.detail_wrapper {
+		margin: 0;
 	}
 
 	/* Hide table headers (but not display: none;, for accessibility) */
@@ -79,6 +81,20 @@
 
 }
 
-/* Tablet View */
-@media only screen and (min-width: 641px) and (max-width: 1023px) {
+/* Tablet view aka Bootstrap medium */
+@media only screen and (min-width: 768px) and (max-width: 991px) {
+	/*body { background: yellow; }*/
+
+	.detail_wrapper {
+		margin: 0;
+	}
+}
+
+/* Bootstrap large */
+@media only screen and (min-width: 992px) and (max-width: 1199px) {
+	/*body { background: lightgreen; }*/
+
+	.detail_wrapper {
+		margin: 0 4em;
+	}
 }

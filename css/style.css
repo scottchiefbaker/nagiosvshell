@@ -364,3 +364,7 @@ table {
 .tac_header_bg {
 	background: lightgray;
 }
+
+.detail_wrapper {
+	margin: 0 13em;
+}

@@ -55,7 +55,7 @@
 					<!--
 						<tr>
 						<td class="enabled">Obsession: Enabled</td>
-						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host={$host_name}&amp;service=Ping"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
+						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host={$host_name}&amp;service={$svc_name}"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
 						</tr>
 					-->
 
@@ -89,11 +89,11 @@
 			<table>
 				<tr>
 					<td>Send custom notification</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host={$host_name}&amp;service=Ping" title="Send Custom Notification">{$icons.bell}</a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host={$host_name}&amp;service={$svc_name}" title="Send Custom Notification">{$icons.bell}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host={$host_name}&amp;service=Ping" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host={$host_name}&amp;service={$svc_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Check Immediately</td>
@@ -101,12 +101,12 @@
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host={$host_name}&amp;service=Ping" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
 
 			<div class="mt-3">
-				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host={$host_name}&amp;service=Ping" title="View this service in Nagios Core">View this service in Nagios Core</a>
+				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host={$host_name}&amp;service={$svc_name}" title="View this service in Nagios Core">View this service in Nagios Core</a>
 			</div>
 		</div>
 	</div>

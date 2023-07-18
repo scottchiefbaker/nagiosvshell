@@ -3,7 +3,7 @@
 	Monitoring Features
 </h4>
 
-<div class="container-fluid">
+<div class="container-fluid d-none d-md-block">
 	<div class="row">
 		<div class="border p-2 col green me-1">
 			<h5>Flap Detection</h5>

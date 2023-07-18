@@ -198,8 +198,17 @@ class vshell {
 			$state_id = $x['current_state'] ?? -1;
 
 			$ret[$hn]['state_str'] = $this->host_state_map[$state_id];
-		}
 
+			// Work around for PENDING states
+			if ($x['current_state'] == 0 && $x['last_check'] == 0) {
+				$ret[$hn]['current_state'] = 'PENDING';
+				$ret[$hn]['plugin_output'] = "No data received yet";
+				$ret[$hn]['duration']      = "N/A";
+				$ret[$hn]['attempt']       = "N/A";
+				$ret[$hn]['last_check']    = "N/A";
+			}
+
+		}
 
 		$has_filters = ($state_filter || $name_filter || $host_filter);
 		if ($has_filters) {

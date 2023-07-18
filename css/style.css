@@ -160,7 +160,7 @@ th.service_description {
 th.hostname, td.hostname, div.hostname { }
 th.service_description, td.service_description, div.service_description { }
 
-table.resp th.duration, table.resp td.duration, table.resp th.last_check, table.resp td.last_check {
+table.resp th.last_check, table.resp td.last_check {
 	display: none;
 }
 

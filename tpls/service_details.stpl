@@ -1,6 +1,9 @@
 <div class="detail_wrapper">
 	<h3 class="text-start"><b>Service:</b> <span id="service" data-value="{$svc_name}">{$svc_name}</span></h3>
 	<h4 class="text-start"><b>Host:</b> <span id="host" data-value="{$host_name}"><a href="host_details.php?host_name={$host_name}">{$host_name}</a></span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.list}</a></h4>
+	{if $svc_info.notes}
+	<h4 class="text-start"><b>Notes:</b> {$svc_info.notes}</h4>
+	{/if}
 
 	<div class="d-xl-flex mt-3">
 		<div class="flex-fill me-xl-4">

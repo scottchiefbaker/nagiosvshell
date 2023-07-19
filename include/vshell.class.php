@@ -332,10 +332,13 @@ class vshell {
 
 		$ret = [];
 		foreach ($one as $host_name => $obj) {
-			$obj    = $one[$host_name] ?? [];
-			$status = $two[$host_name] ?? [];
+			foreach ($obj as $svc) {
+				$svc_name = $svc['service_description'];
+				$obj      = $one[$host_name][$svc_name] ?? [];
+				$status   = $two[$host_name][$svc_name] ?? [];
 
-			$ret[$host_name] = array_merge($obj, $status);
+				$ret[$host_name][$svc_name] = array_merge($obj, $status);
+			}
 		}
 
 		$all_comments = $y['servicecomment'] ?? [];

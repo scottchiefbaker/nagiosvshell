@@ -30,8 +30,9 @@ class vshell {
 
 		$icons = $this->get_icons();
 		$this->sluz->assign('icons', $icons);
+		$this->sluz->assign('username', $username);
 		$this->sluz->assign('global', $this->get_global_vars());
-		$this->sluz->assign('perms', $this->read_nagios_perms(CGICFG));
+		$this->sluz->assign('perms', $this->get_user_perms(CGICFG, $username));
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
 	}
 
@@ -618,7 +619,7 @@ class vshell {
 		exit(7);
 	}
 
-	function read_nagios_perms($file) {
+	function get_user_perms($file, $username) {
 		if (!is_readable($file)) {
 			$this->error_out("Unable to read permission file '$file'", 48242);
 		}
@@ -643,8 +644,11 @@ class vshell {
 					sort($val);
 
 					$key = str_replace("authorized_for_", '', $key);
-					foreach ($val as $user) {
-						$ret[$key][$user] = true;
+
+					if (in_array($username, $val)) {
+						$ret[$key] = true;
+					} else {
+						$ret[$key] = false;
 					}
 				}
 			}

@@ -135,7 +135,7 @@ a.sub-nav {
 }
 
 .problem { background-color: #FFC85F; }
-.pending { background-color: #C7C7C7; }
+.pending, .PENDING { background-color: #C7C7C7; }
 .unhandled { background-color: #FF935B; }
 .acknowledged { background-color: #FFE4AF; }
 .accent {	background-color: #999; }

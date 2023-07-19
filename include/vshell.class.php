@@ -201,7 +201,7 @@ class vshell {
 
 			// Work around for PENDING states
 			if ($x['current_state'] == 0 && $x['last_check'] == 0) {
-				$ret[$hn]['current_state'] = 'PENDING';
+				$ret[$hn]['state_str'] = 'PENDING';
 				$ret[$hn]['plugin_output'] = "No data received yet";
 				$ret[$hn]['duration']      = "N/A";
 				$ret[$hn]['attempt']       = "N/A";
@@ -303,6 +303,16 @@ class vshell {
 				$svcs[$hn][$sn]['x_host_state_str'] = $y['state_str'] ?? '';
 				$svcs[$hn][$sn]['x_host_address']   = $y['address']   ?? '';
 				$svcs[$hn][$sn]['comments']         = $svc_comments;
+
+				// Work around for PENDING states
+				if ($x['current_state'] == 0 && $x['last_check'] == 0) {
+					$svcs[$hn][$sn]['state_str']     = 'PENDING';
+					$svcs[$hn][$sn]['plugin_output'] = "No data received yet";
+					$svcs[$hn][$sn]['duration']      = "N/A";
+					$svcs[$hn][$sn]['attempt']       = "N/A";
+					$svcs[$hn][$sn]['last_check']    = "N/A";
+				}
+
 			}
 		}
 
@@ -350,6 +360,15 @@ class vshell {
 
 		$state_id         = $ret['current_state'] ?? -1;
 		$ret['state_str'] = $this->svc_state_map[$state_id];
+
+		// Work around for PENDING states
+		if ($ret['current_state'] == 0 && $ret['last_check'] == 0) {
+			$ret['state_str']     = 'PENDING';
+			$ret['plugin_output'] = "No data received yet";
+			$ret['duration']      = "N/A";
+			$ret['attempt']       = "N/A";
+			$ret['last_check']    = "N/A";
+		}
 
 		return $ret;
 	}

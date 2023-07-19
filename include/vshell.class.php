@@ -31,6 +31,7 @@ class vshell {
 		$icons = $this->get_icons();
 		$this->sluz->assign('icons', $icons);
 		$this->sluz->assign('global', $this->get_global_vars());
+		$this->sluz->assign('perms', $this->read_nagios_perms(CGICFG));
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
 	}
 
@@ -615,6 +616,41 @@ class vshell {
 
 		print $this->sluz->fetch($tpl);
 		exit(7);
+	}
+
+	function read_nagios_perms($file) {
+		if (!is_readable($file)) {
+			$this->error_out("Unable to read permission file '$file'", 48242);
+		}
+
+		// Loop through each line of the file
+		$ret   = [];
+		$lines = file($file);
+		foreach ($lines as $line) {
+			// Skip any comments
+			if (str_starts_with($line, '#')) {
+				continue;
+			}
+
+			// If the line is a key = val we parse it
+			if (preg_match("/(.+?)\s*=\s*(.+)/", $line, $m)) {
+				$key = $m[1] ?? "";
+				$val = $m[2] ?? "";
+
+				// If it's one of the authorized lines we pull it out
+				if (str_starts_with($key, "authorized")) {
+					$val = preg_split("/\s*,\s*/", $val);
+					sort($val);
+
+					$key = str_replace("authorized_for_", '', $key);
+					foreach ($val as $user) {
+						$ret[$key][$user] = true;
+					}
+				}
+			}
+		}
+
+		return $ret;
 	}
 
 }

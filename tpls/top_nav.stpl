@@ -1,15 +1,15 @@
-<div class="topnav row mb-3">
-	<nav class="col navbar navbar-expand-lg border navbar-light bg-light py-0 px-2">
-		<a class="navbar-brand" href="./" title="VShell Dashboard">
+<nav class="navbar navbar-expand-lg bg-body-tertiary">
+	<div class="container-fluid gx-md-0">
+		<a class="navbar-brand" href="./" title="V-Shell Dashboard">
 			<svg style="width:32px;height:32px" viewBox="0 0 24 24">
 				<path fill="currentColor" d="M9,7L11,17H13L15,7H13L12,12L11,7H9M5,3H19A2,2 0 0,1 21,5V19A2,2 0 0,1 19,21H5A2,2 0 0,1 3,19V5A2,2 0 0,1 5,3Z" />
 			</svg>
 		</a>
-		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+
+		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
-
-		<div class="collapse navbar-collapse" id="navbarSupportedContent">
+		<div class="collapse navbar-collapse" id="navbarNav">
 			<ul class="navbar-nav me-auto">
 
 				<li class="nav-item">
@@ -97,9 +97,9 @@
 
 			</ul>
 
-			<div class="mx-2">
+			<div class="mx-2 d-none d-lg-block">
 				<a class="text-dark" href="https://github.com/scottchiefbaker/nagiosvshell" title="VShell v{$VSHELL_VERSION} is on Github!">
-				{$icons.github}
+					{$icons.github}
 				</a>
 			</div>
 
@@ -111,10 +111,9 @@
 					<button class="btn btn-primary btn-sm" type="submit">Find</button>
 				</div>
 			</form>
-
 		</div>
-	</nav>
-</div>
+	</div>
+</nav>
 
 {if !$global.notifications_enabled}
 <div class="alert alert-danger py-2 text-center mb-3">

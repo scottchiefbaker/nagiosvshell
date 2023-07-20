@@ -3,6 +3,10 @@
 require('../include/vshell.class.php');
 $v = new vshell;
 
+if (!$v->perms['system_commands']) {
+	send_json_error("You do not have permission to send commands", 48244);
+}
+
 $host  = trim($_POST['host']         ?? "");
 $svc   = trim($_POST['service']      ?? "");
 $cmd   = trim($_POST['command']      ?? "");

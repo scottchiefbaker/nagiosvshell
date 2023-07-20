@@ -10,8 +10,10 @@ class vshell {
 
 	public $version        = "3.0.1";
 	public $base_dir       = "";
+	public $username       = "";
 	public $sluz           = null;
 	public $tac_data       = [];
+	public $perms          = [];
 	public $start_time     = 0;
 	public $host_state_map = [ -1 => 'Bees?', 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
 	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
@@ -21,8 +23,8 @@ class vshell {
 		$this->base_dir   = dirname(__FILE__) . "/../";
 
 		// Make sure we're logged in before showing any data
-		$username = $_SERVER['REMOTE_USER'] ?? "";
-		if (!$username) {
+		$this->username = $_SERVER['REMOTE_USER'] ?? "";
+		if (!$this->username) {
 			$this->error_out("You must be logged in to view this page", 19313);
 		}
 
@@ -32,8 +34,10 @@ class vshell {
 		$this->sluz->assign('icons', $icons);
 		$this->sluz->assign('username', $username);
 		$this->sluz->assign('global', $this->get_global_vars());
-		$this->sluz->assign('perms', $this->get_user_perms(CGICFG, $username));
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
+
+		$this->perms = $this->get_user_perms(CGICFG, $username);
+		$this->sluz->assign('perms', $this->perms);
 	}
 
 	function get_tac_data() {

@@ -22,8 +22,10 @@ if ($svc && $host && $extra) {
 	$cmd = sprintf("[%lu] %s;%s;%s;%s\n",$time,$cmd,$host,$svc,$extra);
 } elseif ($svc && $host) {
 	$cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);
-} else {
+} elseif ($cmd) {
 	$cmd = sprintf("[%lu] %s;%s;\n",$time,$cmd,$host);
+} else {
+	send_json_error("Missing command", 65932);
 }
 
 $ok = file_put_contents(CMDFILE, $cmd);

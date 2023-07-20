@@ -32,11 +32,11 @@ class vshell {
 
 		$icons = $this->get_icons();
 		$this->sluz->assign('icons', $icons);
-		$this->sluz->assign('username', $username);
+		$this->sluz->assign('username', $this->username);
 		$this->sluz->assign('global', $this->get_global_vars());
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
 
-		$this->perms = $this->get_user_perms(CGICFG, $username);
+		$this->perms = $this->get_user_perms(CGICFG, $this->username);
 		$this->sluz->assign('perms', $this->perms);
 	}
 

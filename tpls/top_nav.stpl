@@ -117,14 +117,16 @@
 	</div>
 </nav>
 
-{if !$global.notifications_enabled}
-<div class="alert alert-danger py-2 text-center mb-3">
-	<b>Warning:</b> Notifications are disabled!
-</div>
-{/if}
+<div class="container-fluid mt-3">
+	{if !$global.notifications_enabled}
+	<div class="alert alert-danger py-2 text-center mb-3">
+		<b>Warning:</b> Notifications are disabled!
+	</div>
+	{/if}
 
-{if !$global.cmd_file_writable}
-<div class="alert alert-warning py-2 text-center mb-3">
-	<b>Warning:</b> Command file <code>{$cmd_file}</code> is not writable. Commands may not function.
+	{if !$global.cmd_file_writable}
+	<div class="alert alert-warning py-2 text-center mb-3">
+		<b>Warning:</b> Command file <code>{$cmd_file}</code> is not writable. Commands may not function.
+	</div>
 </div>
 {/if}

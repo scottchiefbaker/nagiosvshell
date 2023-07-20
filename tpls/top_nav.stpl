@@ -52,6 +52,7 @@
 					</div>
 				</li>
 
+				{if $perms.system_commands}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
 						Commands
@@ -74,6 +75,7 @@
 						</div>
 					</div>
 				</li>
+				{/if}
 
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

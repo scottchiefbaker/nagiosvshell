@@ -1,3 +1,4 @@
+<!-- ##################### NAVBAR START ##################### -->
 <nav class="navbar navbar-expand-lg bg-body-tertiary py-0">
 	<div class="container-fluid border-bottom">
 		<a class="navbar-brand" href="./" title="V-Shell Dashboard">
@@ -116,7 +117,9 @@
 		</div>
 	</div>
 </nav>
+<!-- ##################### NAVBAR END ##################### -->
 
+<!-- ##################### GLOBAL NOTIFICATION START ##################### -->
 <div class="container-fluid mt-3">
 	{if !$global.notifications_enabled}
 	<div class="alert alert-danger py-2 text-center mb-3">
@@ -130,3 +133,4 @@
 	</div>
 	{/if}
 </div>
+<!-- ##################### GLOBAL NOTIFICATION END ##################### -->

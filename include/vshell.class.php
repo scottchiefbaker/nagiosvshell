@@ -150,6 +150,7 @@ class vshell {
 		$ret['notifications_enabled'] = $ne;
 		$ret['cmd_file']              = CMDFILE;
 		$ret['cmd_file_writable']     = is_writable(CMDFILE);
+		$ret['html_refresh_seconds']  = intval($ini_array['REFRESH_SECONDS'] ?? 60);
 
 		return $ret;
 	}

@@ -1,12 +1,12 @@
-Full vs ReadOnly access from config
 Add event handler toggling
 HTML5 interface to add service/host comments
 Alias vs Hostname display?
 Hostgroup overview with [hosts up] [svcs up]
-Option to disable auto-refresh
 Pagination
 
 Completed
 =========
 Oh host view: Link to hostgroups
 Filter by state AND name
+Full vs ReadOnly access from config
+Option to disable auto-refresh

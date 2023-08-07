@@ -231,6 +231,12 @@ class vshell {
 			return $data;
 		}
 
+		// We're using Vim smartcasing here. If there is a capital we do a case SENSITIVE search
+		$case_sensitive = "i"; // Default to case IN-sensitive
+		if (preg_match("/[A-Z]/", $name_filter)) {
+			$case_sensitive = "";
+		}
+
 		$ret = [];
 		foreach ($data as $x) {
 			$state_str = $x['state_str']           ?? "";
@@ -246,7 +252,7 @@ class vshell {
 				$ret[$host_name] = $x;
 			} elseif ($host_filter && ($host_filter === $host_name)) {
 				$ret[$host_name] = $x;
-			} elseif ($name_filter && (preg_match("/$name_filter/", $host_name) || preg_match("/$name_filter/", $svc_name))) {
+			} elseif ($name_filter && (preg_match("/$name_filter/$case_sensitive", $host_name) || preg_match("/$name_filter/$case_sensitive", $svc_name))) {
 				$ret[$host_name] = $x;
 			}
 		}
@@ -259,6 +265,12 @@ class vshell {
 
 		if ($no_filters) {
 			return $data;
+		}
+
+		// We're using Vim smartcasing here. If there is a capital we do a case SENSITIVE search
+		$case_sensitive = "i";
+		if (preg_match("/[A-Z]/", $name_filter)) {
+			$case_sensitive = "";
 		}
 
 		$ret = [];
@@ -277,7 +289,7 @@ class vshell {
 					$ret[$host_name][$svc_name] = $x;
 				} elseif ($host_filter && ($host_filter === $host_name)) {
 					$ret[$host_name][$svc_name] = $x;
-				} elseif ($name_filter && (preg_match("/$name_filter/", $host_name) || preg_match("/$name_filter/", $svc_name))) {
+				} elseif ($name_filter && (preg_match("/$name_filter/$case_sensitive", $host_name) || preg_match("/$name_filter/$case_sensitive", $svc_name))) {
 					$ret[$host_name][$svc_name] = $x;
 				}
 			}

@@ -356,6 +356,8 @@ class vshell {
 			$svcs = $this->filter_service_results($svcs, $state_filter, $name_filter, $host_filter);
 		}
 
+		ksort($svcs, SORT_FLAG_CASE | SORT_NATURAL);
+
 		return $svcs;
 	}
 

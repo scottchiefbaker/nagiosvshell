@@ -19,7 +19,11 @@
 			<table class="mt-2">
 				<tr><td class="servicedetail_key">Service State</td><td class="{$host_info.state_str}">{$host_info.state_str}</td></tr>
 				<tr><td class="servicedetail_key">Address</td><td class="">{$host_info.address}</td></tr>
+
+				{if $perms.system_commands}
 				<tr><td class="servicedetail_key">Check Command</td><td>{$host_info.check_command}</td></tr>
+				{/if}
+
 				<tr><td class="servicedetail_key">Plugin Output</td><td>{$host_info.plugin_output}</td></tr>
 				<tr><td class="servicedetail_key">State Type</td><td>{if $host_info.state_type == 0}Soft{elseif $host_info.state_type == 1}Hard{else}Unknown{/if}</td></tr>
 				<tr><td class="servicedetail_key">Current Check</td><td>{$host_info.current_attempt} of {$host_info.max_attempts}</td></tr>

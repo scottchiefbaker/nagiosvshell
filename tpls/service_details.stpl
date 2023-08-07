@@ -38,6 +38,7 @@
 				<table>
 					<tr>
 						<td class="{if $svc_info.active_checks_enabled}enabled{else}disabled{/if}">Active Checks: {if $svc_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
+						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
 								<label class="switch">
@@ -46,9 +47,11 @@
 								</label>
 							</div>
 						</td>
+						{/if}
 					</tr>
 					<tr>
 						<td class="{if $svc_info.passive_checks_enabled}enabled{else}disabled{/if}">Passive Checks: {if $svc_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
+						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
 								<label class="switch">
@@ -57,6 +60,7 @@
 								</label>
 							</div>
 						</td>
+						{/if}
 					</tr>
 
 					<!--
@@ -68,6 +72,7 @@
 
 					<tr>
 						<td class="{if $svc_info.notifications_enabled}enabled{else}disabled{/if}">Notifications: {if $svc_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
+						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
 								<label class="switch">
@@ -76,9 +81,11 @@
 								</label>
 							</div>
 						</td>
+						{/if}
 					</tr>
 					<tr>
 						<td class="{if $svc_info.flap_detection_enabled}enabled{else}disabled{/if}">Flap Detection: {if $svc_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
+						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
 								<label class="switch">
@@ -87,10 +94,12 @@
 								</label>
 							</div>
 						</td>
+						{/if}
 					</tr>
 				</table>
 			</div>
 
+			{if $perms.all_service_commands}
 			<!-- Nagios Core Command Table -->
 			<h5 class="alert alert-secondary p-2">Core Commands</h5>
 			<table>
@@ -111,6 +120,7 @@
 					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
+			{/if}
 
 			<div class="mt-3">
 				<a class="label" href="{$core_cgi}extinfo.cgi?type=2&amp;host={$host_name}&amp;service={$svc_name}" title="View this service in Nagios Core">View this service in Nagios Core</a>

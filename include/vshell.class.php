@@ -237,6 +237,8 @@ class vshell {
 			$case_sensitive = "";
 		}
 
+		//k([$state_filter, $name_filter, $host_filter]);
+
 		$ret = [];
 		foreach ($data as $x) {
 			$state_str = $x['state_str']           ?? "";
@@ -248,13 +250,19 @@ class vshell {
 			$state_filter_match = ($state_filter === $state_str) || (($state_filter === "PROBLEMS") && ($state_str !== "UP"));
 
 			// Apply various filters
-			if ($state_filter && $state_filter_match) {
-				$ret[$host_name] = $x;
-			} elseif ($host_filter && ($host_filter === $host_name)) {
-				$ret[$host_name] = $x;
-			} elseif ($name_filter && (preg_match("/$name_filter/$case_sensitive", $host_name) || preg_match("/$name_filter/$case_sensitive", $svc_name))) {
-				$ret[$host_name] = $x;
+			if ($state_filter && !$state_filter_match) {
+				continue;
 			}
+
+			if ($host_filter && ($host_filter !== $host_name)) {
+				continue;
+			}
+
+			if ($name_filter && (!preg_match("/$name_filter/$case_sensitive", $host_name) && !preg_match("/$name_filter/$case_sensitive", $svc_name))) {
+				continue;
+			}
+
+			$ret[$host_name] = $x;
 		}
 
 		return $ret;
@@ -273,6 +281,8 @@ class vshell {
 			$case_sensitive = "";
 		}
 
+		//k([$state_filter, $name_filter, $host_filter]);
+
 		$ret = [];
 		foreach ($data as $host_name => $svc) {
 			foreach ($svc as $x) {
@@ -285,13 +295,19 @@ class vshell {
 				$state_filter_match = ($state_filter === $state_str) || (($state_filter === "PROBLEMS") && ($state_str !== "OK"));
 
 				// Apply various filters
-				if ($state_filter && $state_filter_match) {
-					$ret[$host_name][$svc_name] = $x;
-				} elseif ($host_filter && ($host_filter === $host_name)) {
-					$ret[$host_name][$svc_name] = $x;
-				} elseif ($name_filter && (preg_match("/$name_filter/$case_sensitive", $host_name) || preg_match("/$name_filter/$case_sensitive", $svc_name))) {
-					$ret[$host_name][$svc_name] = $x;
+				if ($state_filter && !$state_filter_match) {
+					continue;
 				}
+
+				if ($host_filter && ($host_filter !== $host_name)) {
+					continue;
+				}
+
+				if ($name_filter && (!preg_match("/$name_filter/$case_sensitive", $host_name) && !preg_match("/$name_filter/$case_sensitive", $svc_name))) {
+					continue;
+				}
+
+				$ret[$host_name][$svc_name] = $x;
 			}
 		}
 

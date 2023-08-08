@@ -13,7 +13,7 @@
 				<tr><td class="servicedetail_key">Service State</td><td class="{$svc_info.state_str}">{$svc_info.state_str}</td></tr>
 
 				{if $perms.system_commands}
-				<tr><td class="servicedetail_key">Check Command</td><td>{$svc_info.check_command}</td></tr>
+				<tr><td class="servicedetail_key">Check Command</td><td><code>{$svc_info.check_command}</code></td></tr>
 				{/if}
 
 				<tr><td class="servicedetail_key">Plugin Output</td><td>{$svc_info.plugin_output}</td></tr>

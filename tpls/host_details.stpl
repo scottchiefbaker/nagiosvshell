@@ -21,7 +21,7 @@
 				<tr><td class="servicedetail_key">Address</td><td class="">{$host_info.address}</td></tr>
 
 				{if $perms.system_commands}
-				<tr><td class="servicedetail_key">Check Command</td><td>{$host_info.check_command}</td></tr>
+				<tr><td class="servicedetail_key">Check Command</td><td><code>{$host_info.check_command}</code></td></tr>
 				{/if}
 
 				<tr><td class="servicedetail_key">Plugin Output</td><td>{$host_info.plugin_output}</td></tr>

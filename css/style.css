@@ -115,7 +115,8 @@ a.sub-nav {
 .contentWrapper {width:80%; margin: auto; }
 
 /* ========== Formatting Classes ========== */
-.down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL {
+/*.down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL {*/
+.down, .critical, .red, .DOWN, .CRITICAL {
 	background-color: #FF795F;
 }
 .warning, .yellow, .WARNING {

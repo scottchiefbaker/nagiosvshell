@@ -15,6 +15,7 @@ class vshell {
 	public $tac_data       = [];
 	public $perms          = [];
 	public $start_time     = 0;
+	public $result_limit   = 0;
 	public $host_state_map = [ -1 => 'Bees?', 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
 	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
 
@@ -152,6 +153,9 @@ class vshell {
 		$ret['cmd_file_writable']     = is_writable(CMDFILE);
 		$ret['html_refresh_seconds']  = intval($ini_array['REFRESH_SECONDS'] ?? 60);
 
+		// Number of records to show on a page (for pagination)
+		$this->result_limit = intval($ini_array['RESULT_LIMIT'] ?? 0);
+
 		return $ret;
 	}
 
@@ -171,6 +175,7 @@ class vshell {
 		$ret['arrow_up_down'] = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-arrow-down-up" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M11.5 15a.5.5 0 0 0 .5-.5V2.707l3.146 3.147a.5.5 0 0 0 .708-.708l-4-4a.5.5 0 0 0-.708 0l-4 4a.5.5 0 1 0 .708.708L11 2.707V14.5a.5.5 0 0 0 .5.5zm-7-14a.5.5 0 0 1 .5.5v11.793l3.146-3.147a.5.5 0 0 1 .708.708l-4 4a.5.5 0 0 1-.708 0l-4-4a.5.5 0 0 1 .708-.708L4 13.293V1.5a.5.5 0 0 1 .5-.5z"/></svg>';
 		$ret['alarm_clock'] = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-alarm-fill" viewBox="0 0 16 16"><path d="M6 .5a.5.5 0 0 1 .5-.5h3a.5.5 0 0 1 0 1H9v1.07a7.001 7.001 0 0 1 3.274 12.474l.601.602a.5.5 0 0 1-.707.708l-.746-.746A6.97 6.97 0 0 1 8 16a6.97 6.97 0 0 1-3.422-.892l-.746.746a.5.5 0 0 1-.707-.708l.602-.602A7.001 7.001 0 0 1 7 2.07V1h-.5A.5.5 0 0 1 6 .5zm2.5 5a.5.5 0 0 0-1 0v3.362l-1.429 2.38a.5.5 0 1 0 .858.515l1.5-2.5A.5.5 0 0 0 8.5 9V5.5zM.86 5.387A2.5 2.5 0 1 1 4.387 1.86 8.035 8.035 0 0 0 .86 5.387zM11.613 1.86a2.5 2.5 0 1 1 3.527 3.527 8.035 8.035 0 0 0-3.527-3.527z"/></svg>';
 		$ret['github'] = '<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" class="bi bi-github" viewBox="0 0 16 16"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z"/></svg>';
+		$ret['tools'] = '<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-tools" viewBox="0 0 16 16"><path d="M1 0 0 1l2.2 3.081a1 1 0 0 0 .815.419h.07a1 1 0 0 1 .708.293l2.675 2.675-2.617 2.654A3.003 3.003 0 0 0 0 13a3 3 0 1 0 5.878-.851l2.654-2.617.968.968-.305.914a1 1 0 0 0 .242 1.023l3.27 3.27a.997.997 0 0 0 1.414 0l1.586-1.586a.997.997 0 0 0 0-1.414l-3.27-3.27a1 1 0 0 0-1.023-.242L10.5 9.5l-.96-.96 2.68-2.643A3.005 3.005 0 0 0 16 3c0-.269-.035-.53-.102-.777l-2.14 2.141L12 4l-.364-1.757L13.777.102a3 3 0 0 0-3.675 3.68L7.462 6.46 4.793 3.793a1 1 0 0 1-.293-.707v-.071a1 1 0 0 0-.419-.814L1 0Zm9.646 10.646a.5.5 0 0 1 .708 0l2.914 2.915a.5.5 0 0 1-.707.707l-2.915-2.914a.5.5 0 0 1 0-.708ZM3 11l.471.242.529.026.287.445.445.287.026.529L5 13l-.242.471-.026.529-.445.287-.287.445-.529.026L3 15l-.471-.242L2 14.732l-.287-.445L1.268 14l-.026-.529L1 13l.242-.471.026-.529.445-.287.287-.445.529-.026L3 11Z"/></svg>';
 
 		return $ret;
 	}
@@ -333,11 +338,14 @@ class vshell {
 				// Find the host associated with this service
 				$y = $hosts[$hn] ?? [];
 
-				$state_id                           = $x['current_state'] ?? -1;
-				$svcs[$hn][$sn]['state_str']        = $this->svc_state_map[$state_id];
-				$svcs[$hn][$sn]['x_host_state_str'] = $y['state_str'] ?? '';
-				$svcs[$hn][$sn]['x_host_address']   = $y['address']   ?? '';
-				$svcs[$hn][$sn]['comments']         = $svc_comments;
+				$state_id = $x['current_state'] ?? -1;
+
+				$svcs[$hn][$sn]['state_str']                   = $this->svc_state_map[$state_id];
+				$svcs[$hn][$sn]['x_host_state_str']            = $y['state_str']                     ?? '';
+				$svcs[$hn][$sn]['x_host_state']                = $state_id;
+				$svcs[$hn][$sn]['x_host_address']              = $y['address']                       ?? '';
+				$svcs[$hn][$sn]['x_host_problem_acknowledged'] = $y['problem_has_been_acknowledged'] ?? '';
+				$svcs[$hn][$sn]['comments']                    = $svc_comments;
 
 				// Work around for PENDING states
 				if ($x['current_state'] == 0 && $x['last_check'] == 0) {
@@ -692,6 +700,71 @@ class vshell {
 		return $ret;
 	}
 
+	public function record_limit($data, $limit, $offset) {
+		$ret = [];
+
+		$count = 0; // Total number of elements
+		$shown = 0; // Number of elements that have been shown
+
+		// Here we whittle down the service array (two levels deep)
+		// based on the offset/limit
+		foreach ($data as $host => $x) {
+			foreach ($x as $y) {
+				$name = $y['service_description'];
+
+				// If we fall in the pagination range we add it to the hash
+				if (($shown < $limit) && ($count >= $offset)) {
+					$ret[$host][$name] = $y;
+					$shown++;
+				}
+
+				$count++;
+			}
+		}
+
+		// Figure out what page we're currently showing (based on offset)
+		// and how many total pages we will need
+		if ($limit) {
+			$current_page = intval(ceil($offset / $limit));
+			$num_pages    = intval(ceil($count / $limit));
+		} else {
+			$current_page = 1;
+			$num_pages    = 1;
+		}
+
+		// We build the array of page offsets based on the total number
+		// of elements and page limit. This is for: Page 1, Page 2, Page 3, etc
+		$offsets = [];
+		for ($i = 0; $i < $num_pages; $i++) {
+			$diff = abs($current_page - $i);
+			// Only show X pages on either side of current page
+			if ($diff <= 4) {
+				$offsets[$i] = $i * $limit;
+			}
+		}
+
+		// Calculate the previous and next offsets
+		$prev_offset = $offset - $limit;
+		$next_offset = $offset + $limit;
+
+		$obj = [
+			'total'        => $count,
+			'offset'       => $offset,
+			'prev_offset'  => $prev_offset,
+			'next_offset'  => $next_offset,
+			'page_limit'   => $limit,
+			'current_page' => $current_page,
+			'page_list'    => $offsets,
+			'num_pages'    => $num_pages,
+			'shown'        => $count,
+		];
+
+		// Return value is an array of the whittled down data, and a hash of
+		// pagination information
+		$ret = [$ret, $obj];
+
+		return $ret;
+	}
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

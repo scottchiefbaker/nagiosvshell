@@ -13,6 +13,7 @@
 		</tr>
 	</thead>
 	<tbody>
+
 	{foreach $service_info as $w}
 		{foreach $w as $idx => $x}
 		<tr class="statustablerow">
@@ -64,3 +65,26 @@
 	{/foreach}
 	</tbody>
 </table>
+
+<footer class="d-flex mt-3">
+	<div class="">
+		<b>{$pagination.shown}</b> entries shown
+	</div>
+
+	{if $pagination.num_pages > 1}
+	<div class="mb-0 d-flex justify-content-end flex-grow-1">
+		<nav aria-label="Page navigation example" class="">
+			<ul class="pagination mb-0 justify-content-end">
+				<li class="page-item {if $pagination.prev_offset < 0}disabled{/if}" title="Previous page"><a class="page-link" href="?offset={$pagination.prev_offset}&state_filter={$state_filter}&name_filter={$name_filter}">&laquo;</a></li>
+
+				{foreach $pagination.page_list as $idx => $offset}
+				<li class="page-item {if $idx == $pagination.current_page}active{/if}"><a class="page-link" href="?offset={$offset}&state_filter={$state_filter}&name_filter={$name_filter}">{$idx + 1}</a></li>
+				{/foreach}
+
+				<li class="page-item {if $pagination.next_offset > $pagination.total}disabled{/if}" title="Next page"><a class="page-link" href="?offset={$pagination.next_offset}&state_filter={$state_filter}&name_filter={$name_filter}">&raquo;</a></li>
+			</ul>
+		</nav>
+	</div>
+	{/if}
+
+</footer>

@@ -17,7 +17,7 @@
 			<h5 class="alert alert-secondary p-2">Advanced details</h5>
 
 			<table class="mt-2">
-				<tr><td class="servicedetail_key">Service State</td><td class="{$host_info.state_str}">{$host_info.state_str}</td></tr>
+				<tr><td class="servicedetail_key">Service State</td><td class="{$host_info.state_str}">{$host_info.state_str}{if $host_info.problem_has_been_acknowledged} (Acknowledged){/if}</td></tr>
 				<tr><td class="servicedetail_key">Address</td><td class="">{$host_info.address}</td></tr>
 
 				{if $perms.system_commands}

@@ -537,6 +537,8 @@ class vshell {
 			}
 		}
 
+		ksort($ret, SORT_FLAG_CASE | SORT_NATURAL);
+
 		return $ret;
 	}
 

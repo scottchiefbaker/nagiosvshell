@@ -531,6 +531,8 @@ class vshell {
 
 		// Get the details for each individual host
 		foreach ($groups as $group_name => $x) {
+			// Sort the hosts inside the group
+			ksort($x, SORT_FLAG_CASE | SORT_NATURAL);
 			foreach ($x as $host_name) {
 				$details                      = $this->get_host_data($host_name);
 				$ret[$group_name][$host_name] = $details;

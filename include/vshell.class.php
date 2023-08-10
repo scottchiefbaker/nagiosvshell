@@ -69,6 +69,12 @@ class vshell {
 
 			$count++;
 		}
+
+		$down_hosts        = $ret['host']['state']['DOWN']        ?? -1;
+		$unreachable_hosts = $ret['host']['state']['UNREACHABLE'] ?? -1;
+		$all_hosts_up      = (($down_hosts === 0) && ($unreachable_hosts === 0));
+
+		$ret['host']['all_up']      = $all_hosts_up;
 		$ret['host']['total_count'] = $count;
 
 		//////////////////////////////////////////////////////////////////////
@@ -96,6 +102,14 @@ class vshell {
 				$count++;
 			}
 		}
+
+		$warn_svcs = $ret['service']['state']['WARNING']  ?? -1;
+		$crit_svcs = $ret['service']['state']['CRITICAL'] ?? -1;
+		$unkn_svcs = $ret['service']['state']['UNKNOWN']  ?? -1;
+
+		$all_svcs_up = (($warn_svcs === 0) && ($crit_svcs === 0) && ($unkn_svcs === 0));
+
+		$ret['service']['all_up']      = $all_svcs_up;
 		$ret['service']['total_count'] = $count;
 
 		//////////////////////////////////////////////////////////////////////

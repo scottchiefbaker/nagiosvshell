@@ -770,7 +770,7 @@ class vshell {
 			'current_page' => $current_page,
 			'page_list'    => $offsets,
 			'num_pages'    => $num_pages,
-			'shown'        => $count,
+			'shown'        => $shown,
 		];
 
 		// Return value is an array of the whittled down data, and a hash of

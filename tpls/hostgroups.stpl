@@ -1,5 +1,3 @@
-{include file='tpls/status_search.stpl'}
-
 <div class="statusTable">
 	<table class="statusTable resp">
 		<thead>

@@ -347,18 +347,19 @@ class vshell {
 				$hn = $x['host_name'] ?? "";
 				$sn = $x['service_description'] ?? "";
 
-				$svc_comments = $comments[$hn][$sn] ?? [];
-
 				// Find the host associated with this service
 				$y = $hosts[$hn] ?? [];
 
-				$state_id = $x['current_state'] ?? -1;
+				$state_id      = $x['current_state'] ?? -1;
+				$host_comments = $y['comments']      ?? [];
+				$svc_comments  = $comments[$hn][$sn] ?? [];
 
 				$svcs[$hn][$sn]['state_str']                   = $this->svc_state_map[$state_id];
-				$svcs[$hn][$sn]['x_host_state_str']            = $y['state_str']                     ?? '';
 				$svcs[$hn][$sn]['x_host_state']                = $state_id;
+				$svcs[$hn][$sn]['x_host_state_str']            = $y['state_str']                     ?? '';
 				$svcs[$hn][$sn]['x_host_address']              = $y['address']                       ?? '';
 				$svcs[$hn][$sn]['x_host_problem_acknowledged'] = $y['problem_has_been_acknowledged'] ?? '';
+				$svcs[$hn][$sn]['x_host_comments']             = $host_comments;
 				$svcs[$hn][$sn]['comments']                    = $svc_comments;
 
 				// Work around for PENDING states

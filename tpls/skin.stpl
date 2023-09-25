@@ -29,6 +29,10 @@
 	{include file='tpls/top_nav.stpl'}
 
 	<div class="container-fluid mt-3 main_box">
+		{if $tac_data.host.all_up && $tac_data.service.all_up}
+		<div class="alert alert-success text-center p-2"><b>Congratulations:</b> All services and hosts are OK!<span class="ms-2">&#x2705;</span></div>
+		{/if}
+
 		<!-- ########################HOSTS TABLE########################## -->
 		{if $show_host_table}
 		<h4 class="text-center tac_header_bg mb-1 p-1 border text_shadow">

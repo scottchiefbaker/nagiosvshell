@@ -128,62 +128,62 @@ function sw() {
 	}
 }
 
-    // Approximate is the number of output segments to have (2 is a good number)
-    function human_time(int $time,$approximate = 0) {
-        if ($time === 0) {
-            return "0 seconds";
-        }
+// Approximate is the number of output segments to have (2 is a good number)
+function human_time(int $time,$approximate = 0) {
+	if ($time === 0) {
+		return "0 seconds";
+	}
 
-        $years = intval($time / (86400 * 365));
-        $time -= $years * (86400 * 365);
+	$years = intval($time / (86400 * 365));
+	$time -= $years * (86400 * 365);
 
-        $months = intval($time / (86400 * 30.25));
-        $time  -= $months * (86400 * 30.25); // 30.25 days a month on average
+	$months = intval($time / (86400 * 30.25));
+	$time  -= $months * (86400 * 30.25); // 30.25 days a month on average
 
-        $days  = intval($time / (60 * 60 * 24));
-        $time -= $days * (60 * 60 * 24);
+	$days  = intval($time / (60 * 60 * 24));
+	$time -= $days * (60 * 60 * 24);
 
-        $hours = intval($time / (60 * 60));
-        $time -= $hours * (60 * 60);
+	$hours = intval($time / (60 * 60));
+	$time -= $hours * (60 * 60);
 
-        $minutes = intval($time / 60);
-        $time   -= $minutes * 60;
+	$minutes = intval($time / 60);
+	$time   -= $minutes * 60;
 
-        $seconds = $time % 60;
+	$seconds = $time % 60;
 
-        $yp = "years";
-        if ($years == 1) { $yp = "year"; }
-        $xp = "months";
-        if ($months == 1) { $xp = "month"; }
-        $dp = "days";
-        if ($days == 1) { $dp = "day"; }
-        $hp = "hours";
-        if ($hours == 1) { $hp = "hour"; }
-        $mp = "minutes";
-        if ($minutes == 1) { $mp = "minute"; }
+	$yp = "years";
+	if ($years == 1) { $yp = "year"; }
+	$xp = "months";
+	if ($months == 1) { $xp = "month"; }
+	$dp = "days";
+	if ($days == 1) { $dp = "day"; }
+	$hp = "hours";
+	if ($hours == 1) { $hp = "hour"; }
+	$mp = "minutes";
+	if ($minutes == 1) { $mp = "minute"; }
 
-        $ret = "";
-        if ($years)   { $ret .= "$years $yp "; }
-        if ($months)  { $ret .= "$months $xp "; }
-        if ($days)    { $ret .= "$days $dp "; }
-        if ($hours)   { $ret .= "$hours $hp "; }
-        if ($minutes) { $ret .= "$minutes $mp "; }
-		if ($seconds) { $ret .= "$seconds seconds"; }
+	$ret = "";
+	if ($years)   { $ret .= "$years $yp "; }
+	if ($months)  { $ret .= "$months $xp "; }
+	if ($days)    { $ret .= "$days $dp "; }
+	if ($hours)   { $ret .= "$hours $hp "; }
+	if ($minutes) { $ret .= "$minutes $mp "; }
+	if ($seconds) { $ret .= "$seconds seconds"; }
 
-		if ($approximate) {
-			$parts  = preg_split("/\s/",$ret);
-			$ret    = "~";
+	if ($approximate) {
+		$parts  = preg_split("/\s/",$ret);
+		$ret    = "~";
 
-			for ($i = 0; $i < $approximate; $i++) {
-				$first  = $parts[$i * 2]       ?? "";
-				$second = $parts[($i * 2) + 1] ?? "";
-				$p[]    = "$first $second";
-			}
-
-			$ret .= join(" ",$p);
+		for ($i = 0; $i < $approximate; $i++) {
+			$first  = $parts[$i * 2]       ?? "";
+			$second = $parts[($i * 2) + 1] ?? "";
+			$p[]    = "$first $second";
 		}
 
-		return $ret;
+		$ret .= join(" ",$p);
 	}
+
+	return $ret;
+}
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

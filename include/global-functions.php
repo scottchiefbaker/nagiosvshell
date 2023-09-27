@@ -115,6 +115,19 @@ function increment(&$i,$value = 1) {
 	}
 }
 
+// Stopwatch function: returns milliseconds
+function sw() {
+	static $start = null;
+
+	if (!$start) {
+		$start = hrtime(1);
+	} else {
+		$ret   = (hrtime(1) - $start) / 1000000;
+		$start = null; // Reset the start time
+		return $ret;
+	}
+}
+
     // Approximate is the number of output segments to have (2 is a good number)
     function human_time(int $time,$approximate = 0) {
         if ($time === 0) {

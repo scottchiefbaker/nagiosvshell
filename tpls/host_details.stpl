@@ -139,7 +139,15 @@
 			{/if}
 
 			<div class="mt-3">
-				<a class="label" href="{$core_cgi}extinfo.cgi?type=1&amp;host={$host_name}" title="View this host in Nagios Core">View this host in Nagios Core</a>
+				<div class="">
+					<a class="label" href="{$core_cgi}extinfo.cgi?type=1&amp;host={$host_name}" title="View this host in Nagios Core">View host in Nagios Core</a>
+				</div>
+
+				{if $perms.configuration_information}
+				<div class="">
+					<a class="label" href="show_host_config.php?host_name={$host_name|urlencode}" title="View this service in Nagios Core">View host configuration</a>
+				</div>
+				{/if}
 			</div>
 		</div>
 	</div>

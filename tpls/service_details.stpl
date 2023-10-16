@@ -128,7 +128,7 @@
 				</div>
 				{if $perms.configuration_information}
 				<div class="">
-					<a class="label" href="show_config.php?host_name={$host_name|urlencode}&amp;svc_name={$svc_name|urlencode}" title="View this service in Nagios Core">View service configuration</a>
+					<a class="label" href="show_svc_config.php?host_name={$host_name|urlencode}&amp;svc_name={$svc_name|urlencode}" title="View this service in Nagios Core">View service configuration</a>
 				</div>
 				{/if}
 			</div>

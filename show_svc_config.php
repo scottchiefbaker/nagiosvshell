@@ -36,7 +36,7 @@ $v->sluz->assign("svc_info" , $svc_info);
 $v->sluz->assign("cmd_api"  , CORECMD);
 $v->sluz->assign("core_cgi" , CORECGI);
 
-print $v->fetch("tpls/show_config.stpl");
+print $v->fetch("tpls/show_svc_config.stpl");
 
 ////////////////////////////////////////////////////////////
 

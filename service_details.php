@@ -24,7 +24,7 @@ $v->sluz->assign("svc_info" , $svc_info);
 $v->sluz->assign("cmd_api"  , CORECMD);
 $v->sluz->assign("core_cgi" , CORECGI);
 
-print $v->fetch("service_details.stpl");
+print $v->fetch("tpls/service_details.stpl");
 
 ////////////////////////////////////////////////////////////
 

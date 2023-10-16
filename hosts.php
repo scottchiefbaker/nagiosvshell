@@ -29,6 +29,6 @@ $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("filter_type", "host");
 $v->sluz->assign("tac_data", $v->get_tac_data());
 
-print $v->fetch("hosts.stpl");
+print $v->fetch("tpls/hosts.stpl");
 
 ////////////////////////////////////////////////////////////

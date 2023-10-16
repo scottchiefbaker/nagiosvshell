@@ -43,6 +43,6 @@ $v->sluz->assign("filter_type"       , "service");
 $v->sluz->assign("tac_data"          , $v->get_tac_data());
 $v->sluz->assign("pagination"        , $pagination);
 
-print $v->fetch("services.stpl");
+print $v->fetch("tpls/services.stpl");
 
 ////////////////////////////////////////////////////////////

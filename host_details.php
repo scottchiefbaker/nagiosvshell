@@ -20,6 +20,6 @@ $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("cmd_api"  , CORECMD);
 $v->sluz->assign("core_cgi" , CORECGI);
 
-print $v->fetch("host_details.stpl");
+print $v->fetch("tpls/host_details.stpl");
 
 ////////////////////////////////////////////////////////////

@@ -11,6 +11,6 @@ $v->sluz->assign("show_host_table", true);
 $v->sluz->assign("show_service_table", true);
 $v->sluz->assign("tac_data", $v->get_tac_data());
 
-print $v->fetch("index.stpl");
+print $v->fetch("tpls/index.stpl");
 
 ////////////////////////////////////////////////////////////

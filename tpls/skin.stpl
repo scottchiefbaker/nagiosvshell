@@ -80,7 +80,7 @@
 		{/if}
 
 		<div class="">
-			{include file="tpls/$__child_tpl"}
+			{include file="$__child_tpl"}
 		</div>
 	</div>
 </body>

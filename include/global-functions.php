@@ -65,6 +65,11 @@ function human_time_diff($ut) {
 	$in_future = ($seconds < 0);
 	$seconds   = abs($seconds);
 
+	# If we're asked about 0 it means the event has never occured (usually)
+	if ($ut === 0) {
+		return "Never";
+	}
+
 	$num  = 0;
 	$unit = "";
 

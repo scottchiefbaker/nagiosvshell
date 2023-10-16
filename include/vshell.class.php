@@ -793,6 +793,15 @@ class vshell {
 
 		return $ret;
 	}
+
+	public function get_host_config_info($host_name) {
+		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$one = $x['host'] ?? [];
+
+		$ret = $one[$host_name];
+
+		return $ret;
+	}
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

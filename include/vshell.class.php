@@ -784,6 +784,15 @@ class vshell {
 
 		return $ret;
 	}
+
+	public function get_service_config_info($host_name, $svc_name) {
+		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$one = $x['service'] ?? [];
+
+		$ret = $one[$host_name][$svc_name] ?? [];
+
+		return $ret;
+	}
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

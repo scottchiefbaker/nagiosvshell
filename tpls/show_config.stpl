@@ -1,0 +1,27 @@
+<div class="detail_wrapper">
+	<h3><b>Configuration for:</b> <a href="service_details.php?host_name={$host_name|urlencode}&amp;svc_name={$svc_name|urlencode}">{$svc_name}</a></h3>
+
+	<h4 class="text-start"><b>Host:</b> <span id="host" data-value="{$host_name}"><a href="host_details.php?host_name={$host_name}">{$host_name}</a></span> <a class="ms-2" title="View all services for this host" href="services.php?host_filter={$host_name}">{$icons.list}</a></h4>
+	{if $svc_info.notes}
+	<h4 class="text-start"><b>Notes:</b> {$svc_info.notes}</h4>
+	{/if}
+
+	<div class="mt-3">
+		{foreach $svc_info as $key => $val}
+
+			{* Only show the ones that are scalars (not arrays) *}
+			{if is_scalar($val)}
+			<div class="d-flex mb-1">
+				<div class="w-25 text-end bg-secondary text-white pe-2 me-1">
+					{$key|capitalize}
+				</div>
+				<div class="w-75 ps-2 bg-light">
+					{if !is_numeric($val)}<code>{/if}
+					{$val}
+					{if !is_numeric($val)}</code>{/if}
+				</div>
+			</div>
+			{/if}
+		{/foreach}
+	</div>
+</div>

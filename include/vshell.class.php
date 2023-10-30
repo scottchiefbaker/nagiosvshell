@@ -19,9 +19,11 @@ class vshell {
 	public $host_state_map = [ -1 => 'Bees?', 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
 	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
 
-	function __construct() {
+	function __construct($opts = []) {
 		$this->start_time = microtime(1);
 		$this->base_dir   = dirname(__FILE__) . "/../";
+
+		$simple = $opts['simple'] ?? false;
 
 		// Make sure we're logged in before showing any data
 		$this->username = $_SERVER['REMOTE_USER'] ?? "";
@@ -34,7 +36,7 @@ class vshell {
 		$icons = $this->get_icons();
 		$this->sluz->assign('icons', $icons);
 		$this->sluz->assign('username', $this->username);
-		$this->sluz->assign('global', $this->get_global_vars());
+		$this->sluz->assign('global', $this->get_global_vars($simple));
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
 
 		$this->perms = $this->get_user_perms(CGICFG, $this->username);
@@ -132,7 +134,7 @@ class vshell {
 		return $ret;
 	}
 
-	function get_global_vars() {
+	function get_global_vars($simple = false) {
 		$base_dir = dirname(__FILE__) . "/../";
 		$ini_path = "$base_dir/config/vshell.conf";
 
@@ -157,10 +159,13 @@ class vshell {
 
 		//////////////////////////////////////////////////////////////
 
-		$raw = $this->parse_nagios_status_file(STATUSFILE);
+		if (!$simple) {
+			$raw = $this->parse_nagios_status_file(STATUSFILE);
+		}
 
-		$program = $raw['programstatus'] ?? [];
-		$ne      = ($program['enable_notifications'] === "1");
+		$program    = $raw['programstatus'] ?? [];
+		$enable_not = $program['enable_notifications'] ?? 0;
+		$ne         = $enable_not === "1";
 
 		$ret['notifications_enabled'] = $ne;
 		$ret['cmd_file']              = CMDFILE;

@@ -390,7 +390,7 @@ class vshell {
 	}
 
 	function get_service_details_raw() {
-		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$one = $x['service'] ?? [];
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
 		$two = $y['servicestatus'] ?? [];
@@ -443,7 +443,7 @@ class vshell {
 
 	function get_host_data_raw() {
 		// Merge the current status and the config data
-		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$one = $x['host'] ?? [];
 		$y   = $this->parse_nagios_status_file(STATUSFILE);
 		$two = $y['hoststatus'] ?? [];
@@ -487,7 +487,7 @@ class vshell {
 		$ret = [];
 
 		// Get all the groups and their children
-		$x  = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x  = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$hg = $x['hostgroup'] ?? [];
 
 		// Loop through the list
@@ -522,7 +522,7 @@ class vshell {
 		$ret = [];
 
 		// Get the raw data
-		$x      = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x      = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$hg     = $x['hostgroup'] ?? [];
 		$groups = [];
 
@@ -554,7 +554,7 @@ class vshell {
 		$ret = [];
 
 		// Get the raw data
-		$x      = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x      = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$hg     = $x['hostgroup'] ?? [];
 		$groups = [];
 
@@ -596,7 +596,171 @@ class vshell {
 		return $ret;
 	}
 
-	function parse_nagios_status_file($file) {
+	function parse_nagios_status_file($file = STATUSFILE, $use_cache = true) {
+		$start = microtime(1);
+		$fp    = fopen($file, 'r');
+
+		if (!$fp) {
+			$this->error_out("Unable to open '$file' for reading");
+		}
+
+		// Basic memoizing to save time on repeat calls
+		static $cache;
+		if ($use_cache && !empty($cache[$file])) {
+			return $cache[$file];
+		}
+
+		// Return object
+		$ret  = [];
+		// Section subheader
+		$type = '';
+		$obj  = [];
+
+		while ($line = fgets($fp)) {
+			$first_char = $line[0];
+
+			// If the line is a comment or blank skip it
+			if ($first_char === "#") {
+				continue;
+			}
+
+			// Key/value: entry_time=1689262170
+			if (str_contains($line, "=")) {
+				$line  = trim($line);
+				$parts = explode("=", $line, 2);
+				//kd($line, $file);
+
+				$key = $parts[0] ?? "";
+				$val = $parts[1] ?? "";
+
+				$obj[$key] = $val;
+			// Start of a section: hoststatus {
+			} elseif (str_contains($line, "{")) {
+				$parts = explode(" {", $line, 2);
+
+				$str = $parts[0] ?? "";
+				$str = str_replace("define ", "", $str);
+
+				$type = $str;
+			// End of a section
+			} elseif (str_contains($line, "}")) {
+				// Build a hash with appropriate sections
+				if ($type === "servicestatus") {
+					$hn = $obj['host_name'] ?? "";
+					$sn = $obj['service_description'] ?? "";
+					$ret[$type][$hn][$sn] = $obj;
+				} elseif ($type === "hoststatus" ) {
+					$hn = $obj['host_name'] ?? "";
+					$ret[$type][$hn] = $obj;
+				} elseif ($type === "hostcomment") {
+					$hn = $obj['host_name'];
+					$ret[$type][$hn][] = $obj;
+				} elseif ($type === "servicecomment") {
+					$hn = $obj['host_name'];
+					$sn = $obj['service_description'];
+					$ret[$type][$hn][$sn][] = $obj;
+				// These each have a single section only
+				} elseif (in_array($type, ["info", "programstatus"])) {
+					$ret[$type] = $obj;
+				} else {
+					// Store this object
+					$ret[$type][] = $obj;
+				}
+
+				// Reset object for next loop
+				$obj = [];
+			} else {
+				// Bees?
+			}
+		}
+
+		$cache[$file] = $ret;
+
+		//if (!empty($_GET['debug'])) {
+		//    printf("StatusFile: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);
+		//}
+
+		return $ret;
+	}
+
+	function parse_nagios_objects_file($file = OBJECTSFILE, $use_cache = true) {
+		$start = microtime(1);
+		$fp    = fopen($file, 'r');
+
+		if (!$fp) {
+			$this->error_out("Unable to open '$file' for reading");
+		}
+
+		// Basic memoizing to save time on repeat calls
+		static $cache;
+		if ($use_cache && !empty($cache[$file])) {
+			return $cache[$file];
+		}
+
+		// Return object
+		$ret  = [];
+		// Section subheader
+		$type = '';
+
+		while ($line = fgets($fp)) {
+			$first_char = $line[0];
+			$line       = trim($line);
+
+			// If the line is a comment or blank skip it
+			if ($first_char === "#") {
+				continue;
+			}
+
+			// Key/value: low_flap_threshold  0.000000
+			if (str_contains($line, "\t")) {
+				$line  = trim($line);
+				$parts = explode("\t", $line, 2);
+
+				$key = $parts[0] ?? "";
+				$val = $parts[1] ?? "";
+
+				//kd([$line, $key, $val]);
+
+				$obj[$key] = $val;
+			// Start of a section: define hoststatus {
+			} elseif (str_contains($line, "{")) {
+				// We want the middle word of this line
+				$parts = explode(" ", $line);
+				$str   = $parts[1] ?? "";
+
+				$type = $str;
+			// End of a section
+			} elseif ($line === "}") {
+				// Build a hash with appropriate sections
+				if ($type === "host") {
+					$hn = $obj['host_name'];
+					$ret[$type][$hn] = $obj;
+				} elseif ($type === 'service') {
+					$hn = $obj['host_name'];
+					$sn = $obj['service_description'];
+					$ret[$type][$hn][$sn] = $obj;
+				} else {
+					// Store this object
+					$ret[$type][] = $obj;
+				}
+
+				// Reset object for next loop
+				$obj = [];
+			} else {
+				// Bees?
+			}
+		}
+
+		$cache[$file] = $ret;
+
+		//if (!empty($_GET['debug'])) {
+		//    printf("ObjectFile: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);
+		//}
+
+		return $ret;
+	}
+
+	function parse_nagios_status_file_old($file) {
 		$start = microtime(1);
 		$fp    = fopen($file, 'r');
 
@@ -670,7 +834,7 @@ class vshell {
 		$cache[$file] = $ret;
 
 		//if (!empty($_GET['debug'])) {
-		//    printf("New: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);
+		//    printf("StatusOld: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);
 		//}
 
 		return $ret;
@@ -791,7 +955,7 @@ class vshell {
 	}
 
 	public function get_service_config_info($host_name, $svc_name) {
-		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$one = $x['service'] ?? [];
 
 		$ret = $one[$host_name][$svc_name] ?? [];
@@ -800,7 +964,7 @@ class vshell {
 	}
 
 	public function get_host_config_info($host_name) {
-		$x   = $this->parse_nagios_status_file(OBJECTSFILE);
+		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$one = $x['host'] ?? [];
 
 		$ret = $one[$host_name];

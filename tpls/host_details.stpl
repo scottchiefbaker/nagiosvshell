@@ -9,7 +9,7 @@
 	</h4>
 	{/if}
 	{if $host_info.notes}
-	<h4 class="text-start"><b>Notes:</b> {$host_info.notes}</h4>
+	<h6 class="text-start"><b>Notes:</b> {$host_info.notes}</h6>
 	{/if}
 
 	<div class="d-xl-flex mt-3">

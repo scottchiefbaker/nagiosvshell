@@ -6,7 +6,7 @@
 			<th class="hostname">Host Name</th>
 			<th class="service_description">Service</th>
 			<th class="status">Status</th>
-			<th class="d-none d-xxl-table-cell">Last Change</th>
+			<th class="d-none">Last Change</th>
 			<th class="attempt">Attempt</th>
 			<th class="last_check">Last Check</th>
 			<th class="plugin_output">Status Information</th>
@@ -61,7 +61,7 @@
 				</div>
 			</td>
 			<td column-name="Status" class="{$x.state_str} status center">{$x.state_str}</td>
-			<td column-name="Last Change" class="d-none d-xxl-table-cell">{$x.last_state_change|human_time_diff}</td>
+			<td column-name="Last Change" class="d-none">{$x.last_state_change|human_time_diff}</td>
 			<td column-name="Attempt" class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
 			<td column-name="Last Check" class="last_check">{$x.last_check}</td>
 			<td column-name="Output" class="plugin_output"><div class="plugin_output">{$x.plugin_output}</div></td>

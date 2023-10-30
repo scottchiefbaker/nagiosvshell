@@ -1,6 +1,5 @@
 <?php
 
-
 // Nagios V-Shell
 // Copyright (c) 2010-2011 Nagios Enterprises, LLC.
 // Written by Mike Guthrie <mguthrie@nagios.com>
@@ -81,11 +80,6 @@ if (is_readable($ini_path)) {
 	print "Unable to load vshell.conf";
 	die;
 }
-
-// Server root information
-define("BASEURL"   , $base . '/' . $ini_array["BASEURL"] . '/');
-define("SERVERBASE", $base); //http://<address>
-define('DIRBASE'   , $base_dir); //assigns current directory as root
 
 // Nagios Core locations
 define('COREURL', $base   . '/' . $ini_array["COREURL"] . '/'); //Nagios core web URL

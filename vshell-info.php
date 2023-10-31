@@ -12,9 +12,9 @@ sw();
 $x   = $v->parse_nagios_status_file(STATUSFILE, false);
 $s_ms = sw();
 
-$count['contactstatus']  = count($x['contactstatus'] ?? 0);
-$count['hoststatus']     = count($x['hoststatus'] ?? 0);
-$count['servicestatus']  = count($x['servicestatus'] ?? 0);
+$count['contactstatus']  = count($x['contactstatus'] ?? []);
+$count['hoststatus']     = count($x['hoststatus']    ?? []);
+$count['servicestatus']  = count($x['servicestatus'] ?? []);
 
 $hc = $x['hostcomment'] ?? [];
 $sc = $x['servicecomment'] ?? [];
@@ -48,7 +48,8 @@ $o_ms = sw();
 // These are all one level deep
 $parts = qw("command contact contactgroup host hostgroup timeperiod");
 foreach ($parts as $name) {
-	$count[$name] = count($y[$name] ?? 0);
+	$data         = $y[$name] ?? [];
+	$count[$name] = count($data);
 }
 
 // These are all two levels deep

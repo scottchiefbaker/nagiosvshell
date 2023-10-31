@@ -7,7 +7,7 @@
 		<meta http-equiv="refresh" content="{$global.html_refresh_seconds}">
 		{/if}
 
-		<title>Nagios V-Shell dashboard</title>
+		<title>{$page_title|default:"Nagios V-Shell dashboard"}</title>
 
 		<link rel="stylesheet" href="css/bootstrap5.min.css" type="text/css" media="screen" />
 		<link rel="stylesheet" href="css/style.css" type="text/css" media="screen" />

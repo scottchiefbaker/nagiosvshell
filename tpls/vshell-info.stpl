@@ -1,0 +1,39 @@
+<h2 class="mb-3">V-Shell debug information</h2>
+
+<div class="mb-3">
+	Parsed <code>{$status_file}</code> ({$status_size|human_size}) in {$status_millis|round:2} ms
+
+	{foreach $status_counts as $key => $val}
+	<div class="d-flex mb-1 mt-1">
+		<div class="bg-secondary text-light text-end ms-4 pe-2" style="width: 12em;">
+			{$key}
+		</div>
+		<div class="ps-2 bg-light w-100">
+			{$val}
+		</div>
+	</div>
+	{/foreach}
+</div>
+
+<div class="mb-3">
+	Parsed <code>{$object_file}</code> ({$object_size|human_size}) in {$object_millis|round:2} ms
+
+	{foreach $object_counts as $key => $val}
+	<div class="d-flex mb-1 mt-1">
+		<div class="bg-secondary text-light text-end ms-4 pe-2" style="width: 12em;">
+			{$key}
+		</div>
+		<div class="ps-2 bg-light w-100">
+			{$val}
+		</div>
+	</div>
+	{/foreach}
+</div>
+
+<div class="mb-3">
+	Parsed <code>{$nagios_file}</code> ({$nagios_size|human_size}) in {$nagios_millis|round:2} ms
+</div>
+
+<div class="alert alert-info">
+	Total time to parse status and config files: <b>{$total_parse|round:2} ms</b> ({$query_time_ms} ms total time)
+</div>

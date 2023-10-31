@@ -123,5 +123,11 @@
 		<b>Warning:</b> Command file <code>{$cmd_file}</code> is not writable. Commands may not function.
 	</div>
 	{/if}
+
+	{if !function_exists('json_encode')}
+	<div class="alert alert-warning py-2 text-center mb-3">
+		<b>Warning:</b> <code>json_encode()</code> support not found in PHP. Commands may not function.
+	</div>
+	{/if}
 </div>
 <!-- ##################### GLOBAL NOTIFICATION END ##################### -->

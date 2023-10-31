@@ -200,6 +200,7 @@ class vshell {
 		$ret['cmd_file_writable']     = is_writable(CMDFILE);
 		$ret['html_refresh_seconds']  = intval($ini_array['REFRESH_SECONDS'] ?? 60);
 		$ret['core_url']              = $core_url;
+		$ret['nagios_cfg_file']       = $nagios_cfg_file;
 
 		// Number of records to show on a page (for pagination)
 		$this->result_limit = intval($ini_array['RESULT_LIMIT'] ?? 0);
@@ -1001,7 +1002,7 @@ class vshell {
 		return $ret;
 	}
 
-	private function parse_nagios_config($file) {
+	public function parse_nagios_config($file) {
 		$lines = file($file);
 		$ret   = [];
 

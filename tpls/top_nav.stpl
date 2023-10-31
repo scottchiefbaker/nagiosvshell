@@ -95,7 +95,7 @@
 				</li>
 
 				<li class="nav-item">
-					<a class="nav-link" title="Access Nagios Core interface" href="https://nagios.web-ster.com/nagios/">Nagios Core</a>
+					<a class="nav-link" title="Access Nagios Core interface" href="{$global.core_url}">Nagios Core</a>
 				</li>
 
 			</ul>

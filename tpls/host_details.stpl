@@ -117,23 +117,23 @@
 				</tr>
 				<tr>
 					<td>Send custom notification</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=159&amp;host={$host_name}" title="Send Custom Notification">{$icons.bell}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=159&amp;host={$host_name}" title="Send Custom Notification">{$icons.bell}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime for host</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=55&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=55&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime and all services</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=86&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=86&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule a check for all services</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=17&amp;host={$host_name}" title="Schedule Downtime">{$icons.clock}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=17&amp;host={$host_name}" title="Schedule Downtime">{$icons.clock}</a></td>
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=33&amp;host={$host_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=33&amp;host={$host_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
 			{/if}

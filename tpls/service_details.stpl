@@ -105,11 +105,11 @@
 			<table>
 				<tr>
 					<td>Send custom notification</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=160&amp;host={$host_name}&amp;service={$svc_name}" title="Send Custom Notification">{$icons.bell}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=160&amp;host={$host_name}&amp;service={$svc_name}" title="Send Custom Notification">{$icons.bell}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=56&amp;host={$host_name}&amp;service={$svc_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=56&amp;host={$host_name}&amp;service={$svc_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Check Immediately</td>
@@ -117,7 +117,7 @@
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
 			{/if}

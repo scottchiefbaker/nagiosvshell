@@ -1,25 +1,5 @@
 <?php
 
-// Borrowed from : https://github.com/igorw/get-in
-// Discussion    : http://nikic.github.io/2014/01/10/The-case-against-the-ifsetor-function.html
-function get_in(array $array, array $keys, $default = null) {
-	if (!$keys) {
-		return $array;
-	}
-	// This is a micro-optimization, it is fast for non-nested keys, but fails for null values
-	if (count($keys) === 1 && isset($array[$keys[0]])) {
-		return $array[$keys[0]];
-	}
-	$current = $array;
-	foreach ($keys as $key) {
-		if (!is_array($current) || !array_key_exists($key, $current)) {
-			return $default;
-		}
-		$current = $current[$key];
-	}
-	return $current;
-}
-
 // PHP implementation of Perl's qw() (quote word)
 // https://perlmaven.com/qw-quote-word
 function qw($str,$return_hash = false) {

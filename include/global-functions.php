@@ -171,4 +171,14 @@ function human_time(int $time,$approximate = 0) {
 	return $ret;
 }
 
+function human_size($size) {
+	# If the size is 0 or less, return 0 B this stops math errors from occurring
+	if ($size <= 0) {
+		return '0B';
+	} else {
+		$unit=array('B','KB','MB','GB','TB','PB');
+		return @round($size/pow(1024,($i=floor(log($size,1024)))),2) . $unit[$i];
+	}
+}
+
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

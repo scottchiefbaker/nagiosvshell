@@ -646,10 +646,20 @@ class vshell {
 		$type = '';
 		$obj  = [];
 
+		/* Example:
+
+		headername {
+			key1=val1
+			key2=val2
+			name=Jason
+		}
+
+		*/
+
 		while ($line = fgets($fp)) {
 			$first_char = $line[0];
 
-			// If the line is a comment or blank skip it
+			// If the line is a comment
 			if ($first_char === "#") {
 				continue;
 			}
@@ -732,12 +742,22 @@ class vshell {
 		// Section subheader
 		$type = '';
 
+		/* Example:
+
+		define headername {
+			key1	val1
+			key2	val2
+			name	Jason
+		}
+
+		*/
+
 		while ($line = fgets($fp)) {
-			$first_char = $line[0];
 			$line       = trim($line);
+			$first_char = $line[0] ?? "";
 
 			// If the line is a comment or blank skip it
-			if ($first_char === "#") {
+			if ($first_char === "#" || !$line) {
 				continue;
 			}
 

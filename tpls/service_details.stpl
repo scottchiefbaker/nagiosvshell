@@ -5,6 +5,12 @@
 	<h6 class="text-start"><b>Notes:</b> {$svc_info.notes}</h6>
 	{/if}
 
+	{if $svc_info.problem_has_been_acknowledged}
+	<div class="alert alert-warning">
+		<b>Note:</b> Problem has been acknowledged
+	</div>
+	{/if}
+
 	<div class="d-xl-flex mt-3">
 		<div class="flex-fill me-xl-4">
 			<h5 class="alert alert-secondary p-2">Advanced details</h5>

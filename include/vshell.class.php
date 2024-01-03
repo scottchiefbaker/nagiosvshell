@@ -408,6 +408,7 @@ class vshell {
 
 			}
 
+			// Sort each group of services naturally
 			ksort($svcs[$hn], SORT_FLAG_CASE | SORT_NATURAL);
 		}
 
@@ -415,6 +416,9 @@ class vshell {
 		if ($has_filters) {
 			$svcs = $this->filter_service_results($svcs, $state_filter, $name_filter, $host_filter);
 		}
+
+		// Sort each hostname naturally
+		ksort($svcs, SORT_FLAG_CASE | SORT_NATURAL);
 
 		return $svcs;
 	}

@@ -144,7 +144,7 @@
 	<hr />
 
 	<div class="text-center" style="font-size: 75%;">
-		<a href="{$cmd_api}cmd_typ=3&host={$host_name}&service={$svc_name}">Add a comment</a>
+		<a href="{$cmd_api}?cmd_typ=3&host={$host_name}&service={$svc_name}">Add a comment</a>
 	</div>
 	<table class="table table-sm table-striped">
 		<thead class="table-dark">
@@ -160,7 +160,7 @@
 				<td title="{$x.entry_time|v_date_format}">{$x.entry_time|human_time_diff} by <b>{$x.author}</b></td>
 				<td>{$x.comment_data}</td>
 				<td class="text-center">
-					<a href="{$cmd_api}cmd_typ=4&amp;com_id={$x.comment_id}" title="Delete Comment">
+					<a href="{$cmd_api}?cmd_typ=4&amp;com_id={$x.comment_id}" title="Delete Comment">
 						{$icons.trash}
 					</a>
 				</td>

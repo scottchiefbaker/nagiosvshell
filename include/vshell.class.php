@@ -407,14 +407,14 @@ class vshell {
 				}
 
 			}
+
+			ksort($svcs[$hn], SORT_FLAG_CASE | SORT_NATURAL);
 		}
 
 		$has_filters = ($state_filter || $name_filter || $host_filter);
 		if ($has_filters) {
 			$svcs = $this->filter_service_results($svcs, $state_filter, $name_filter, $host_filter);
 		}
-
-		ksort($svcs, SORT_FLAG_CASE | SORT_NATURAL);
 
 		return $svcs;
 	}

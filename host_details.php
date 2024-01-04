@@ -14,6 +14,9 @@ $host_name    = $_GET['host_name']    ?? "";
 ////////////////////////////////////////////////////////
 
 $host_info = $v->get_host_data($host_name);
+if (!$host_info) {
+	$v->error_out("Host $host_name not found", 84525);
+}
 
 $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("host_name", $host_name);

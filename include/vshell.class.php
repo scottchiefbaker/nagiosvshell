@@ -460,6 +460,11 @@ class vshell {
 		$raw = $this->get_service_details_raw();
 		$ret = $raw[$host_name][$svc_name] ?? [];
 
+		// Nothing found, don't keep going
+		if (!$ret) {
+			return [];
+		}
+
 		$state_id         = $ret['current_state'] ?? -1;
 		$ret['state_str'] = $this->svc_state_map[$state_id];
 
@@ -505,6 +510,11 @@ class vshell {
 	function get_host_data($name) {
 		$raw = $this->get_host_data_raw();
 		$ret = $raw[$name] ?? [];
+
+		// Nothing found, don't keep going
+		if (!$ret) {
+			return [];
+		}
 
 		// Get the groups this host is in
 		$ret['host_groups']    = $this->get_hostgroups($name);

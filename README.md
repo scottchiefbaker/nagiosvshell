@@ -37,7 +37,7 @@ you *may* need to update your Apache configuration. You can use
 
 ## Getting Started
 
-To get started, log into your Nagios V-Shell interface at
+Log into your Nagios V-Shell interface at
 `http://www.mydomain.com/nagios/vshell`, and enter your Nagios Core
 credentials.
 

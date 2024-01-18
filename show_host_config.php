@@ -33,9 +33,6 @@ $v->sluz->assign("svc_name" , $svc_name);
 $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("host_info", $host_info);
 
-$v->sluz->assign("cmd_api"  , CORECMD);
-$v->sluz->assign("core_cgi" , CORECGI);
-
 print $v->fetch("tpls/show_host_config.stpl");
 
 ////////////////////////////////////////////////////////////

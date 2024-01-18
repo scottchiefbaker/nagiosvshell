@@ -51,11 +51,11 @@
 					</a>
 
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=3">Comments</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=6">Downtime</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=0">Process Info</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=4">Performance Info</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/extinfo.cgi?type=7">Scheduling Queue</a>
+						<a class="dropdown-item" href="{$core_cgi}extinfo.cgi?type=3">Comments</a>
+						<a class="dropdown-item" href="{$core_cgi}extinfo.cgi?type=6">Downtime</a>
+						<a class="dropdown-item" href="{$core_cgi}extinfo.cgi?type=0">Process Info</a>
+						<a class="dropdown-item" href="{$core_cgi}extinfo.cgi?type=4">Performance Info</a>
+						<a class="dropdown-item" href="{$core_cgi}extinfo.cgi?type=7">Scheduling Queue</a>
 
 						<div class="dropdown-divider"></div>
 						<div class="dropdown-item notification-menu mr-1 d-inline-block">
@@ -75,13 +75,13 @@
 					</a>
 
 					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/avail.cgi">Availability</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/trends.cgi">Trends</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/history.cgi?host=all">Alert History</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/summary.cgi">Alert Summary</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/histogram.cgi">Alert Histogram</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/notifications.cgi?contact=all">Notifications</a>
-						<a class="dropdown-item" href="https://nagios.web-ster.com/nagios/cgi-bin/showlog.cgi">Event Log</a>
+						<a class="dropdown-item" href="{$core_cgi}avail.cgi">Availability</a>
+						<a class="dropdown-item" href="{$core_cgi}trends.cgi">Trends</a>
+						<a class="dropdown-item" href="{$core_cgi}history.cgi?host=all">Alert History</a>
+						<a class="dropdown-item" href="{$core_cgi}summary.cgi">Alert Summary</a>
+						<a class="dropdown-item" href="{$core_cgi}histogram.cgi">Alert Histogram</a>
+						<a class="dropdown-item" href="{$core_cgi}notifications.cgi?contact=all">Notifications</a>
+						<a class="dropdown-item" href="{$core_cgi}showlog.cgi">Event Log</a>
 					</div>
 				</li>
 

@@ -71,13 +71,6 @@
 						{/if}
 					</tr>
 
-					<!--
-						<tr>
-						<td class="enabled">Obsession: Enabled</td>
-						<td class="center"><a href="https://nagios.web-ster.com/nagios/cgi-bin/cmd.cgi?cmd_typ=100&amp;host=rgnet&amp;service=Ping"><img src="views/images/action_small.gif" title="Toggle Obsession" class="iconLink" alt="Toggle" /></a></td>
-						</tr>
-					-->
-
 					<tr>
 						<td class="{if $host_info.notifications_enabled}enabled{else}disabled{/if}">Notifications: {if $host_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_host_commands}

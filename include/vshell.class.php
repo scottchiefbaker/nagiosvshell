@@ -34,10 +34,12 @@ class vshell {
 		$this->sluz = new sluz;
 
 		$icons = $this->get_icons();
-		$this->sluz->assign('icons', $icons);
-		$this->sluz->assign('username', $this->username);
-		$this->sluz->assign('global', $this->get_global_vars($simple));
+		$this->sluz->assign('icons'         , $icons);
+		$this->sluz->assign('username'      , $this->username);
+		$this->sluz->assign('global'        , $this->get_global_vars($simple));
 		$this->sluz->assign('VSHELL_VERSION', $this->version);
+		$this->sluz->assign("cmd_api"       , CORECMD);
+		$this->sluz->assign("core_cgi"      , CORECGI);
 
 		$this->perms = $this->get_user_perms(CGICFG, $this->username);
 		$this->sluz->assign('perms', $this->perms);

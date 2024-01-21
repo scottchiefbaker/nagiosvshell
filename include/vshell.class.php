@@ -918,7 +918,7 @@ class vshell {
 
 	function get_user_perms($file, $username) {
 		if (!is_readable($file)) {
-			$this->error_out("Unable to read permission file '$file'", 48242);
+			$this->error_out("Unable to read permission file <code>$file</code>", 48242);
 		}
 
 		// Loop through each line of the file

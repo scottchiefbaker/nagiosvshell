@@ -242,7 +242,13 @@ class vshell {
 		$skin = "tpls/skin.stpl";
 		$ret  = $this->sluz->fetch($skin);
 
-		if (!empty($_GET['debug'])) {
+		$perms     = $this->perms           ?? [];
+		$all_hosts = $perms['all_hosts']    ?? false;
+		$all_svcs  = $perms['all_services'] ?? false;
+		$is_admin  = (($all_hosts === true) && ($all_svcs === true));
+
+		// Show debug information if you have enough permissions
+		if ($is_admin && !empty($_GET['debug'])) {
 			k($this->sluz->tpl_vars);
 		}
 

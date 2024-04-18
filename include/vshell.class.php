@@ -162,6 +162,7 @@ class vshell {
 		$nagios_cfg = $this->parse_nagios_config($nagios_cfg_file);
 
 		$this->config = $nagios_cfg;
+
 		if ($_SERVER['HTTPS']) {
 			$proto = "https";
 		} else {
@@ -208,6 +209,101 @@ class vshell {
 
 		// Number of records to show on a page (for pagination)
 		$this->result_limit = intval($ini_array['RESULT_LIMIT'] ?? 0);
+
+		return $ret;
+	}
+
+	function get_log_items($host = "", $service = "") {
+		// Current log file
+		$file  = $this->config['log_file'];
+		$lines = file($file);
+		$ret   = [];
+
+		// Path to the previous Nagios logs
+		$archive = $this->config['log_archive_path'];
+
+		// How many days to go backwards
+		$days   = 2;
+		$utime  = time();
+		for ($i = 1; $i <= $days; $i++) {
+			$ut = $utime - (86400 * $i);
+
+			// Example: nagios-12-31-2023-00.log
+			// MM-DD-YYYY
+			$log_file = $archive . "/nagios-" . date("m-d-Y", $ut) . "-00.log";
+
+			// Warn if we can't load the log file
+			if (!is_readable($log_file)) {
+				$this->error_out("Unable to read <code>$log_file</code>", 12321);
+			}
+
+			// Get lines from the prev file
+			$new   = file($log_file);
+			$lines = array_merge($lines, $new);
+		}
+
+		// [1713340687] SERVICE ALERT: directlink-probe;Hulk - Disk - C:;WARNING;SOFT;1;WARNING: Used_percent was 86.10 %
+		foreach ($lines as $line) {
+			if (preg_match("/\[(\d+?)\] (.+?): (.+)/", $line, $m)) {
+				$unixtime = $m[1];
+				$action   = $m[2];
+				$str      = $m[3];
+				$parts    = preg_split("/;/", $str);
+
+				$obj = [
+					'datetime' => $unixtime,
+					'action'   => $action,
+				];
+
+				if ($action === "SERVICE ALERT") {
+					$obj['host']     = $parts[0];
+					$obj['service']  = $parts[1];
+					$obj['status']   = $parts[2];
+					$obj['severity'] = $parts[3];
+					$obj['attempt']  = $parts[4];
+					$obj['text']     = $parts[5];
+				} elseif ($action === "HOST ALERT") {
+					$obj['host']     = $parts[0];
+					$obj['status']   = $parts[1];
+					$obj['severity'] = $parts[2];
+					$obj['attempt']  = $parts[3];
+					$obj['text']     = $parts[4];
+				} else {
+					//print "$action<br />\n";
+				}
+
+				// If we're filtering for a specific host we do it here
+				$found_host = $obj['host']    ?? "";
+				$found_svc  = $obj['service'] ?? "";
+
+				// Filtering for a service
+				if (($host && $service) && ($found_host === $host && $found_svc === $service)) {
+					$ret[] = $obj;
+				// Filtering for a host
+				} elseif ((!$service && $host) && $found_host === $host) {
+					$ret[] = $obj;
+				}
+
+				// We're getting ALL of them
+				if (!$host) {
+					$ret = $obj;
+				}
+
+			}
+		}
+
+		// Sort the entries using log_sort
+		usort($ret, 'vshell::log_sort');
+
+		return $ret;
+	}
+
+	// Sort via reverse unix datetime (newest first)
+	function log_sort($a, $b) {
+		$one = $a['datetime'] ?? 0;
+		$two = $b['datetime'] ?? 0;
+
+		$ret = $b <=> $a;
 
 		return $ret;
 	}

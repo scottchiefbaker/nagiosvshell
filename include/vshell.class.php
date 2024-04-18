@@ -382,6 +382,9 @@ class vshell {
 			$ret = $this->filter_host_results($ret, $state_filter, $name_filter, $host_filter);
 		}
 
+		// Sort naturally
+		ksort($ret, SORT_FLAG_CASE | SORT_NATURAL);
+
 		return $ret;
 	}
 

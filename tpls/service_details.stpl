@@ -136,6 +136,20 @@
 
 	<hr />
 
+	<div class="fw-bold mb-1 ms-1">Log history:</div>
+	<table>
+	{foreach $log_items as $x}
+		<tr>
+			<td style="width: 14em;">{$x.datetime|v_date_format}</td>
+			<td style="width: 8em;" class="bg-{$x.status|strtolower}">{$x.status}</td>
+			{*<td>{$x.attempt}</td>*}
+			<td>{$x.text}</td>
+		</tr>
+	{/foreach}
+	</table>
+
+	<hr />
+
 	<div class="text-center" style="font-size: 75%;">
 		<a href="{$cmd_api}?cmd_typ=3&host={$host_name}&service={$svc_name}">Add a comment</a>
 	</div>

@@ -20,9 +20,13 @@ if (!$svc_info) {
 	$v->error_out("Service $svc_name not found", 48201);
 }
 
+// Service log items
+$log_items = $v->get_log_items($host_name, $svc_name);
+
 $v->sluz->assign("svc_name" , $svc_name);
 $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("svc_info" , $svc_info);
+$v->sluz->assign("log_items", $log_items);
 
 print $v->fetch("tpls/service_details.stpl");
 

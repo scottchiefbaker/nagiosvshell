@@ -18,6 +18,7 @@ class vshell {
 	public $result_limit   = 0;
 	public $host_state_map = [ -1 => 'Bees?', 0 => 'UP', 1 => 'DOWN', 2 => 'UNREACHABLE', 3 => 'UNKNOWN' ];
 	public $svc_state_map  = [ -1 => 'Bees?', 0 => 'OK', 1 => 'WARNING', 2 => 'CRITICAL', 3 => 'UNKNOWN' ];
+	public $config         = [];
 
 	function __construct($opts = []) {
 		$this->start_time = microtime(1);
@@ -160,6 +161,7 @@ class vshell {
 
 		$nagios_cfg = $this->parse_nagios_config($nagios_cfg_file);
 
+		$this->config = $nagios_cfg;
 		if ($_SERVER['HTTPS']) {
 			$proto = "https";
 		} else {

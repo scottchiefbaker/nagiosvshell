@@ -2,6 +2,9 @@
 
 $(document).ready(function() {
 	init_notification_toggle();
+
+	// Anything related to the log history section
+	init_log_history();
 });
 
 function init_toggles() {
@@ -97,4 +100,23 @@ function init_notification_toggle() {
 
 		$.ajax(url,options);
 	});
+}
+
+function init_log_history() {
+	// Hide the plus/expand sign if there are less than 10 entries
+	var log_count = $('.log_item').length;
+	if (log_count <= 10) {
+		$('.show_more_log').hide();
+	}
+
+	// Show all the log entries when clicked
+	$(".show_more_log").css('cursor', 'pointer').click(function() {
+		show_all_logs();
+		$(this).hide(); // Remove the show more link
+		location.href = "#log_history";
+	});
+}
+
+function show_all_logs() {
+	$('.log_item').removeClass('d-none');
 }

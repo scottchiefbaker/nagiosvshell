@@ -1023,6 +1023,17 @@ class vshell {
 		exit(7);
 	}
 
+	function warn($err_msg, $err_num) {
+		static $warnings = [];
+
+		$warnings[] = [
+			'msg' => $err_msg,
+			'num' => $err_num,
+		];
+
+		$this->sluz->assign("__warnings", $warnings);
+	}
+
 	function get_user_perms($file, $username) {
 		if (!is_readable($file)) {
 			$this->error_out("Unable to read permission file <code>$file</code>", 48242);

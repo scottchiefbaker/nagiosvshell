@@ -29,6 +29,8 @@
 	{include file='tpls/top_nav.stpl'}
 
 	<div class="container-fluid mt-3 main_box">
+		{foreach $__warnings as $x}<div class="alert alert-warning"><b>Warning:</b> {$x.msg} (#{$x.num})</div>{/foreach}
+
 		{if $tac_data.host.all_up && $tac_data.service.all_up}
 		<div class="alert alert-success text-center p-2"><b>Congratulations:</b> All services and hosts are OK!<span class="ms-2">&#x2705;</span></div>
 		{/if}

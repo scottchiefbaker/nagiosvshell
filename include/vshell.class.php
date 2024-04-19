@@ -234,7 +234,8 @@ class vshell {
 
 			// Warn if we can't load the log file
 			if (!is_readable($log_file)) {
-				$this->error_out("Unable to read <code>$log_file</code>", 12321);
+				$this->warn("Unable to read <code>$log_file</code>", 12321);
+				continue;
 			}
 
 			// Get lines from the prev file

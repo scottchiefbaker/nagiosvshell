@@ -273,6 +273,12 @@ class vshell {
 					//print "$action<br />\n";
 				}
 
+				$action = preg_replace("/(SERVICE|HOST)/", "", $action);
+				$action = strtolower($action);
+				$action = trim($action);
+
+				$obj['action'] = $action;
+
 				// If we're filtering for a specific host we do it here
 				$found_host = $obj['host']    ?? "";
 				$found_svc  = $obj['service'] ?? "";

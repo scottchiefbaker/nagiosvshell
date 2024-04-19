@@ -14,45 +14,6 @@ if (document.all || document.getElementById) {
 	hidden = "hidden";
 }
 
-function showDropdown(id)
-{
-	if (document.layers)
-	{
-		//alert("there are layers");
-		menu = document.layers[id];
-	}
-	if(document.getElementById)
-	{
-		menu = document.getElementById(id);
-	}
-	if(menu)
-	{
-		//alert(menu);
-		menu.style.display = "block";
-	}
-
-}
-
-function hideDropdown(id)
-{
-	menu = document.getElementById(id);
-	if(menu)
-	{
-		//alert(menu);
-		menu.style.display = "none";
-	}
-
-}
-/*this function toggles the grids and configuration tables */
-function showHide(id)
-{
-	//alert(id);
-	var divID = "#"+id;
-	$(divID).slideToggle("fast");
-
-
-}
-
 function init_toggles() {
 	$(".input_toggle").on("click", function() {
 		var checked  = $(this).prop('checked');

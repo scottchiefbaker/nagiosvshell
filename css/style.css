@@ -116,13 +116,13 @@ a.sub-nav {
 
 /* ========== Formatting Classes ========== */
 /*.down, .critical, .red, .disabled, .Disabled, .DOWN, .CRITICAL {*/
-.down, .critical, .red, .DOWN, .CRITICAL, .bg-down, .bg-critical {
+.down, .critical, .red, .DOWN, .CRITICAL, .bg-down, .bg-critical, .bg-disabled {
 	background-color: #FF795F;
 }
 .warning, .yellow, .WARNING, .bg-warning {
 	background-color: #FEFF5F;
 }
-.ok, .green, .up, .enabled, .Enabled, .OK, .UP, .bg-ok, .bg-up {
+.ok, .green, .up, .enabled, .Enabled, .OK, .UP, .bg-ok, .bg-up, .bg-enabled {
 	background-color: #b2ff5f;
 }
 .unknown, .unreachable, .orange, .UNKNOWN, .UNREACHABLE, .bg-unknown {

@@ -44,6 +44,8 @@ class vshell {
 
 		$this->perms = $this->get_user_perms(CGICFG, $this->username);
 		$this->sluz->assign('perms', $this->perms);
+
+		$this->init_check();
 	}
 
 	function get_tac_data() {
@@ -1205,6 +1207,13 @@ class vshell {
 		}
 
 		return $ret;
+	}
+
+	// Some checks of the environment so we know we're good
+	private function init_check() {
+		if (!function_exists("json_encode")) {
+			$this->warn("<code>json_encode()</code> support not found in PHP. Commands may not function.", 38219);
+		}
 	}
 }
 

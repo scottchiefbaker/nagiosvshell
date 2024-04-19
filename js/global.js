@@ -4,16 +4,6 @@ $(document).ready(function() {
 	init_notification_toggle();
 });
 
-/* browser detection */
-if (document.layers) {
-	visible = "show";
-	hidden = "hide";
-}
-if (document.all || document.getElementById) {
-	visible = "visible";
-	hidden = "hidden";
-}
-
 function init_toggles() {
 	$(".input_toggle").on("click", function() {
 		var checked  = $(this).prop('checked');

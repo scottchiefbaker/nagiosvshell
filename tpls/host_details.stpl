@@ -45,7 +45,7 @@
 			<div class="mb-3">
 				<table>
 					<tr>
-						<td class="{if $host_info.active_checks_enabled}enabled{else}disabled{/if}">Active Checks: {if $host_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $host_info.active_checks_enabled}bg-enabled{else}bg-disabled{/if}">Active Checks: {if $host_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_host_commands}
 						<td class="center">
 							<div class="">
@@ -58,7 +58,7 @@
 						{/if}
 					</tr>
 					<tr>
-						<td class="{if $host_info.passive_checks_enabled}enabled{else}disabled{/if}">Passive Checks: {if $host_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $host_info.passive_checks_enabled}bg-enabled{else}bg-disabled{/if}">Passive Checks: {if $host_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_host_commands}
 						<td class="center">
 							<div class="">
@@ -72,7 +72,7 @@
 					</tr>
 
 					<tr>
-						<td class="{if $host_info.notifications_enabled}enabled{else}disabled{/if}">Notifications: {if $host_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $host_info.notifications_enabled}bg-enabled{else}bg-disabled{/if}">Notifications: {if $host_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_host_commands}
 						<td class="center">
 							<div class="">
@@ -85,7 +85,7 @@
 						{/if}
 					</tr>
 					<tr>
-						<td class="{if $host_info.flap_detection_enabled}enabled{else}disabled{/if}">Flap Detection: {if $host_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $host_info.flap_detection_enabled}bg-enabled{else}bg-disabled{/if}">Flap Detection: {if $host_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_host_commands}
 						<td class="center">
 							<div class="">

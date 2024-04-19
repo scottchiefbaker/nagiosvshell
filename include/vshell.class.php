@@ -225,7 +225,7 @@ class vshell {
 		// How many days to go backwards
 		$days   = 2;
 		$utime  = time();
-		for ($i = 1; $i <= $days; $i++) {
+		for ($i = 0; $i <= $days; $i++) {
 			$ut = $utime - (86400 * $i);
 
 			// Example: nagios-12-31-2023-00.log

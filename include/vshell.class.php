@@ -243,6 +243,9 @@ class vshell {
 			$lines = array_merge($lines, $new);
 		}
 
+		// FIXME: For now this is disabled while we develop the feature
+		$include_notifications = false;
+
 		// [1713340687] SERVICE ALERT: directlink-probe;Hulk - Disk - C:;WARNING;SOFT;1;WARNING: Used_percent was 86.10 %
 		foreach ($lines as $line) {
 			if (preg_match("/\[(\d+?)\] (.+?): (.+)/", $line, $m)) {
@@ -269,6 +272,22 @@ class vshell {
 					$obj['severity'] = $parts[2];
 					$obj['attempt']  = $parts[3];
 					$obj['text']     = $parts[4];
+				// [1711754256] SERVICE NOTIFICATION: user;gray;Load Average;OK;notify-by-email;OK - load average: 0.01, 0.42, 0.89
+				} elseif ($include_notifications && $action === "SERVICE NOTIFICATION") {
+					$obj['user']              = $parts[0];
+					$obj['host']              = $parts[1];
+					$obj['service']           = $parts[2];
+					$obj['severity']          = $parts[3];
+					$obj['notification_type'] = $parts[4];
+					$obj['text']              = $parts[5];
+				// [1711389267] HOST NOTIFICATION: user;gray;UP;host-notify-by-email;PING OK - Packet loss = 0%, RTA = 5.64 ms
+				} elseif ($include_notifications && $action === "HOST NOTIFICATION") {
+					$obj['user']              = $parts[0];
+					$obj['host']              = $parts[1];
+					$obj['service']           = $parts[2];
+					$obj['severity']          = $parts[3];
+					$obj['notification_type'] = $parts[4];
+					$obj['text']              = $parts[5];
 				} else {
 					//print "$action<br />\n";
 				}

@@ -18,8 +18,22 @@ if (!$host_info) {
 	$v->error_out("Host $host_name not found", 84525);
 }
 
+// This gets host items AND service items
+$x         = $v->get_log_items($host_name);
+$log_items = [];
+
+// Filter for the host specific stuff
+foreach ($x as $y) {
+	$is_host_alert = ($y['action'] === "HOST ALERT");
+
+	if ($is_host_alert) {
+		$log_items[] = $y;
+	}
+}
+
 $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("host_name", $host_name);
+$v->sluz->assign("log_items", $log_items);
 
 print $v->fetch("tpls/host_details.stpl");
 

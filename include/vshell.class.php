@@ -231,18 +231,20 @@ class vshell {
 			$ut = $utime - (86400 * $i);
 
 			// Example: nagios-12-31-2023-00.log
-			// MM-DD-YYYY
-			$log_file = $archive . "/nagios-" . date("m-d-Y", $ut) . "-00.log";
+			$pattern  = "nagios-" . date("m-d-Y", $ut) . "*.log";
+			$files    = glob($archive . "/" . $pattern);
 
-			// Warn if we can't load the log file
-			if (!is_readable($log_file)) {
-				$this->warn("Unable to read <code>$log_file</code>", 12321);
-				continue;
+			foreach ($files as $log_file) {
+				// Warn if we can't load the log file
+				if (!is_readable($log_file)) {
+					$this->warn("Unable to read <code>$log_file</code>", 12321);
+					continue;
+				}
+
+				// Get lines from the prev file
+				$new   = file($log_file);
+				$lines = array_merge($lines, $new);
 			}
-
-			// Get lines from the prev file
-			$new   = file($log_file);
-			$lines = array_merge($lines, $new);
 		}
 
 		// FIXME: For now this is disabled while we develop the feature

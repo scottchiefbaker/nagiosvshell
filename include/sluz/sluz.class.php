@@ -5,7 +5,7 @@
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
 
 class sluz {
-	public $version      = '0.8';
+	public $version      = '0.8.1';
 	public $tpl_file     = null; // The path to the TPL file
 	public $inc_tpl_file = null; // The path to the {include} file
 
@@ -55,13 +55,13 @@ class sluz {
 		} elseif (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'":,]*)\s*\}$/', $str, $m)) {
 			$ret = $this->variable_block($m[1]);
 		// If statement {if $foo}{/if}
-		} elseif (str_starts_with($str, '{if ') && preg_match('/^\{if (.+?)\}(.+)\{\/if\}$/s', $str, $m)) {
-			$ret = $this->if_block($str, $m);
+		} elseif (str_starts_with($str, '{if ') && str_ends_with($str, '{/if}')) {
+			$ret = $this->if_block($str);
 		// Foreach {foreach $foo as $x}{/foreach}
 		} elseif (str_starts_with($str, '{foreach ') && preg_match('/^\{foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
 			$ret = $this->foreach_block($m);
 		// Include {include file='my.stpl' number='99'}
-		} elseif (str_starts_with($str, '{include ') && preg_match('/^\{include.+?\}$/s', $str, $m)) {
+		} elseif (str_starts_with($str, '{include ')) {
 			$ret = $this->include_block($str);
 		// Liternal {literal}Stuff here{/literal}
 		} elseif (str_starts_with($str, '{literal}') && preg_match('/^\{literal\}(.+)\{\/literal\}$/s', $str, $m)) {
@@ -634,56 +634,12 @@ class sluz {
 	}
 
 	// parse an if statement
-	private function if_block($str, $m) {
+	private function if_block($str) {
+		$toks  = $this->get_tokens($str);
+		$rules = $this->get_if_rules_from_tokens($toks);
+
 		// Put the tpl_vars in the current scope so if works against them
 		extract($this->tpl_vars, EXTR_PREFIX_ALL, $this->var_prefix);
-
-		// The first conditional is the {if ...}
-		$cond[0] = $m[1];
-
-		// If we see a nested if we need to ignore that part
-		$nested_if = strrpos($m[2], '{/if}');
-		if ($nested_if) {
-			$payload  = substr($m[2], $nested_if + 5);
-
-			// If it's a nested if/else we chop off the end after the LAST {/if}
-			// FIXME: This is a huge hack, I don't know why it works, but it
-			// does and all the unit tests pass. So :shrug: ??
-			//$first_p  = $m[2];
-			$first_p = preg_replace("|({/if}.*){else.*|s", '\\1', $m[2]);
-		} else {
-			$payload = $m[2];
-		}
-
-		// We build a list of tests and their output value if true in $rules
-		// We extract the conditions in $cond and the true values in $parts
-
-		// This is the number of if/elseif/else blocks we need to find tests for
-		$part_count = preg_match_all("/(\{elseif|else\})/", $payload, $m);
-		$part_count += 1; // The initial {if}
-
-		// The middle conditions are the {elseif XXXX} stuff
-		preg_match_all("/\{elseif (.+?)\}/", $payload, $m);
-		foreach ($m[1] as $i) {
-			$cond[] = $i;
-		}
-
-		// The last condition is the else and it's ALWAYS true
-		$cond[] = 1;
-
-		// This gets us all the payload elements
-		$parts = preg_split("/(\{elseif (.+?)\}|\{else\})/", $payload);
-
-		// If it's a nested if, we already have the first part so we use that
-		if ($nested_if) {
-			$parts[0] = $first_p;
-		}
-
-		// Build all the rules and associated values
-		$rules  = [];
-		for ($i = 0; $i < $part_count; $i++) {
-			$rules[] = [$cond[$i] ?? null,$parts[$i] ?? null];
-		}
 
 		$ret = "";
 		foreach ($rules as $x) {
@@ -867,6 +823,118 @@ class sluz {
 		}
 
 		return false;
+	}
+
+	function get_tokens($str) {
+		$x = preg_split('/({[^}]+})/', $str, 0, PREG_SPLIT_DELIM_CAPTURE);
+		$x = array_filter($x);
+		$x = array_values($x);
+
+		return $x;
+	}
+
+	function is_if_token($str) {
+		if ($str === '{else}') {
+			return true;
+		}
+
+		if ($str === '{/if}') {
+			return true;
+		}
+
+		// Return the conditional for this
+		if (preg_match("/({if|{elseif) (.+?)}/", $str, $m)) {
+			$ret = trim($m[2] ?? "");
+			return $ret;
+		};
+
+		return false;
+	}
+
+	private function get_if_rules_from_tokens($toks) {
+		$num    = count($toks);
+		$nested = 0;
+
+		// This builds an array of which tokens are pieces of the if
+		$tmp = [];
+		for ($i = 0; $i < $num; $i++) {
+			$item = $toks[$i];
+
+			if (str_starts_with($item, '{if')) { $nested++; }
+			if ($item === '{/if}')             { $nested--; }
+
+			// If we're in the middle of a nest, it's automatically NOT an if piece
+			if ($nested !== 1) {
+				$yes = false;
+			} else {
+				$yes = boolval($this->is_if_token($item));
+			}
+
+			// The last {if} of a nested doesn't count
+			if ($nested === 1 && $item === '{/if}') {
+				$yes = false;
+			}
+
+			$tmp[$i] = $yes;
+		}
+
+		$tmp[$num - 1] = true;
+
+		////////////////////////////////////////////////////////////////////////
+
+		// Now that we know what pieces are the ifs we can pull those out
+		// because they are the test conditions
+		$conds = [];
+		for ($i = 0; $i < $num; $i++) {
+			$item = $tmp[$i];
+
+			if ($item) {
+				$test    = $this->is_if_token($toks[$i]);
+				$is_last = ($i === ($num - 1));
+
+				if (!$is_last) {
+					$conds[] = $test;
+				}
+			}
+		}
+
+		// Last one is the final {/if} and it's always true
+		$tmp[$num] = true;
+
+		////////////////////////////////////////////////////////////////////////
+
+		// Everything AFTER an {if} piece is the payload to that test condition
+		$str      = '';
+		$payloads = [];
+		$first    = true;
+		for ($i = 0; $i < $num; $i++) {
+			$item = $tmp[$i];
+
+			if (!$item) {
+				$str .= $toks[$i];
+			} else {
+				if (!$first) {
+					$payloads[] = $str;
+				}
+
+				$first = false;
+				$str   = '';
+			}
+		}
+
+		$cond_count = count($conds);
+		$payl_count = count($payloads);
+
+		if ($cond_count !== $payl_count) {
+			$this->error_out("Error parsing {if} conditions in '$str'", 95320);
+		}
+
+		$ret = [];
+		for ($i = 0; $i < count($conds); $i++) {
+			$ret[] = [$conds[$i], $payloads[$i]];
+		}
+
+		return $ret;
 	}
 }
 

@@ -8,7 +8,7 @@ require_once("$base_dir/include/sluz/sluz.class.php");
 
 class vshell {
 
-	public $version        = "3.0.1";
+	public $version        = "3.0.2";
 	public $base_dir       = "";
 	public $username       = "";
 	public $sluz           = null;

@@ -29,6 +29,10 @@ $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("filter_type", "host");
 $v->sluz->assign("tac_data", $v->get_tac_data());
 
+if (!empty($_GET['json'])) {
+	$v->send_json($host_info);
+}
+
 print $v->fetch("tpls/hosts.stpl");
 
 ////////////////////////////////////////////////////////////

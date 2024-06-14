@@ -13,6 +13,10 @@ $v->sluz->assign("show_host_table", true);
 $v->sluz->assign("host_groups", $hosts);
 $v->sluz->assign("tac_data", $v->get_tac_data());
 
+if (!empty($_GET['json'])) {
+	$v->send_json($hosts);
+}
+
 print $v->fetch("tpls/hostgroups.stpl");
 
 ////////////////////////////////////////////////////////////

@@ -28,6 +28,10 @@ $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("svc_info" , $svc_info);
 $v->sluz->assign("log_items", $log_items);
 
+if (!empty($_GET['json'])) {
+	$v->send_json($svc_info);
+}
+
 print $v->fetch("tpls/service_details.stpl");
 
 ////////////////////////////////////////////////////////////

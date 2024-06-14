@@ -35,6 +35,10 @@ $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("log_items", $log_items);
 
+if (!empty($_GET['json'])) {
+	$v->send_json($host_info);
+}
+
 print $v->fetch("tpls/host_details.stpl");
 
 ////////////////////////////////////////////////////////////

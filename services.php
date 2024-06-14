@@ -47,6 +47,10 @@ $v->sluz->assign("filter_type"       , "service");
 $v->sluz->assign("tac_data"          , $v->get_tac_data());
 $v->sluz->assign("pagination"        , $pagination);
 
+if (!empty($_GET['json'])) {
+	$v->send_json($svc_info);
+}
+
 print $v->fetch("tpls/services.stpl");
 
 ////////////////////////////////////////////////////////////

@@ -43,13 +43,13 @@ function init_toggles() {
 				}
 
 				if (checked == true) {
-					$(my_td).removeClass("bg-disabled").addClass("bg-enabled");
+					$(my_td).removeClass("bgv-disabled").addClass("bgv-enabled");
 
 					var my_text = $(my_td).text();
 					my_text     = my_text.replace("Disabled","Enabled");
 					$(my_td).text(my_text);
 				} else {
-					$(my_td).removeClass("bg-enabled").addClass("bg-disabled");
+					$(my_td).removeClass("bgv-enabled").addClass("bgv-disabled");
 
 					var my_text = $(my_td).text();
 					my_text     = my_text.replace("Enabled","Disabled");

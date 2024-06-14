@@ -43,7 +43,7 @@
 			<div class="mb-3">
 				<table>
 					<tr>
-						<td class="{if $svc_info.active_checks_enabled}bg-enabled{else}bg-disabled{/if}">Active Checks: {if $svc_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $svc_info.active_checks_enabled}bgv-enabled{else}bgv-disabled{/if}">Active Checks: {if $svc_info.active_checks_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
@@ -56,7 +56,7 @@
 						{/if}
 					</tr>
 					<tr>
-						<td class="{if $svc_info.passive_checks_enabled}bg-enabled{else}bg-disabled{/if}">Passive Checks: {if $svc_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $svc_info.passive_checks_enabled}bgv-enabled{else}bgv-disabled{/if}">Passive Checks: {if $svc_info.passive_checks_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
@@ -70,7 +70,7 @@
 					</tr>
 
 					<tr>
-						<td class="{if $svc_info.notifications_enabled}bg-enabled{else}bg-disabled{/if}">Notifications: {if $svc_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $svc_info.notifications_enabled}bgv-enabled{else}bgv-disabled{/if}">Notifications: {if $svc_info.notifications_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
@@ -83,7 +83,7 @@
 						{/if}
 					</tr>
 					<tr>
-						<td class="{if $svc_info.flap_detection_enabled}bg-enabled{else}bg-disabled{/if}">Flap Detection: {if $svc_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
+						<td class="{if $svc_info.flap_detection_enabled}bgv-enabled{else}bgv-disabled{/if}">Flap Detection: {if $svc_info.flap_detection_enabled}Enabled{else}Disabled{/if}</td>
 						{if $perms.all_service_commands}
 						<td class="center">
 							<div class="">
@@ -142,7 +142,7 @@
 		<tr class="log_item {if $__FOREACH_INDEX >= 10}d-none{/if}">
 			<td style="width: 14em;">{$x.datetime|v_date_format}</td>
 			<td style="width: 6em;" class="">{$x.action|ucfirst}</td>
-			<td style="width: 8em;" class="bg-{$x.status|strtolower}">{$x.status}{$x.user}</td>
+			<td style="width: 8em;" class="bgv-{$x.status|strtolower}">{$x.status}{$x.user}</td>
 			{*<td>{$x.attempt}</td>*}
 			<td>{$x.text}</td>
 		</tr>

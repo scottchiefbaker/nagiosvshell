@@ -33,6 +33,10 @@ $v->sluz->assign("svc_name" , $svc_name);
 $v->sluz->assign("host_name", $host_name);
 $v->sluz->assign("svc_info" , $svc_info);
 
+if (!empty($_GET['json'])) {
+	$v->send_json($svc_info);
+}
+
 print $v->fetch("tpls/show_svc_config.stpl");
 
 ////////////////////////////////////////////////////////////

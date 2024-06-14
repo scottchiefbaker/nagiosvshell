@@ -84,4 +84,15 @@ $total_time = $s_ms + $o_ms + $n_ms;
 $v->sluz->assign('total_parse', $total_time);
 $v->sluz->assign('page_title', "V-Shell debug information");
 
+if (!empty($_GET['json'])) {
+	// This is lazy, but it's a simple way to get most of the data we want
+	$obj = $v->sluz->tpl_vars;
+
+	// Remove some of the bigger objects we don't need
+	unset($obj['icons']);
+	unset($obj['global']);
+
+	$v->send_json($obj);
+}
+
 print $v->fetch("tpls/vshell-info.stpl");

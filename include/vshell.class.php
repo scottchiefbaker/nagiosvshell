@@ -142,9 +142,17 @@ class vshell {
 	function get_global_vars($simple = false) {
 		$base_dir = dirname(__FILE__) . "/../";
 		$ini_path = "$base_dir/config/vshell.conf";
+		$etc_path = "/etc/vshell.conf";
 
-		if (is_readable("/etc/vshell.conf")) {
+		// Check /etc/ first
+		if (is_readable($etc_path)) {
+			$world_readable = $this->is_world_readable($etc_path);
+			if ($world_readable) {
+				$this->warn("<code>$etc_path</code> is world readable. This may leak sensitive data.", 75923);
+			}
+
 			$ini_array = parse_ini_file("/etc/vshell.conf");
+		// Check config/ second (not recommended)
 		} elseif (is_readable($ini_path)) {
 			$ini_array = parse_ini_file($ini_path);
 			$ini_path  = realpath($ini_path);

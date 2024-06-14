@@ -1186,7 +1186,7 @@ class vshell {
 		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
 		$one = $x['host'] ?? [];
 
-		$ret = $one[$host_name];
+		$ret = $one[$host_name] ?? [];
 
 		return $ret;
 	}

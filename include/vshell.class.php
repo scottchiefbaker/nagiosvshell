@@ -143,10 +143,10 @@ class vshell {
 		$base_dir = dirname(__FILE__) . "/../";
 		$ini_path = "$base_dir/config/vshell.conf";
 
-		if (is_readable($ini_path)) {
-			$ini_array = parse_ini_file($ini_path);
-		} elseif (is_readable("/etc/vshell.conf")) {
+		if (is_readable("/etc/vshell.conf")) {
 			$ini_array = parse_ini_file("/etc/vshell.conf");
+		} elseif (is_readable($ini_path)) {
+			$ini_array = parse_ini_file($ini_path);
 		} else {
 			$this->error_out("Missing configuration. Unable to load <code>config/vshell.conf</code>", 19023);
 		}

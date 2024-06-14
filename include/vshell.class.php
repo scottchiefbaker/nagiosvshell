@@ -1232,6 +1232,23 @@ class vshell {
 		print $json;
 		exit;
 	}
+
+	public function is_world_readable($file) {
+		if (!file_exists($file)) {
+			return null;
+		} elseif (!is_readable($file)) {
+			return false;
+		}
+
+		$perms = fileperms($file);
+		if ($perms & 0x0004) {
+			$ret = true;
+		} else{
+			$ret = false;
+		}
+
+		return $ret;
+	}
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

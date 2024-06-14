@@ -147,8 +147,10 @@ class vshell {
 			$ini_array = parse_ini_file("/etc/vshell.conf");
 		} elseif (is_readable($ini_path)) {
 			$ini_array = parse_ini_file($ini_path);
+			$ini_path  = realpath($ini_path);
+			$this->warn("Using <code>$ini_path</code> which is probably less secure than <code>/etc/vshell.conf</code>", 94823);
 		} else {
-			$this->error_out("Missing configuration. Unable to load <code>config/vshell.conf</code>", 19023);
+			$this->error_out("Missing configuration. Unable to load <code>/etc/vshell.conf</code>", 19023);
 		}
 
 		$nagios_cfg_file = $ini_array['NAGIOSCFG'] ?? "";

@@ -1217,6 +1217,14 @@ class vshell {
 			$this->warn("<code>json_encode()</code> support not found in PHP. Commands may not function.", 38219);
 		}
 	}
+
+	public function send_json(array $hash) {
+		$json = json_encode($hash);
+
+		header('Content-type: application/json');
+		print $json;
+		exit;
+	}
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

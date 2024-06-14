@@ -28,7 +28,7 @@ git clone https://github.com/scottchiefbaker/nagiosvshell /usr/share/nagios/html
 
 ## Configuration
 
-Copy the `config/vshell-sample.conf` to `config/vshell.conf` and edit
+Copy the `config/vshell-sample.conf` to `/etc/vshell.conf` and edit
 appropriately for your system.
 
 If you are using V-Shell in a location *other* than your Nagios HTML directory,

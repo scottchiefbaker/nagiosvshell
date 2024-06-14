@@ -49,3 +49,15 @@ V-Shell.
 V-Shell maintains most of the same features of Nagios Core, while simplifying
 and modernizing the most commonly used Nagios tasks. Nagios Core system commands,
 reports, and interface can all be accessed by direct links from V-Shell.
+
+## JSON Interface
+
+VShell includes a full JSON interface for *reading* stats. Every URL in VSHell can
+have `json=1` appended to it to get the data on that page in JSON format. This
+can be helpful if you want to script a specific service or host.
+
+#### Example:
+
+```
+curl --user nagios https://nagios.domain.com/nagios/vshell/services.php?host_filter=router&json=1
+```

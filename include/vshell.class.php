@@ -607,6 +607,11 @@ class vshell {
 		$state_id         = $ret['current_state'] ?? -1;
 		$ret['state_str'] = $this->svc_state_map[$state_id];
 
+		$can_see_command_strings = $this->perms['system_commands'];
+		if (!$can_see_command_strings) {
+			$ret['check_command'] = "[command removed]";
+		}
+
 		// Work around for PENDING states
 		if ($ret['current_state'] == 0 && $ret['last_check'] == 0) {
 			$ret['state_str']     = 'PENDING';

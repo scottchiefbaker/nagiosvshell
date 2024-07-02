@@ -5,20 +5,21 @@
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
 
 class sluz {
-	public $version      = '0.8.1';
-	public $tpl_file     = null; // The path to the TPL file
-	public $inc_tpl_file = null; // The path to the {include} file
+	public $version       = '0.8.2';
+	public $tpl_file      = null;       // The path to the TPL file
+	public $inc_tpl_file  = null;       // The path to the {include} file
 
-	public $debug        = 0;
-	public $in_unit_test = false;
-	public $tpl_vars     = [];
-	public $use_mo       = true; // Use micro-optimiziations
+	public $debug         = 0;          // Enable debug mode
+	public $in_unit_test  = false;      // Boolean if we are in unit testing mode
+	public $use_mo        = true;       // Use micro- optimiziations
+	public $tpl_vars      = [];         // Array of variables assigned to the TPL
+	public $parent_tpl    = null;       // Path to parent TPL
 
-	private $php_file     = null;
-	private $var_prefix   = "sluz_pfx";
-	private $simple_mode  = false;
-	private $fetch_called = false;
-	private $char_pos     = -1;
+	private $var_prefix   = "sluz_pfx"; // Variable prefix for extract()
+	private $php_file     = null;       // Path to the calling PHP file
+	private $simple_mode  = false;      // Boolean are we in simple mode
+	private $fetch_called = false;      // Boolean used in simple if fetch has been called
+	private $char_pos     = -1;         // Character offset in the TPL
 
 	public function __construct() { }
 	public function __destruct()  {
@@ -28,6 +29,7 @@ class sluz {
 		}
 	}
 
+	// Assign variables to pass to the TPL
 	public function assign($key, $val = null) {
 		// Single item call (assign array at once)
 		if (is_null($val) && is_array($key)) {
@@ -43,7 +45,7 @@ class sluz {
 
 		$this->char_pos = $char_pos;
 
-		// Micro-optimization for "" input
+		// Micro-optimization for "" input!
 		if (strlen($str) === 0) {
 			return '';
 		}
@@ -201,7 +203,7 @@ class sluz {
 
 	// Specify a path to the .stpl file, or pass nothing to let sluz 'guess'
 	// Guess is 'tpls/[scriptname_minus_dot_php].stpl
-	public function fetch($tpl_file = "") {
+	public function fetch($tpl_file = "", $parent = null) {
 		if (!$this->php_file) {
 			$this->php_file = $this->get_php_file();
         }
@@ -209,6 +211,12 @@ class sluz {
 		// We use ABSOLUTE paths here because this may be called in the destructor which has a cwd() of '/'
 		if (!$tpl_file) {
 			$tpl_file = dirname($this->php_file) . '/' . $this->guess_tpl_file($this->php_file);
+		}
+
+		$parent_tpl = $parent ?? $this->parent_tpl;
+		if (!empty($parent_tpl)) {
+			$this->assign("__CHILD_TPL", $tpl_file);
+			$tpl_file = $parent_tpl;
 		}
 
 		$str    = $this->get_tpl_content($tpl_file);
@@ -220,12 +228,14 @@ class sluz {
 		return $html;
 	}
 
+	// Guess the TPL filename based on the PHP file
 	public function guess_tpl_file($php_file) {
 		$ret = "tpls/" . preg_replace('/\.php$/', '.stpl', basename($php_file));
 
 		return $ret;
 	}
 
+	// Find the calling parent PHP file (from the perspective of the sluz class)
 	public function get_php_file() {
 		$x    = debug_backtrace();
 		$last = count($x) - 1;
@@ -234,8 +244,10 @@ class sluz {
 		return $ret;
 	}
 
+	// Turn an array of blocks into output HTML
 	private function process_blocks(array $blocks) {
-		$html   = '';
+		$html = '';
+
 		foreach ($blocks as $x) {
 			$block     = $x[0];
 			$char_pos  = $x[1];
@@ -245,6 +257,7 @@ class sluz {
 		return $html;
 	}
 
+	// Load the template file into a string
 	private function get_tpl_content($tpl_file) {
         $tf = $this->tpl_file = $tpl_file;
 
@@ -279,6 +292,7 @@ class sluz {
 		return $ret;
 	}
 
+	// Find the include TPL in the {include} string
 	function extract_include_file($str) {
 		// {include file='foo.stpl'}
 		if (preg_match("/\s(file=)(['\"].+?['\"])/", $str, $m)) {
@@ -347,6 +361,7 @@ class sluz {
 		return $str;
 	}
 
+	// Build an evalable string from a variable string
 	private function dot_to_bracket_callback($m) {
 		$str   = $m[1];
 		$parts = explode(".", $str);
@@ -364,6 +379,7 @@ class sluz {
 		return $ret;
 	}
 
+	// Spit out an error message
 	public function error_out($msg, int $err_num) {
 		$style = "
 			.s_error {
@@ -440,6 +456,7 @@ class sluz {
 		exit;
 	}
 
+	// A bunch of little optimizations and shortcuts
 	private function micro_optimize($input) {
 		// Optimize raw integers
 		if (is_numeric($input)) {
@@ -505,6 +522,7 @@ class sluz {
 		return null;
 	}
 
+	// A smart wrapper around eval()
 	private function peval($str) {
 		if ($this->use_mo) {
 			$x = $this->micro_optimize($str);
@@ -527,6 +545,7 @@ class sluz {
 		return $ret;
 	}
 
+	// Turn on simple mode
 	public function enable_simple_mode($php_file) {
 		$this->php_file    = $php_file;
 		$this->simple_mode = true;
@@ -597,6 +616,7 @@ class sluz {
 		return $ret;
 	}
 
+	// Find the line/column based on char offset in a file
 	private function get_char_location($pos, $tpl_file) {
 		// If we're in an {include} the tpl is that temporarily
 		if ($this->inc_tpl_file) {
@@ -633,10 +653,27 @@ class sluz {
 		return [-1, -1, $tpl_file];
 	}
 
-	// parse an if statement
+	// Parse an if statement
 	private function if_block($str) {
-		$toks  = $this->get_tokens($str);
-		$rules = $this->get_if_rules_from_tokens($toks);
+		// If it's a simple {if $name}Output{/if} we can save a lot of
+		// time parsing detailed rules
+		if ($this->use_mo) {
+			// If there is no {else} or {elseif}
+			$is_simple = (strpos($str, "{else", 7) === false);
+		} else {
+			$is_simple = false;
+		}
+
+		if ($is_simple) {
+			//k($str);
+			preg_match("/{if (.+?)}(.+){\/if}/s", $str, $m);
+			$cond     = $m[1] ?? "";
+			$payload  = $m[2] ?? "";
+			$rules[0] = [$cond, $payload];
+		} else {
+			$toks  = $this->get_tokens($str);
+			$rules = $this->get_if_rules_from_tokens($toks);
+		}
 
 		// Put the tpl_vars in the current scope so if works against them
 		extract($this->tpl_vars, EXTR_PREFIX_ALL, $this->var_prefix);
@@ -782,6 +819,7 @@ class sluz {
 		return $ret;
 	}
 
+	// Find the position of the closing tag in a string. This *IS* nesting aware
 	function find_ending_tag($haystack, $open_tag, $close_tag) {
 		// Do a quick check up to the FIRST closing tag to see if we find it
 		$pos         = strpos($haystack, $close_tag);
@@ -825,6 +863,7 @@ class sluz {
 		return false;
 	}
 
+	// Break up a string into tokens: pieces of {} and the text between them
 	function get_tokens($str) {
 		$x = preg_split('/({[^}]+})/', $str, 0, PREG_SPLIT_DELIM_CAPTURE);
 		$x = array_filter($x);
@@ -833,6 +872,7 @@ class sluz {
 		return $x;
 	}
 
+	// Is the string part of an if token
 	function is_if_token($str) {
 		if ($str === '{else}') {
 			return true;
@@ -851,6 +891,7 @@ class sluz {
 		return false;
 	}
 
+	// Take an array of tokens and build a list of if/else rules
 	private function get_if_rules_from_tokens($toks) {
 		$num    = count($toks);
 		$nested = 0;
@@ -870,7 +911,7 @@ class sluz {
 				$yes = boolval($this->is_if_token($item));
 			}
 
-			// The last {if} of a nested doesn't count
+			// The last {/if} of a nested doesn't count
 			if ($nested === 1 && $item === '{/if}') {
 				$yes = false;
 			}
@@ -936,6 +977,17 @@ class sluz {
 
 		return $ret;
 	}
+
+	// Get/Set parent tpl
+	function parent_tpl($tpl) {
+		if (isset($tpl)) {
+			$this->parent_tpl = $tpl;
+
+			return $this->parent_tpl;
+		} else {
+			return $this->parent_tpl;
+		}
+	}
 }
 
 // This function is *OUTSIDE* of the class so it can be called separately without
@@ -981,15 +1033,6 @@ if (!function_exists('str_contains')) {
 if (!function_exists('str_starts_with')) {
     function str_starts_with($haystack, $needle) {
         return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
-}
-
-// Polyfill stolen from: https://www.php.net/manual/en/function.str-ends-with.php
-// This can be removed when we don't need to support PHP 7.x anymore
-if (! function_exists('str_ends_with')) {
-    function str_ends_with(string $haystack, string $needle): bool {
-        $needle_len = strlen($needle);
-        return ($needle_len === 0 || 0 === substr_compare($haystack, $needle, - $needle_len));
     }
 }
 

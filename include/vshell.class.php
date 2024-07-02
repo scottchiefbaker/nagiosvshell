@@ -370,15 +370,13 @@ class vshell {
 	}
 
 	function fetch($tpl) {
-		$this->sluz->assign("__child_tpl", $tpl);
-
 		$total = microtime(1) - $this->start_time;
 		$total *= 1000;
 
 		$this->sluz->assign('query_time_ms', intval($total));
 
-		$skin = "tpls/skin.stpl";
-		$ret  = $this->sluz->fetch($skin);
+		$this->sluz->parent_tpl("tpls/skin.stpl");
+		$ret = $this->sluz->fetch($tpl);
 
 		$perms     = $this->perms           ?? [];
 		$all_hosts = $perms['all_hosts']    ?? false;

@@ -25,7 +25,13 @@
 				<tr><td class="servicedetail_key">Plugin Output</td><td>{$svc_info.plugin_output}</td></tr>
 				<tr><td class="servicedetail_key">State Type</td><td>{if $svc_info.state_type == 0}Soft{elseif $svc_info.state_type == 1}Hard{else}Unknown{/if}</td></tr>
 				<tr><td class="servicedetail_key">Current Check</td><td>{$svc_info.current_attempt} of {$svc_info.max_attempts}</td></tr>
+
+				{if $svc_info.active_checks_enabled}
 				<tr title="{$svc_info.next_check|v_date_format}"><td class="servicedetail_key">Next Check</td><td>{$svc_info.next_check|human_time_diff}</td></tr>
+				{else}
+				<tr title="{$svc_info.next_check|v_date_format}"><td class="servicedetail_key">Next Check</td><td>N/A</td></tr>
+				{/if}
+
 				<tr><td class="servicedetail_key">Check Type</td><td>{if $svc_info.active_checks_enabled}Active{else}Passive{/if}</td></tr>
 				<tr title="{$svc_info.last_check|v_date_format}"><td class="servicedetail_key">Last Check</td><td>{$svc_info.last_check|human_time_diff}</td></tr>
 				<tr title="{$svc_info.last_state_change|v_date_format}"><td class="servicedetail_key">Last State Change</td><td>{$svc_info.last_state_change|human_time_diff}</td></tr>

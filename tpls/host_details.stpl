@@ -8,6 +8,11 @@
 		{/foreach}
 	</h4>
 	{/if}
+
+	{if $host_info.parents}
+	<h5><b>Parents:</b> {$host_info.parents}</h5>
+	{/if}
+
 	{if $host_info.notes}
 	<h6 class="text-start"><b>Notes:</b> {$host_info.notes}</h6>
 	{/if}

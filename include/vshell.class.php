@@ -794,6 +794,11 @@ class vshell {
 
 	function parse_nagios_status_file($file = STATUSFILE, $use_cache = true) {
 		$start = microtime(1);
+
+		if (!file_exists($file)) {
+			$this->error_out("Unable to read <code>$file</code>. Is Nagios running?", 47203);
+		}
+
 		$fp    = fopen($file, 'r');
 
 		if (!$fp) {

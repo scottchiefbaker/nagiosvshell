@@ -26,6 +26,11 @@
 						{$icons.tools}
 					</div>
 					{/if}
+					{if !$x.x_host_notifications_enabled}
+					<div class="pe-2" title="Host notifications disabled">
+						{$icons.no_bell}
+					</div>
+					{/if}
 					<a href="?host_filter={$x.host_name}" title="See all services for this host"><span class="">{$icons.list}</span></a>
 				</div>
 			</td>

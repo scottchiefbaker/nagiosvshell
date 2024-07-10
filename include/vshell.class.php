@@ -536,13 +536,14 @@ class vshell {
 				$host_comments = $y['comments']      ?? [];
 				$svc_comments  = $comments[$hn][$sn] ?? [];
 
-				$svcs[$hn][$sn]['state_str']                   = $this->svc_state_map[$state_id];
-				$svcs[$hn][$sn]['x_host_state']                = $state_id;
-				$svcs[$hn][$sn]['x_host_state_str']            = $y['state_str']                     ?? '';
-				$svcs[$hn][$sn]['x_host_address']              = $y['address']                       ?? '';
-				$svcs[$hn][$sn]['x_host_problem_acknowledged'] = $y['problem_has_been_acknowledged'] ?? '';
-				$svcs[$hn][$sn]['x_host_comments']             = $host_comments;
-				$svcs[$hn][$sn]['comments']                    = $svc_comments;
+				$svcs[$hn][$sn]['state_str']                    = $this->svc_state_map[$state_id];
+				$svcs[$hn][$sn]['x_host_state']                 = $state_id;
+				$svcs[$hn][$sn]['x_host_state_str']             = $y['state_str']                     ?? '';
+				$svcs[$hn][$sn]['x_host_address']               = $y['address']                       ?? '';
+				$svcs[$hn][$sn]['x_host_problem_acknowledged']  = $y['problem_has_been_acknowledged'] ?? '';
+				$svcs[$hn][$sn]['x_host_notifications_enabled'] = $y['notifications_enabled']         ?? '';
+				$svcs[$hn][$sn]['x_host_comments']              = $host_comments;
+				$svcs[$hn][$sn]['comments']                     = $svc_comments;
 
 				// Work around for PENDING states
 				if ($x['current_state'] == 0 && $x['last_check'] == 0) {

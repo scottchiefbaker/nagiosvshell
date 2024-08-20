@@ -24,7 +24,7 @@ $log_items = [];
 
 // Filter for the host specific stuff
 foreach ($x as $y) {
-	$is_host_alert = ($y['action'] === "HOST ALERT");
+	$is_host_alert = ($y['action_raw'] === "HOST ALERT");
 
 	if ($is_host_alert) {
 		$log_items[] = $y;

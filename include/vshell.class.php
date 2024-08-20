@@ -298,13 +298,14 @@ class vshell {
 				} elseif ($include_notifications && $action === "HOST NOTIFICATION") {
 					$obj['user']              = $parts[0];
 					$obj['host']              = $parts[1];
-					$obj['service']           = $parts[2];
-					$obj['severity']          = $parts[3];
-					$obj['notification_type'] = $parts[4];
-					$obj['text']              = $parts[5];
+					$obj['status']            = $parts[2];
+					$obj['notification_type'] = $parts[3];
+					$obj['text']              = $parts[4];
 				} else {
 					//print "$action<br />\n";
 				}
+
+				$obj['action_raw'] = $action;
 
 				$action = preg_replace("/(SERVICE|HOST)/", "", $action);
 				$action = strtolower($action);

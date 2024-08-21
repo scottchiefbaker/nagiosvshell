@@ -152,7 +152,7 @@
 
 	<hr />
 
-	<div id="log_history" class="fw-bold mb-1 ms-1">
+	<div id="log_history" class="fw-bold mb-1 ms-1" title="Last {$days_of_logs} days worth of logs">
 		Log history:
 	</div>
 	<table>

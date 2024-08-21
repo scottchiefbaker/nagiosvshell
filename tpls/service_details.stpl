@@ -142,7 +142,7 @@
 
 	<hr />
 
-	<div class="fw-bold mb-1 ms-1">Log history:</div>
+	<div class="fw-bold mb-1 ms-1" title="Last {$days_of_logs} days worth of logs">Log history:</div>
 	<table>
 	{foreach $log_items as $x}
 		<tr class="log_item {if $__FOREACH_INDEX >= 10}d-none{/if}">

@@ -31,7 +31,7 @@ function qw($str,$return_hash = false) {
 	}
 }
 
-function v_date_format($ut, $format = "Y-m-d H:i:s a") {
+function v_date_format($ut, $format = "Y-m-d h:i:s a") {
 	$ut  = intval($ut);
 	$ret = date($format, $ut);
 

@@ -19,10 +19,11 @@ if (!$host_info) {
 }
 
 // This gets host items AND service items
-$x         = $v->get_log_items($host_name);
-$log_items = [];
+$days = 2;
+$x    = $v->get_log_items($days, $host_name);
 
 // Filter for the host specific stuff
+$log_items = [];
 foreach ($x as $y) {
 	$is_host_alert = ($y['action_raw'] === "HOST ALERT");
 
@@ -31,9 +32,10 @@ foreach ($x as $y) {
 	}
 }
 
-$v->sluz->assign("host_info", $host_info);
-$v->sluz->assign("host_name", $host_name);
-$v->sluz->assign("log_items", $log_items);
+$v->sluz->assign("host_info"   , $host_info);
+$v->sluz->assign("host_name"   , $host_name);
+$v->sluz->assign("log_items"   , $log_items);
+$v->sluz->assign("days_of_logs", $days);
 
 if (!empty($_GET['json'])) {
 	$v->send_json($host_info);

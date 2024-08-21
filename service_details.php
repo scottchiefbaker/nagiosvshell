@@ -21,12 +21,14 @@ if (!$svc_info) {
 }
 
 // Service log items
-$log_items = $v->get_log_items($host_name, $svc_name);
+$days      = 2;
+$log_items = $v->get_log_items($days, $host_name, $svc_name);
 
-$v->sluz->assign("svc_name" , $svc_name);
-$v->sluz->assign("host_name", $host_name);
-$v->sluz->assign("svc_info" , $svc_info);
-$v->sluz->assign("log_items", $log_items);
+$v->sluz->assign("svc_name"    , $svc_name);
+$v->sluz->assign("host_name"   , $host_name);
+$v->sluz->assign("svc_info"    , $svc_info);
+$v->sluz->assign("log_items"   , $log_items);
+$v->sluz->assign("days_of_logs", $days);
 
 if (!empty($_GET['json'])) {
 	$v->send_json($svc_info);

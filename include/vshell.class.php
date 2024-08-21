@@ -225,7 +225,7 @@ class vshell {
 		return $ret;
 	}
 
-	function get_log_items($host = "", $service = "") {
+	function get_log_items($days, $host = "", $service = "") {
 		// Current log file
 		$file  = $this->config['log_file'];
 		$lines = file($file);
@@ -235,7 +235,6 @@ class vshell {
 		$archive = $this->config['log_archive_path'];
 
 		// How many days to go backwards
-		$days   = 2;
 		$utime  = time();
 		for ($i = 0; $i <= $days; $i++) {
 			$ut = $utime - (86400 * $i);

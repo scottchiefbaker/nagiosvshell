@@ -125,7 +125,7 @@ a.sub-nav {
 .ok, .green, .up, .enabled, .Enabled, .OK, .UP, .bgv-ok, .bgv-up, .bgv-enabled {
 	background-color: #b2ff5f;
 }
-.unknown, .unreachable, .orange, .UNKNOWN, .UNREACHABLE, .bgv-unknown {
+.unknown, .unreachable, .orange, .UNKNOWN, .UNREACHABLE, .bgv-unknown, .bgv-unreachable {
 	background-color: #FFC45F;
 }
 

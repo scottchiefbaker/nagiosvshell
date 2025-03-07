@@ -120,7 +120,7 @@
 
 	{if !$global.cmd_file_writable}
 	<div class="alert alert-warning py-2 text-center mb-3">
-		<b>Warning:</b> Command file <code>{$cmd_file}</code> is not writable. Commands may not function.
+		<b>Warning:</b> Command file <code>{$global.cmd_file}</code> is not writable. Commands may not function.
 	</div>
 	{/if}
 </div>

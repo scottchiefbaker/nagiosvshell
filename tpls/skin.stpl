@@ -75,7 +75,7 @@
 					<a class="highlight" href="services.php?state_filter=CRITICAL"><div class="td">{$tac_data.service.state.CRITICAL} Critical</div></a>
 				</div>
 				<div class="unreachable col-lg border p-1 mb-1 mb-lg-0">
-					<a class="highlight" href="hosts.php?state_filter=UNREACHABLE"><div class="td">{$tac_data.host.state.UNREACHABLE} Unreachable</div></a>
+					<a class="highlight" href="hosts.php?state_filter=UNREACHABLE"><div class="td">{$tac_data.service.state.UNKNOWN} Unknown</div></a>
 				</div>
 			</div>
 		</div>

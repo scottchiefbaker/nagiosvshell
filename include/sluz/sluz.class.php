@@ -5,18 +5,18 @@
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
 
 class sluz {
-	public $version       = '0.8.2';
+	public $version       = '0.8.8';
 	public $tpl_file      = null;       // The path to the TPL file
 	public $inc_tpl_file  = null;       // The path to the {include} file
 
 	public $debug         = 0;          // Enable debug mode
 	public $in_unit_test  = false;      // Boolean if we are in unit testing mode
-	public $use_mo        = true;       // Use micro- optimiziations
 	public $tpl_vars      = [];         // Array of variables assigned to the TPL
 	public $parent_tpl    = null;       // Path to parent TPL
 
 	private $var_prefix   = "sluz_pfx"; // Variable prefix for extract()
 	private $php_file     = null;       // Path to the calling PHP file
+	private $php_file_dir = null;       // Path to the calling PHP directory
 	private $simple_mode  = false;      // Boolean are we in simple mode
 	private $fetch_called = false;      // Boolean used in simple if fetch has been called
 	private $char_pos     = -1;         // Character offset in the TPL
@@ -45,16 +45,8 @@ class sluz {
 
 		$this->char_pos = $char_pos;
 
-		// Micro-optimization for "" input!
-		if (strlen($str) === 0) {
-			return '';
-		}
-
-		// If it doesn't start with a '{' it's plain text so we just return it
-		if ($str[0] !== '{') {
-			$ret = $str;
 		// Simple variable replacement {$foo} or {$foo|default:"123"}
-		} elseif (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'":,]*)\s*\}$/', $str, $m)) {
+		if (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'":,]*)\s*\}$/', $str, $m)) {
 			$ret = $this->variable_block($m[1]);
 		// If statement {if $foo}{/if}
 		} elseif (str_starts_with($str, '{if ') && str_ends_with($str, '{/if}')) {
@@ -62,15 +54,15 @@ class sluz {
 		// Foreach {foreach $foo as $x}{/foreach}
 		} elseif (str_starts_with($str, '{foreach ') && preg_match('/^\{foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
 			$ret = $this->foreach_block($m);
+		// This is for complicated variables with default values that don't match the above rule
+		} elseif (str_contains($str, "|") && preg_match('/^\{\$(\w.+)\}/', $str, $m)) {
+			$ret = $this->variable_block($m[1]);
 		// Include {include file='my.stpl' number='99'}
 		} elseif (str_starts_with($str, '{include ')) {
 			$ret = $this->include_block($str);
 		// Liternal {literal}Stuff here{/literal}
 		} elseif (str_starts_with($str, '{literal}') && preg_match('/^\{literal\}(.+)\{\/literal\}$/s', $str, $m)) {
 			$ret = $m[1];
-		// This is for complicated variables with default values that don't match the above rule
-		} elseif (str_contains($str, "|default:") && preg_match('/^\{\$(\w.+)\}/', $str, $m)) {
-			$ret = $this->variable_block($m[1]);
 		// Catch all for other { $num + 3 } type of blocks
 		} elseif (preg_match('/^\{(.+)}$/s', $str, $m)) {
 			$ret = $this->expression_block($str, $m);
@@ -88,15 +80,35 @@ class sluz {
 
 	// Break the text up in to tokens/blocks to process by process_block()
 	public function get_blocks($str) {
+		$start_time = microtime(1);
+
 		$start  = 0;
 		$blocks = [];
 		$slen   = strlen($str);
 
-		for ($i = 0; $i < $slen; $i++) {
-			$char = $str[$i];
+		// Start looking for blocks at the first delim
+		$z = strpos($str, '{');
+		if ($z === false) { $z = $slen; }
 
-			$is_open    = $char === "{";
-			$is_closed  = $char === "}";
+		for ($i = $z; $i < $slen; $i++) {
+			$char      = $str[$i];
+			$is_open   = $char === "{";
+			$is_closed = $char === "}";
+
+			// If it's not an opening or closing tag we jump ahead to the next delim
+			if (!$is_open && !$is_closed) {
+				$next_open = strpos($str, '{', $i);
+				if ($next_open === false) { $next_open = $slen; }
+
+				$next_close = strpos($str, '}', $i);
+				if ($next_close === false) { $next_close = $slen; }
+
+				// The next char to look at is the first open/close delim
+				$i = min($next_open, $next_close) -1;
+
+				continue;
+			}
+
 			$has_len    = $start != $i;
 			$is_comment = false;
 
@@ -121,7 +133,9 @@ class sluz {
 				$len   = $i - $start;
 				$block = substr($str, $start, $len);
 
-				$blocks[] = [$block, $i];
+				if ($block) {
+					$blocks[] = [$block, $i];
+				}
 				$start    = $i;
 			// If it's a "}" it's a closing block that starts at $start
 			} elseif ($is_closed) {
@@ -159,7 +173,9 @@ class sluz {
 					}
 				}
 
-				$blocks[]  = [$block, $i];
+				if ($block) {
+					$blocks[]  = [$block, $i];
+				}
 				$start    += strlen($block);
 				$i         = $start;
 			}
@@ -183,7 +199,31 @@ class sluz {
 
 		// If we're not at the end of the string, add the last block
 		if ($start < $slen) {
-			$blocks[] = [substr($str, $start), $i];
+			$block    = substr($str, $start);
+			if ($block) {
+				$blocks[] = [$block, $i];
+			}
+		}
+
+		// If the *previous* block was an {if} or {foreach} we remove one leading \n
+		// to maintain parity between input and output whitespace. ^ is the whitespace
+		// we're removing.
+		//
+		// This allows templates like:
+		//
+		// {foreach $name as $x}
+		// {$x}
+		// {/foreach}^
+		$prev_is_if = false;
+		for ($i = 0; $i < count($blocks); $i++) {
+			$str       = $blocks[$i][0] ?? "";
+			$cur_is_if = str_starts_with($str, '{if') || str_starts_with($str, '{for');
+
+			if ($prev_is_if) {
+				$blocks[$i][0] = $this->ltrim_one($str, "\n");
+			}
+
+			$prev_is_if = $cur_is_if;
 		}
 
 		return $blocks;
@@ -205,12 +245,13 @@ class sluz {
 	// Guess is 'tpls/[scriptname_minus_dot_php].stpl
 	public function fetch($tpl_file = "", $parent = null) {
 		if (!$this->php_file) {
-			$this->php_file = $this->get_php_file();
+			$this->php_file     = $this->get_php_file();
+			$this->php_file_dir = dirname($this->php_file);
         }
 
 		// We use ABSOLUTE paths here because this may be called in the destructor which has a cwd() of '/'
 		if (!$tpl_file) {
-			$tpl_file = dirname($this->php_file) . '/' . $this->guess_tpl_file($this->php_file);
+			$tpl_file = $this->guess_tpl_file($this->php_file);
 		}
 
 		$parent_tpl = $parent ?? $this->parent_tpl;
@@ -228,9 +269,18 @@ class sluz {
 		return $html;
 	}
 
+	public function parse_string($tpl_str) {
+		$blocks = $this->get_blocks($tpl_str);
+		$html   = $this->process_blocks($blocks);
+
+		return $html;
+	}
+
 	// Guess the TPL filename based on the PHP file
 	public function guess_tpl_file($php_file) {
-		$ret = "tpls/" . preg_replace('/\.php$/', '.stpl', basename($php_file));
+		$base     = basename($php_file);
+		$tpl_name = preg_replace('/\.php$/', '.stpl', $base);
+		$ret      = "tpls/$tpl_name";
 
 		return $ret;
 	}
@@ -239,19 +289,28 @@ class sluz {
 	public function get_php_file() {
 		$x    = debug_backtrace();
 		$last = count($x) - 1;
-		$ret  = basename($x[$last]['file'] ?? "");
+		$ret  = $x[$last]['file'] ?? "";
 
 		return $ret;
 	}
 
 	// Turn an array of blocks into output HTML
 	private function process_blocks(array $blocks) {
-		$html = '';
+		$start_time = microtime(1);
+		$html       = '';
 
 		foreach ($blocks as $x) {
-			$block     = $x[0];
-			$char_pos  = $x[1];
-			$html     .= $this->process_block($block, $char_pos);
+			$block      = $x[0];
+			$first_char = ($block[0] ?? "") === '{';
+
+			// If the first char is a { it's something we need to process
+			if ($block && $first_char) {
+				$char_pos  = $x[1];
+				$html     .= $this->process_block($block, $char_pos);
+			// It's a static text block so we just append it
+			} elseif ($block) {
+				$html .= $block;
+			}
 		}
 
 		return $html;
@@ -259,11 +318,16 @@ class sluz {
 
 	// Load the template file into a string
 	private function get_tpl_content($tpl_file) {
-        $tf = $this->tpl_file = $tpl_file;
+		$start_time = microtime(1);
+		$tf         = $this->tpl_file = $tpl_file;
 
 		// If we're in simple mode and we have a __halt_compiler() we can assume inline mode
 		$inline_simple = $this->simple_mode && $this->get_inline_content($this->php_file);
 		$is_inline     = ($tpl_file === SLUZ_INLINE) || $inline_simple;
+
+		if ($this->php_file_dir) {
+			$tf  = $this->php_file_dir . "/$tf";
+		}
 
 		if ($is_inline) {
 			$str = $this->get_inline_content($this->php_file);
@@ -315,11 +379,9 @@ class sluz {
 	// Extract data from an array in the form of $foo.key.baz
 	public function array_dive(string $needle, array $haystack) {
 		// Do a simple hash lookup first before we dive deep (we may get lucky)
-		if ($this->use_mo) {
-			$x = $haystack[$needle] ?? null;
-			if ($x) {
-				return $x;
-			}
+		$x = $haystack[$needle] ?? null;
+		if ($x) {
+			return $x;
 		}
 
 		// Split at the periods
@@ -467,7 +529,7 @@ class sluz {
 
 		// Optimize simple $vars
 		$first_char = $last_char = null;
-		if (is_string($input)) {
+		if ($input && is_string($input)) {
 			$first_char = $input[0];
 			$last_char  = $input[-1];
 		// It's not a number or a string?
@@ -523,12 +585,10 @@ class sluz {
 	}
 
 	// A smart wrapper around eval()
-	private function peval($str) {
-		if ($this->use_mo) {
-			$x = $this->micro_optimize($str);
-			if ($x) {
-				return $x;
-			}
+	private function peval($str, &$err = 0) {
+		$x = $this->micro_optimize($str);
+		if ($x) {
+			return $x;
 		}
 
 		extract($this->tpl_vars, EXTR_PREFIX_ALL, $this->var_prefix);
@@ -540,15 +600,19 @@ class sluz {
 			@eval($cmd);
 		} catch (ParseError $e) {
 			// Ooops
+			$err = -1;
 		}
+
+		//k([$str, $cmd, $ret, $err], KRUMO_EXPAND_ALL);
 
 		return $ret;
 	}
 
 	// Turn on simple mode
 	public function enable_simple_mode($php_file) {
-		$this->php_file    = $php_file;
-		$this->simple_mode = true;
+		$this->php_file     = $php_file;
+		$this->php_file_dir = dirname($php_file);
+		$this->simple_mode  = true;
 	}
 
 	///////////////////////////////////////////////////////////////////////////////
@@ -577,8 +641,12 @@ class sluz {
 			// User function
 			} else {
 				$pre   = $this->array_dive($key, $this->tpl_vars) ?? "";
-				// Each modifier is separated by a |
-				$parts = preg_split("/\\|/", $mod);
+
+				// Each modifier is separated by a | but we only split on
+				// pipes that are NOT in a quoted string. Pattern provided
+				// by ChatGPT.
+				$pattern = '/\|(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/';
+				$parts   = preg_split($pattern, $mod);
 
 				// Loop through each modifier (chaining)
 				foreach ($parts as $mod) {
@@ -588,18 +656,30 @@ class sluz {
 					$params    = [$pre];
 
 					if ($param_str) {
-						$new    = preg_split("/,/", $param_str);
+						// Split a string by commas only when they are not inside quotation marks
+						$new = preg_split('/,(?=(?:[^"]*"[^"]*")*[^"]*$)/', $param_str);
+						$new = array_map([$this, 'peval'], $new);
+
 						$params = array_merge($params, $new);
 					}
 
-					//printf("Calling: %s(%s)<br />\n", $func, join(", ", $params));
+					//k([$str, $parts, $func, $new, $params]);
+					//printf("Calling: %s([%s])<br />\n", $func, join(", ", $params[0]));
 
 					if (!is_callable($func)) {
 						list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 						return $this->error_out("Unknown function call <code>$func</code> in <code>$file</code> on line #$line", 47204);
 					}
 
-					$pre = call_user_func_array($func, $params);
+					try {
+						$pre = call_user_func_array($func, $params);
+					} catch (Exception $e) {
+						$msg = "Exception: " . $e->getMessage();
+						$this->error_out($msg, 79134);
+					} catch (TypeError $e) {
+						$msg = "TypeError: " . $e->getMessage();
+						$this->error_out($msg, 58200);
+					}
 				}
 
 				$ret = $pre;
@@ -657,18 +737,17 @@ class sluz {
 	private function if_block($str) {
 		// If it's a simple {if $name}Output{/if} we can save a lot of
 		// time parsing detailed rules
-		if ($this->use_mo) {
-			// If there is no {else} or {elseif}
-			$is_simple = (strpos($str, "{else", 7) === false);
-		} else {
-			$is_simple = false;
-		}
+		// i.e. there is no {else} or {elseif}
+		$is_simple = (strpos($str, "{else", 7) === false);
 
 		if ($is_simple) {
-			//k($str);
 			preg_match("/{if (.+?)}(.+){\/if}/s", $str, $m);
 			$cond     = $m[1] ?? "";
 			$payload  = $m[2] ?? "";
+
+			// This makes input -> output whitespace more correct
+			$payload  = $this->ltrim_one($payload, "\n");
+
 			$rules[0] = [$cond, $payload];
 		} else {
 			$toks  = $this->get_tokens($str);
@@ -701,6 +780,10 @@ class sluz {
 		// Include blocks may modify tpl vars, so we save them here
 		$save    = $this->tpl_vars;
 		$inc_tpl = $this->extract_include_file($str);
+
+		if ($this->php_file_dir) {
+			$inc_tpl = $this->php_file_dir . "/$inc_tpl";
+		}
 
 		// Extra variables to include sub templates
 		if (preg_match_all("/(\w+)=(['\"](.+?)['\"])/", $str, $m)) {
@@ -735,12 +818,22 @@ class sluz {
 		return $ret;
 	}
 
+	// Remove ONE \n from the beginning of a string
+	function ltrim_one(string $str, $char) {
+		if (isset($str[0]) && $str[0] === $char) {
+			return substr($str, 1);
+		}
+
+		return $str;
+	}
+
 	// Parse a foreach block
 	private function foreach_block($m) {
 		$src     = $this->convert_variables_in_string($m[1]); // src array
 		$okey    = $m[2]; // orig key
 		$oval    = $m[4]; // orig val
 		$payload = $m[5]; // code block to parse on iteration
+		$payload = $this->ltrim_one($payload, "\n"); // Input -> Output \n parity
 		$blocks  = $this->get_blocks($payload);
 
 		$src = $this->peval($src);
@@ -802,16 +895,21 @@ class sluz {
 		$ret = "";
 
 		// Make sure the block has something parseble... at least a $ or "
-		if (!preg_match("/[\"\d$]/", $str)) {
+		if (!preg_match("/[\"\d$(]/", $str)) {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unknown block type <code>$str</code> in <code>$file</code> on line #$line", 73467);
 		}
 
+		$err   = false;
 		$blk   = $m[1] ?? "";
 		$after = $this->convert_variables_in_string($blk);
-		$ret   = $this->peval($after);
+		$ret   = $this->peval($after, $err);
 
-		if (!$ret) {
+		$valid_type = (is_string($ret) || is_numeric($ret));
+
+		// The evaluated block has to return SOMETHING printable (not null/false/obj)
+		// Even "" is fine
+		if ($err || !$valid_type) {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unknown tag <code>$str</code> in <code>$file</code> on line #$line", 18933);
 		}
@@ -1007,33 +1105,6 @@ function sluz($one, $two = null) {
 	$s->assign($one, $two);
 
 	return $s;
-}
-
-// Polyfill stolen from: https://www.php.net/manual/en/function.str-ends-with.php
-// str_ends_with() added in PHP 8.0... this can be removed when we don't need to
-// support PHP 7.x anymore
-if (!function_exists('str_ends_with')) {
-    function str_ends_with(string $haystack, string $needle): bool {
-        $needle_len = strlen($needle);
-        return ($needle_len === 0 || 0 === substr_compare($haystack, $needle, - $needle_len));
-    }
-}
-
-// Polyfill stolen from: https://www.php.net/manual/en/function.str-contains.php
-// str_contains was added in PHP 8.0...  this can be removed when we don't need to
-// support PHP 7.x anymore
-if (!function_exists('str_contains')) {
-    function str_contains($haystack, $needle) {
-        return $needle !== '' && strpos($haystack, $needle) !== false;
-    }
-}
-
-// Polyfill stolen from: https://www.php.net/manual/en/function.str-starts-with.php
-// This can be removed when we don't need to support PHP 7.x anymore
-if (!function_exists('str_starts_with')) {
-    function str_starts_with($haystack, $needle) {
-        return (string)$needle !== '' && strncmp($haystack, $needle, strlen($needle)) === 0;
-    }
 }
 
 // vim: tabstop=4 shiftwidth=4 noexpandtab autoindent softtabstop=4

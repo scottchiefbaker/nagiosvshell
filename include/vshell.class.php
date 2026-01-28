@@ -42,6 +42,9 @@ class vshell {
 		$this->sluz->assign("cmd_api"       , CORECMD);
 		$this->sluz->assign("core_cgi"      , CORECGI);
 
+		$base_url = "https://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/";
+		$this->sluz->assign("BASE_URL"      , $base_url);
+
 		$this->perms = $this->get_user_perms(CGICFG, $this->username);
 		$this->sluz->assign('perms', $this->perms);
 

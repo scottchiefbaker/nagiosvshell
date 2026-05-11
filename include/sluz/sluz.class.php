@@ -5,7 +5,7 @@
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
 
 class sluz {
-	public $version       = '0.8.8';
+	public $version       = '0.9.0';
 	public $tpl_file      = null;       // The path to the TPL file
 	public $inc_tpl_file  = null;       // The path to the {include} file
 
@@ -46,7 +46,7 @@ class sluz {
 		$this->char_pos = $char_pos;
 
 		// Simple variable replacement {$foo} or {$foo|default:"123"}
-		if (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'":,]*)\s*\}$/', $str, $m)) {
+		if (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'";\t :,!@#%^&*?_-]*)\}$/', $str, $m)) {
 			$ret = $this->variable_block($m[1]);
 		// If statement {if $foo}{/if}
 		} elseif (str_starts_with($str, '{if ') && str_ends_with($str, '{/if}')) {
@@ -54,9 +54,6 @@ class sluz {
 		// Foreach {foreach $foo as $x}{/foreach}
 		} elseif (str_starts_with($str, '{foreach ') && preg_match('/^\{foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
 			$ret = $this->foreach_block($m);
-		// This is for complicated variables with default values that don't match the above rule
-		} elseif (str_contains($str, "|") && preg_match('/^\{\$(\w.+)\}/', $str, $m)) {
-			$ret = $this->variable_block($m[1]);
 		// Include {include file='my.stpl' number='99'}
 		} elseif (str_starts_with($str, '{include ')) {
 			$ret = $this->include_block($str);
@@ -304,7 +301,7 @@ class sluz {
 			$first_char = ($block[0] ?? "") === '{';
 
 			// If the first char is a { it's something we need to process
-			if ($block && $first_char) {
+			if ($first_char) {
 				$char_pos  = $x[1];
 				$html     .= $this->process_block($block, $char_pos);
 			// It's a static text block so we just append it

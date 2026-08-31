@@ -3,10 +3,9 @@
 ////////////////////////////////////////////////////////
 
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
-define('SLUZ_IDENT_CHARS', '_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'); // PHP identifier chars: [a-zA-Z0-9_]
 
 class sluz {
-	public $version       = '0.9.6';
+	public $version       = '0.9.8';
 	public $tpl_file      = null;         // The path to the TPL file
 	public $inc_tpl_file  = null;         // The path to the {include} file
 	public $parent_tpl    = null;         // Path to parent TPL
@@ -35,6 +34,7 @@ class sluz {
 	private $close_foreach     = null;
 	private $else_tag          = null;
 	private $elseif_tag        = null;
+	private $else_start        = null;
 	private $if_space_tag      = null;
 	private $comment_open      = null;
 	private $comment_close     = null;
@@ -93,6 +93,15 @@ class sluz {
 			$ret = $m[1];
 		// Catch all for other { $num + 3 } type of blocks
 		} elseif (preg_match($this->catchall_pattern, $str, $m)) {
+			// Blocks must not have whitespace immediately next to the delimiters
+			// e.g. {$foo } or { $foo } or { 3 + 4 } are invalid.
+			$inner = $m[1];
+			if ($inner !== '' && (ctype_space($inner[0]) || ctype_space($inner[-1]))) {
+				list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
+
+				return $this->error_out("Whitespace not allowed next to delimiters <code>$str</code> in <code>$file</code> on line #$line", 50981);
+			}
+
 			$ret = $this->expression_block($str, $m);
 		// If it starts with '{' (from above) but does NOT contain a closing tag
 		} elseif (!str_ends_with($str, $rd)) {
@@ -213,10 +222,22 @@ class sluz {
 					// Between consecutive } characters, count open and close tags in that
 					// segment using substr_count with offset/length. Accumulating incrementally
 					// avoids rescanning the entire block on every }.
-					$j = $i + 1;
+					$j                   = $i + 1;
+					$found_close         = false;
+					$first_literal_close = null; // For nested {literal} blocks
+
 					while ($j < $slen) {
 						$j = strpos($str, $rd, $j);
 						if ($j === false) break;
+
+						// Preserve the first literal close as a fallback when its payload
+						// contains raw {literal} text without a matching nested close.
+						if ($m === 'literal' && $first_literal_close === null) {
+							$tag_end = substr($str, $j - strlen($close_tag) + 1, strlen($close_tag));
+							if ($tag_end === $close_tag) {
+								$first_literal_close = $j;
+							}
+						}
 
 						$seg_len      = $j - $last_pos + 1;
 						$open_count  += substr_count($str, $open_tag_str, $last_pos, $seg_len);
@@ -228,13 +249,59 @@ class sluz {
 						if ($open_count === $close_count) {
 							$tmp = substr($str, $start, $j - $start + 1);
 							if (str_ends_with($tmp, $close_tag)) {
-								$block = $tmp;
+								$block       = $tmp;
+								$found_close = true;
 								break;
 							}
 						}
 
 						$j++;
 					}
+
+					// No matching close tag was found, so this is an unclosed
+					// control block. Slurp everything to the end of the string as a
+					// single unterminated block so it yields 45821 cleanly instead
+					// of a wrong-code error plus leaked trailing payload.
+					if (!$found_close) {
+						// A literal payload may itself begin with {literal} without a
+						// matching nested close. In that case its first close ends the
+						// outer literal; a missing close remains an unclosed-tag error.
+						if ($first_literal_close !== null) {
+							$block = substr($str, $start, $first_literal_close - $start + 1);
+							$found_close = true;
+						} else {
+							$block = substr($str, $start);
+						}
+					}
+				}
+
+				// The block's position in $str is fixed by the walk above; trimming
+				// the literal content must not shift that, so we advance $start by
+				// the original (pre-trim) length.
+				$orig_block_len = strlen($block);
+
+				// For a complete {literal} block standing alone on its lines, trim the
+				// \n that belongs to the tag lines from the literal content, mirroring
+				// the comment-line handling. Skipped for unclosed blocks (no {/literal}).
+				if ($m === 'literal' && $found_close) {
+					$ltag  = $this->literal_tag . $rd;
+					$rtag  = $ld . '/literal' . $rd;
+					$l_len = strlen($ltag);
+					$r_len = strlen($rtag);
+					$inner = substr($block, $l_len, strlen($block) - $l_len - $r_len);
+
+					$begins_line = ($start === 0) || ($str[$start - 1] === "\n");
+					$after_pos   = $start + strlen($block);
+					$ends_line   = ($after_pos >= $slen) || ($str[$after_pos] === "\n");
+
+					if ($begins_line && $inner !== "" && $inner[0] === "\n") {
+						$inner = substr($inner, 1);
+					}
+					if ($ends_line && $inner !== "" && $inner[strlen($inner) - 1] === "\n") {
+						$inner = substr($inner, 0, -1);
+					}
+
+					$block = $ltag . $inner . $rtag;
 				}
 
 				if ($block) {
@@ -242,7 +309,7 @@ class sluz {
 				}
 
 				$prev_was_comment = false; // Non-comment block consumed, reset flag
-				$start += strlen($block);
+				$start += $orig_block_len;
 				$i      = $start;
 			}
 
@@ -408,9 +475,13 @@ class sluz {
 		$inline_simple = $this->simple_mode && $this->get_inline_content($this->php_file);
 		$is_inline     = ($tpl_file === SLUZ_INLINE) || $inline_simple;
 
-		if ($this->php_file_dir) {
-			$tf  = $this->php_file_dir . "/$tf";
-		}
+		// Right now this only works on Linux. May need to updated to work on Windows
+        $is_absolute = is_string($tf) && str_starts_with($tf, '/');
+
+        // If we know the PHP file dir, and it's not an absolute path we prepend it
+        if ($this->php_file_dir && !$is_absolute) {
+            $tf  = $this->php_file_dir . "/$tf";
+        }
 
 		if ($is_inline) {
 			$str = $this->get_inline_content($this->php_file);
@@ -643,18 +714,6 @@ class sluz {
 			return $ret;
 		}
 
-		// If it starts with a '!$' we might be able to cheat and invert
-		if (str_starts_with($input, '!$')) {
-			// Remove the prefix so we can look it up raw
-			$new = substr($input, strlen($this->var_prefix_str) + 1);
-
-			// Only handle pure variable names (no operators, brackets, etc).
-			// Complex expressions like '!$var == 1' must fall through to eval.
-			if ($new !== '' && strspn($new, SLUZ_IDENT_CHARS) === strlen($new)) {
-				return !($this->tpl_vars[$new] ?? null);
-			}
-		}
-
 		////////////////////////////////////////////
 
 		// Optimize a simple 'string'
@@ -696,8 +755,9 @@ class sluz {
 
 		try {
 			@eval($cmd);
-		} catch (ParseError $e) {
-			// Ooops
+		} catch (Throwable $e) {
+			// Ooops — parse errors AND runtime errors (undefined function,
+			// undefined constant, division by zero, ...)
 			$err = -1;
 		}
 
@@ -848,6 +908,79 @@ class sluz {
 		return [-1, -1, $tpl_file];
 	}
 
+	// Fast-path evaluator for simple variable conditions and binary comparisons
+	// in {if}/{elseif} conditions, e.g. "$user.active", "$var > 10",
+	// "$user.role == 'admin'", "$x != $y".
+	// This avoids the extract()+eval() overhead (which recompiles PHP
+	// source on every call) for the overwhelming majority of real-world
+	// template conditions. Returns null if the condition doesn't match
+	// this strict shape, signalling the caller to fall back to peval().
+	private function try_fast_condition($cond) {
+		$cond = trim($cond);
+
+		// Standalone variables, including dotted paths
+		static $var_re = '/^(!)?\$(\w[\w.]*)$/';
+		if (preg_match($var_re, $cond, $vm)) {
+			$value = $this->array_dive($vm[2], $this->tpl_vars);
+
+			if ($vm[1]) {
+				return !$value;
+			} else {
+				return (bool) $value;
+			}
+		}
+
+		// One variable, one comparison operator, and one scalar operand.
+		static $re = '/^\$(\w[\w.]*)\s*(===|!==|==|!=|>=|<=|>|<)\s*(.+)$/s';
+		if (!preg_match($re, $cond, $m)) {
+			return null;
+		}
+
+		$left = $this->array_dive($m[1], $this->tpl_vars);
+		$op   = $m[2];
+		$rhs  = trim($m[3]);
+
+		// Resolve the right-hand side: quoted string literal, numeric
+		// literal, or another $var(.path)*. Anything more complex
+		// (function calls, arithmetic, boolean operators, parens) is
+		// rejected so it falls back to the safe eval() path.
+		if ($rhs === '') {
+			return null;
+		}
+
+		$first = $rhs[0];
+		$last  = $rhs[-1];
+
+		if (($first === "'" || $first === '"') && $first === $last && strlen($rhs) >= 2) {
+			$inner = substr($rhs, 1, -1);
+			// Reject if the inner content still has the quote char (could
+			// be an escaped/complex string) or a backslash (escape seq).
+			if (str_contains($inner, $first) || str_contains($inner, '\\')) {
+				return null;
+			}
+			$right = $inner;
+		} elseif (is_numeric($rhs)) {
+			$right = $rhs + 0;
+		} elseif ($first === '$' && preg_match('/^\$(\w[\w.]*)$/', $rhs, $rm)) {
+			$right = $this->array_dive($rm[1], $this->tpl_vars);
+		} else {
+			return null;
+		}
+
+		switch ($op) {
+			case '==':  return $left == $right;
+			case '!=':  return $left != $right;
+			case '===': return $left === $right;
+			case '!==': return $left !== $right;
+			case '>':   return $left > $right;
+			case '>=':  return $left >= $right;
+			case '<':   return $left < $right;
+			case '<=':  return $left <= $right;
+		}
+
+		return null;
+	}
+
 	// Parse an if statement
 	private function if_block($str) {
 		$ld = $this->left_delim;
@@ -855,7 +988,7 @@ class sluz {
 		// If it's a simple {if $name}Output{/if} we can save a lot of
 		// time parsing detailed rules
 		// i.e. there is no {else} or {elseif}
-		$is_simple = (strpos($str, $this->else_tag, strlen($ld) + 3) === false);
+		$is_simple = (strpos($str, $this->else_start, strlen($ld) + 6) === false);
 
 		if ($is_simple) {
 			preg_match($this->if_simple_pattern, $str, $m);
@@ -865,7 +998,20 @@ class sluz {
 			// This makes input -> output whitespace more correct
 			$payload  = $this->ltrim_one($payload, "\n");
 
-			if (!$this->peval($this->convert_variables_in_string($cond))) {
+			// Try the fast path (simple comparisons)
+			$fast = $this->try_fast_condition($cond);
+			if ($fast !== null) {
+				$pass = $fast;
+			} else {
+				$err  = 0;
+				$pass = $this->peval($this->convert_variables_in_string($cond), $err);
+				if ($err) {
+					list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
+					return $this->error_out("Unable to evaluate condition <code>$cond</code> in <code>$file</code> on line #$line", 18933);
+				}
+			}
+
+			if (!$pass) {
 				return "";
 			}
 
@@ -918,8 +1064,21 @@ class sluz {
 			// on the first match, process and return immediately
 			if ($is_ctrl) {
 				if (!$first) {
-					$passed = ($cur_cond === true)
-						|| (bool) $this->peval($this->convert_variables_in_string((string) $cur_cond));
+					if ($cur_cond === true) {
+						$passed = true;
+					} else {
+						$fast = $this->try_fast_condition((string) $cur_cond);
+						if ($fast !== null) {
+							$passed = $fast;
+						} else {
+							$err    = 0;
+							$passed = (bool) $this->peval($this->convert_variables_in_string((string) $cur_cond), $err);
+							if ($err) {
+								list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
+								return $this->error_out("Unable to evaluate condition <code>$cur_cond</code> in <code>$file</code> on line #$line", 18933);
+							}
+						}
+					}
 
 					if ($passed) {
 						$cur    = $this->ltrim_one($cur, "\n");
@@ -945,6 +1104,14 @@ class sluz {
 		// Include blocks may modify tpl vars, so we save them here
 		$save    = $this->tpl_vars;
 		$inc_tpl = $this->extract_include_file($str);
+
+		// In unit-test mode error_out() returns "ERROR-<code>" instead of
+		// printing and exiting, so a missing/blank include file comes back
+		// as an error string rather than a filename. Propagate it rather
+		// than treating the error text as a template to load.
+		if (str_starts_with($inc_tpl, 'ERROR-')) {
+			return $inc_tpl;
+		}
 
 		if ($this->php_file_dir) {
 			$inc_tpl = $this->php_file_dir . "/$inc_tpl";
@@ -994,14 +1161,13 @@ class sluz {
 
 	// Parse a foreach block
 	private function foreach_block($m) {
-		$src     = $this->convert_variables_in_string($m[1]); // src array
+		// Resolve simple and dotted sources directly instead of using peval().
+		$src     = $this->array_dive(substr($m[1], 1), $this->tpl_vars); // src array
 		$okey    = $m[2]; // orig key
 		$oval    = $m[4]; // orig val
 		$payload = $m[5]; // code block to parse on iteration
 		$payload = $this->ltrim_one($payload, "\n"); // Input -> Output \n parity
 		$blocks  = $this->get_blocks($payload);
-
-		$src = $this->peval($src);
 
 		// If $src isn't an array we convert it to one so foreach doesn't barf
 		if (isset($src) && !is_array($src)) {
@@ -1139,10 +1305,6 @@ class sluz {
 		}
 	}
 
-	// Escaped delimiters for use in regex patterns (cached)
-	private function dlre() { return $this->dlre_cached; }
-	private function drre() { return $this->drre_cached; }
-
 	// Rebuild all cached delimiter-dependent values
 	private function rebuild_delim_cache() {
 		$ld = $this->left_delim;
@@ -1161,11 +1323,12 @@ class sluz {
 		$this->close_foreach = $ld . '/foreach' . $rd;
 		$this->else_tag      = $ld . 'else' . $rd;
 		$this->elseif_tag    = $ld . 'elseif ';
+		$this->else_start    = $ld . 'else'; // Matches '{else' and '{elseif'
 		$this->if_space_tag  = $ld . 'if ';
 		$this->comment_open  = $ld . '*';
 		$this->comment_close = '*' . $rd;
 
-		$this->var_pattern       = '/^'  . $ldre . '\$(\w[\w\|\.\'";\\t :,!@#%^&*?_\/\\\\-]*)' . $rdre . '$/';
+		$this->var_pattern       = '/^'  . $ldre . '\$(\w[\w.]*(?:\|.*)?)' . $rdre . '$/';
 		$this->foreach_pattern   = '/^'  . $ldre . 'foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?' . $rdre . '(.+)' . $ldre . '\/foreach' . $rdre . '$/s';
 		$this->literal_pattern   = '/^'  . $ldre . 'literal' . $rdre . '(.+)' . $ldre . '\/literal' . $rdre . '$/s';
 		$this->catchall_pattern  = '/^'  . $ldre . '(.+)' . $rdre . '$/s';

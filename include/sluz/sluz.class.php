@@ -3,25 +3,54 @@
 ////////////////////////////////////////////////////////
 
 define('SLUZ_INLINE', 'INLINE_TEMPLATE'); // Just a specific string
+define('SLUZ_IDENT_CHARS', '_0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ'); // PHP identifier chars: [a-zA-Z0-9_]
 
 class sluz {
-	public $version       = '0.9.0';
-	public $tpl_file      = null;       // The path to the TPL file
-	public $inc_tpl_file  = null;       // The path to the {include} file
+	public $version       = '0.9.6';
+	public $tpl_file      = null;         // The path to the TPL file
+	public $inc_tpl_file  = null;         // The path to the {include} file
+	public $parent_tpl    = null;         // Path to parent TPL
+	public $tpl_vars      = [];           // Array of variables assigned to the TPL
+	public $debug         = false;        // Enable debug mode
+	public $in_unit_test  = false;        // Boolean if we are in unit testing mode
 
-	public $debug         = 0;          // Enable debug mode
-	public $in_unit_test  = false;      // Boolean if we are in unit testing mode
-	public $tpl_vars      = [];         // Array of variables assigned to the TPL
-	public $parent_tpl    = null;       // Path to parent TPL
+	private $var_prefix     = "sluz_pfx"; // Variable prefix for extract()
+	private $var_prefix_str = null;       // Cached '$' + prefix + '_' for fast lookups
+	private $php_file       = null;       // Path to the calling PHP file
+	private $php_file_dir   = null;       // Path to the calling PHP directory
+	private $simple_mode    = false;      // Are we in simple mode
+	private $fetch_called   = false;      // Used in simple if fetch has been called
+	private $char_pos       = -1;         // Character offset in the TPL
+	private $escape_html    = false;      // Auto-escape HTML in variable output
+	private $left_delim     = '{';        // Left/opening delimiter
+	private $right_delim    = '}';        // Right/closing delimiter
 
-	private $var_prefix   = "sluz_pfx"; // Variable prefix for extract()
-	private $php_file     = null;       // Path to the calling PHP file
-	private $php_file_dir = null;       // Path to the calling PHP directory
-	private $simple_mode  = false;      // Boolean are we in simple mode
-	private $fetch_called = false;      // Boolean used in simple if fetch has been called
-	private $char_pos     = -1;         // Character offset in the TPL
+	// Cached delimiter-dependent values — rebuilt by rebuild_delim_cache()
+	private $dlre_cached       = null;
+	private $drre_cached       = null;
+	private $if_tag            = null;
+	private $foreach_tag       = null;
+	private $literal_tag       = null;
+	private $close_if          = null;
+	private $close_foreach     = null;
+	private $else_tag          = null;
+	private $elseif_tag        = null;
+	private $if_space_tag      = null;
+	private $comment_open      = null;
+	private $comment_close     = null;
+	private $var_pattern       = null;
+	private $foreach_pattern   = null;
+	private $literal_pattern   = null;
+	private $catchall_pattern  = null;
+	private $if_simple_pattern = null;
+	private $tokens_pattern    = null;
+	private $newline_pattern   = null;
 
-	public function __construct() { }
+	public function __construct() {
+		$this->var_prefix_str = '$' . $this->var_prefix . '_';
+		$this->rebuild_delim_cache();
+	}
+
 	public function __destruct()  {
 		// In simple mode we auto print the output
 		if ($this->simple_mode && !$this->fetch_called) {
@@ -41,30 +70,32 @@ class sluz {
 
 	// Convert template blocks in to output strings
 	public function process_block(string $str, int $char_pos = -1) {
-		$ret = '';
-
 		$this->char_pos = $char_pos;
 
+		$ld  = $this->left_delim;
+		$rd  = $this->right_delim;
+		$ret = '';
+
 		// Simple variable replacement {$foo} or {$foo|default:"123"}
-		if (str_starts_with($str, '{$') && preg_match('/^\{\$(\w[\w\|\.\'";\t :,!@#%^&*?_-]*)\}$/', $str, $m)) {
+		if (str_starts_with($str, $ld . '$') && preg_match($this->var_pattern, $str, $m)) {
 			$ret = $this->variable_block($m[1]);
 		// If statement {if $foo}{/if}
-		} elseif (str_starts_with($str, '{if ') && str_ends_with($str, '{/if}')) {
+		} elseif (str_starts_with($str, $this->if_space_tag) && str_ends_with($str, $this->close_if)) {
 			$ret = $this->if_block($str);
 		// Foreach {foreach $foo as $x}{/foreach}
-		} elseif (str_starts_with($str, '{foreach ') && preg_match('/^\{foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?\}(.+)\{\/foreach\}$/s', $str, $m)) {
+		} elseif (str_starts_with($str, $this->foreach_tag . ' ') && preg_match($this->foreach_pattern, $str, $m)) {
 			$ret = $this->foreach_block($m);
 		// Include {include file='my.stpl' number='99'}
-		} elseif (str_starts_with($str, '{include ')) {
+		} elseif (str_starts_with($str, $ld . 'include ')) {
 			$ret = $this->include_block($str);
-		// Liternal {literal}Stuff here{/literal}
-		} elseif (str_starts_with($str, '{literal}') && preg_match('/^\{literal\}(.+)\{\/literal\}$/s', $str, $m)) {
+		// Literal {literal}Stuff here{/literal}
+		} elseif (str_starts_with($str, $this->literal_tag) && preg_match($this->literal_pattern, $str, $m)) {
 			$ret = $m[1];
 		// Catch all for other { $num + 3 } type of blocks
-		} elseif (preg_match('/^\{(.+)}$/s', $str, $m)) {
+		} elseif (preg_match($this->catchall_pattern, $str, $m)) {
 			$ret = $this->expression_block($str, $m);
 		// If it starts with '{' (from above) but does NOT contain a closing tag
-		} elseif (!str_ends_with($str, '}')) {
+		} elseif (!str_ends_with($str, $rd)) {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unclosed tag <code>$str</code> in <code>$file</code> on line #$line", 45821);
 		// Something went WAY wrong
@@ -77,27 +108,32 @@ class sluz {
 
 	// Break the text up in to tokens/blocks to process by process_block()
 	public function get_blocks($str) {
-		$start_time = microtime(1);
-
 		$start  = 0;
 		$blocks = [];
 		$slen   = strlen($str);
+		$ld     = $this->left_delim;
+		$rd     = $this->right_delim;
+
+		$name_len_if      = strlen($this->if_tag);
+		$name_len_foreach = strlen($this->foreach_tag);
+		$name_len_literal = strlen($this->literal_tag);
+		$prev_was_comment = false; // Tracks if previous construct was a comment
 
 		// Start looking for blocks at the first delim
-		$z = strpos($str, '{');
+		$z = strpos($str, $ld);
 		if ($z === false) { $z = $slen; }
 
 		for ($i = $z; $i < $slen; $i++) {
 			$char      = $str[$i];
-			$is_open   = $char === "{";
-			$is_closed = $char === "}";
+			$is_open   = $char === $ld;
+			$is_closed = $char === $rd;
 
 			// If it's not an opening or closing tag we jump ahead to the next delim
 			if (!$is_open && !$is_closed) {
-				$next_open = strpos($str, '{', $i);
+				$next_open = strpos($str, $ld, $i);
 				if ($next_open === false) { $next_open = $slen; }
 
-				$next_close = strpos($str, '}', $i);
+				$next_close = strpos($str, $rd, $i);
 				if ($next_close === false) { $next_close = $slen; }
 
 				// The next char to look at is the first open/close delim
@@ -113,10 +149,9 @@ class sluz {
 			if ($is_open) {
 				$prev_c = $str[$i - 1];
 				$next_c = $str[$i + 1];
-				$chunk  = $prev_c . $char . $next_c;
 
-				// If the { is surrounded by whitespace it's not a block
-				if (preg_match("/\s[\{\}]\s/", $chunk)) {
+				// If the { is surrounded by whitespace it's not a block.
+				if (ctype_space($prev_c) && ctype_space($next_c)) {
 					$is_open = false;
 				}
 
@@ -129,74 +164,115 @@ class sluz {
 			if ($is_open && $has_len) {
 				$len   = $i - $start;
 				$block = substr($str, $start, $len);
+				$start = $i;
+
+				// Strip leading \n if previous block was a comment (comment line ending)
+				if ($prev_was_comment) {
+					$block = $this->ltrim_one($block, "\n");
+					$prev_was_comment = false;
+				}
 
 				if ($block) {
 					$blocks[] = [$block, $i];
 				}
-				$start    = $i;
 			// If it's a "}" it's a closing block that starts at $start
 			} elseif ($is_closed) {
-				$len         = $i - $start + 1;
-				$block       = substr($str, $start, $len);
-				$is_function = preg_match("/^\{(if|foreach|literal)\b/", $block, $m);
+				$len   = $i - $start + 1;
+				$block = substr($str, $start, $len);
 
-				// If we're in a function, loop until we find the closing tag
+				// If this block is an opening function tag ({if}, {foreach}, {literal}),
+				// walk forward to find the matching {/if}, {/foreach}, or {/literal}.
+				// Nested blocks of the same type are handled by counting open vs close tags.
+				$m = null;
+				if (str_starts_with($block, $this->if_tag)) {
+					$c = $block[$name_len_if] ?? '';
+					if ($c !== '' && $c !== '_' && !ctype_alnum($c)) { $m = 'if'; }
+				} elseif (str_starts_with($block, $this->foreach_tag)) {
+					$c = $block[$name_len_foreach] ?? '';
+					if ($c !== '' && $c !== '_' && !ctype_alnum($c)) { $m = 'foreach'; }
+				} elseif (str_starts_with($block, $this->literal_tag)) {
+					$c = $block[$name_len_literal] ?? '';
+					if ($c !== '' && $c !== '_' && !ctype_alnum($c)) { $m = 'literal'; }
+				}
+
+				$is_function = $m !== null;
+
 				if ($is_function) {
-					// Go character by character until we find a '}' and see if we find the closing tag
-					for ($j = $i + 1; $j < strlen($str); $j++) {
-						$closed = ($str[$j] === "}");
+					$close_tag    = $ld . "/$m" . $rd;
+					$open_tag_str = $ld . $m;
 
-						// If we find a close tag we check to see if it's the final closed tag
-						if ($closed) {
-							$len = $j - $start + 1;
-							$tmp = substr($str, $start, $len);
+					// Seed open count with occurrences inside the opening tag itself
+					// (e.g. {if $x eq '{if}'} has two {if substrings)
+					$open_count  = substr_count($block, $open_tag_str);
+					$close_count = 0;
 
-							// Open tag is whatever word is after the '{'
-							$open_tag  = $m[1];
-							// Build the closing tag so we can look for it later
-							$close_tag = "{/$open_tag}";
+					// Position after the opening tag's closing } — start scanning from here
+					$last_pos = $i + 1;
 
-							$open_count  = substr_count($tmp, '{' . $open_tag);
-							$close_count = substr_count($tmp, $close_tag);
+					// Jump directly to each } instead of walking character-by-character.
+					// Between consecutive } characters, count open and close tags in that
+					// segment using substr_count with offset/length. Accumulating incrementally
+					// avoids rescanning the entire block on every }.
+					$j = $i + 1;
+					while ($j < $slen) {
+						$j = strpos($str, $rd, $j);
+						if ($j === false) break;
 
-							//k([$open_tag, $close_tag, $open_count, $close_count, $tmp], KRUMO_EXPAND_ALL);
+						$seg_len      = $j - $last_pos + 1;
+						$open_count  += substr_count($str, $open_tag_str, $last_pos, $seg_len);
+						$close_count += substr_count($str, $close_tag, $last_pos, $seg_len);
+						$last_pos     = $j + 1;
 
-							// If this closing bracket is the closing tag we found the pair
-							if ($open_count === $close_count && (str_ends_with($tmp, $close_tag))) {
+						// When open and close counts match, verify this } ends the correct
+						// close tag (not a coincidental } inside another construct)
+						if ($open_count === $close_count) {
+							$tmp = substr($str, $start, $j - $start + 1);
+							if (str_ends_with($tmp, $close_tag)) {
 								$block = $tmp;
 								break;
 							}
 						}
+
+						$j++;
 					}
 				}
 
 				if ($block) {
-					$blocks[]  = [$block, $i];
+					$blocks[] = [$block, $i];
 				}
-				$start    += strlen($block);
-				$i         = $start;
+
+				$prev_was_comment = false; // Non-comment block consumed, reset flag
+				$start += strlen($block);
+				$i      = $start;
 			}
 
 			// If it's a comment we slurp all the chars until the first '*}' and make that the block
 			if ($is_comment) {
-				$end = $this->find_ending_tag(substr($str, $start), '{*', '*}');
+				$end = $this->find_ending_tag(substr($str, $start), $this->comment_open, $this->comment_close);
 
+				// If we don't find a closing comment tag we add the half-block to the list
+				// and it gets caught by "invalid block" later
 				if ($end === false) {
-					list($line, $col, $file) = $this->get_char_location($i, $this->tpl_file);
-					return $this->error_out("Missing closing <code>*}</code> for comment in <code>$file</code> on line #$line", 48724);
+					continue;
 				}
 
-				$end += 2; // '*}' is 2 long so we add that
-
-				$end_rel    = $end - $start;
-				$start      += $end;
-				$i          = $start;
+				$end   += strlen($this->comment_close);
+				$start += $end;
+				$i      = $start - 1;
+				$prev_was_comment = true; // So trailing \n (line ending) gets stripped
 			}
 		}
 
 		// If we're not at the end of the string, add the last block
 		if ($start < $slen) {
-			$block    = substr($str, $start);
+			$block = substr($str, $start);
+
+			// Strip leading \n if trailing text follows a comment
+			if ($prev_was_comment) {
+				$block = $this->ltrim_one($block, "\n");
+				$prev_was_comment = false;
+			}
+
 			if ($block) {
 				$blocks[] = [$block, $i];
 			}
@@ -211,10 +287,21 @@ class sluz {
 		// {foreach $name as $x}
 		// {$x}
 		// {/foreach}^
-		$prev_is_if = false;
-		for ($i = 0; $i < count($blocks); $i++) {
+		$prev_is_if  = false;
+		$block_count = count($blocks);
+		$if_prefix   = $ld . 'if';
+		$for_prefix  = $ld . 'for';
+
+		for ($i = 0; $i < $block_count; $i++) {
 			$str       = $blocks[$i][0] ?? "";
-			$cur_is_if = str_starts_with($str, '{if') || str_starts_with($str, '{for');
+			$cur_is_if = str_starts_with($str, $if_prefix) || str_starts_with($str, $for_prefix);
+
+			// A combined if/foreach block (contains closing tag) should only
+			// trigger trimming of the next block's \n if the payload already
+			// ends with \n — otherwise the \n is content, not formatting.
+			if ($cur_is_if && (str_contains($str, $this->close_if) || str_contains($str, $this->close_foreach))) {
+				$cur_is_if = boolval(preg_match($this->newline_pattern, $str));
+			}
 
 			if ($prev_is_if) {
 				$blocks[$i][0] = $this->ltrim_one($str, "\n");
@@ -266,6 +353,7 @@ class sluz {
 		return $html;
 	}
 
+	// Parse a string (not a file)
 	public function parse_string($tpl_str) {
 		$blocks = $this->get_blocks($tpl_str);
 		$html   = $this->process_blocks($blocks);
@@ -293,12 +381,11 @@ class sluz {
 
 	// Turn an array of blocks into output HTML
 	private function process_blocks(array $blocks) {
-		$start_time = microtime(1);
-		$html       = '';
+		$html = '';
 
 		foreach ($blocks as $x) {
 			$block      = $x[0];
-			$first_char = ($block[0] ?? "") === '{';
+			$first_char = ($block[0] ?? "") === $this->left_delim;
 
 			// If the first char is a { it's something we need to process
 			if ($first_char) {
@@ -315,8 +402,7 @@ class sluz {
 
 	// Load the template file into a string
 	private function get_tpl_content($tpl_file) {
-		$start_time = microtime(1);
-		$tf         = $this->tpl_file = $tpl_file;
+		$tf = $this->tpl_file = $tpl_file;
 
 		// If we're in simple mode and we have a __halt_compiler() we can assume inline mode
 		$inline_simple = $this->simple_mode && $this->get_inline_content($this->php_file);
@@ -381,6 +467,13 @@ class sluz {
 			return $x;
 		}
 
+		// Fast path: no dots means the direct lookup above was the only option.
+		// Return whatever it found (even falsy values like 0, "", false) without
+		// the overhead of explode() + loop.
+		if (!str_contains($needle, '.')) {
+			return $haystack[$needle] ?? null;
+		}
+
 		// Split at the periods
 		$parts = explode(".", $needle);
 
@@ -396,7 +489,7 @@ class sluz {
 		}
 
 		// If we find a scalar it's the end of the line, anything else is just
-		// another branch, so it doesn't cound as finding something
+		// another branch, so it doesn't count as finding something
 		if (is_scalar($arr) || is_array($arr)) {
 			$ret = $arr;
 		} else {
@@ -410,6 +503,13 @@ class sluz {
 	private function convert_variables_in_string($str) {
 		// If there are no dollars signs it's not a variable string, nothing to do
 		if (!str_contains($str, '$')) {
+			return $str;
+		}
+
+		// Fast path: no dots means just prefix variables, skip callback overhead
+		if (!str_contains($str, '.')) {
+			$str = preg_replace('/\$(\w+)/', '$' . $this->var_prefix . '_$1', $str);
+
 			return $str;
 		}
 
@@ -537,7 +637,7 @@ class sluz {
 		// If it starts with a '$' we might be able to cheat
 		if ($first_char === '$') {
 			// Remove the prefix so we can look it up raw
-			$new = str_replace('$' . $this->var_prefix . '_', '', $input);
+			$new = substr($input, strlen($this->var_prefix_str));
 			$ret = $this->tpl_vars[$new] ?? null;
 
 			return $ret;
@@ -546,11 +646,12 @@ class sluz {
 		// If it starts with a '!$' we might be able to cheat and invert
 		if (str_starts_with($input, '!$')) {
 			// Remove the prefix so we can look it up raw
-			$new = str_replace('!$' . $this->var_prefix . '_', '', $input);
-			$ret = $this->tpl_vars[$new] ?? null;
+			$new = substr($input, strlen($this->var_prefix_str) + 1);
 
-			if ($ret !== null) {
-				return !$ret;
+			// Only handle pure variable names (no operators, brackets, etc).
+			// Complex expressions like '!$var == 1' must fall through to eval.
+			if ($new !== '' && strspn($new, SLUZ_IDENT_CHARS) === strlen($new)) {
+				return !($this->tpl_vars[$new] ?? null);
 			}
 		}
 
@@ -584,7 +685,7 @@ class sluz {
 	// A smart wrapper around eval()
 	private function peval($str, &$err = 0) {
 		$x = $this->micro_optimize($str);
-		if ($x) {
+		if ($x !== null) {
 			return $x;
 		}
 
@@ -619,29 +720,39 @@ class sluz {
 	private function variable_block($str) {
 
 		// If it has a '|' it's either a function call or 'default'
-		if (preg_match("/(.+?)\|(.*)/", $str, $m)) {
-			$key = $m[1];
-			$mod = $m[2];
+		$ppos = strpos($str, '|');
+		if ($ppos !== false) {
+			$key = substr($str, 0, $ppos);
+			$mod = substr($str, $ppos + 1);
 
 			$tmp        = $this->array_dive($key, $this->tpl_vars) ?? "";
-			$is_nothing = ($tmp === null || $tmp === "");
+			$is_nothing = ($tmp === "");
 			$is_default = str_contains($mod, "default:");
 
-			// Empty with a default value
-			if ($is_nothing && $is_default) {
-				$p    = explode("default:", $str, 2);
-				$dval = $p[1] ?? "";
-				$ret  = $this->peval($dval);
-			// Non-empty, but has a default value
-			} elseif (!$is_nothing && $is_default) {
-				$ret = $this->array_dive($key, $this->tpl_vars) ?? "";
-			// User function
-			} else {
-				$pre   = $this->array_dive($key, $this->tpl_vars) ?? "";
+			// If there's a default, extract just the default value and
+			// rebuild $mod to contain only chained modifiers after it
+			if ($is_default) {
+				$p           = explode("default:", $mod, 2);
+				$dval        = $p[1] ?? "";
+				$pattern     = '/\|(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/';
+				$dparts      = preg_split($pattern, $dval, 2);
+				$default_val = $this->peval($dparts[0] ?? "");
 
-				// Each modifier is separated by a | but we only split on
-				// pipes that are NOT in a quoted string. Pattern provided
-				// by ChatGPT.
+				if ($is_nothing) {
+					$pre = $default_val;
+				} else {
+					$pre = $tmp;
+				}
+
+				$mod = $dparts[1] ?? "";
+			} else {
+				$pre = $tmp;
+			}
+
+			// Each modifier is separated by a `|` so we split on those chars
+			// but we have to be careful NOT to split on quoted `|` because they
+			// might be params
+			if ($mod) {
 				$pattern = '/\|(?![^"]*"(?:(?:[^"]*"){2})*[^"]*$)/';
 				$parts   = preg_split($pattern, $mod);
 
@@ -654,9 +765,8 @@ class sluz {
 
 					if ($param_str) {
 						// Split a string by commas only when they are not inside quotation marks
-						$new = preg_split('/,(?=(?:[^"]*"[^"]*")*[^"]*$)/', $param_str);
-						$new = array_map([$this, 'peval'], $new);
-
+						$new    = preg_split('/,(?=(?:[^"]*"[^"]*")*[^"]*$)/', $param_str);
+						$new    = array_map([$this, 'peval'], $new);
 						$params = array_merge($params, $new);
 					}
 
@@ -672,15 +782,15 @@ class sluz {
 						$pre = call_user_func_array($func, $params);
 					} catch (Exception $e) {
 						$msg = "Exception: " . $e->getMessage();
-						$this->error_out($msg, 79134);
+						return $this->error_out($msg, 79134);
 					} catch (TypeError $e) {
 						$msg = "TypeError: " . $e->getMessage();
-						$this->error_out($msg, 58200);
+						return $this->error_out($msg, 58200);
 					}
 				}
-
-				$ret = $pre;
 			}
+
+			$ret = $pre;
 		} else {
 			$ret = $this->array_dive($str, $this->tpl_vars) ?? "";
 		}
@@ -688,6 +798,14 @@ class sluz {
 		// Array used as a scalar should silently convert to a string
 		if (is_array($ret)) {
 			return 'Array';
+		}
+
+		// Auto-escape HTML unless the modifier chain already contains escape or raw
+		if ($this->escape_html) {
+			$has_escape = ($ppos !== false) && (str_contains($mod, 'escape') || str_contains($mod, 'raw'));
+			if (!$has_escape) {
+				$ret = htmlspecialchars((string) $ret, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+			}
 		}
 
 		return $ret;
@@ -732,44 +850,94 @@ class sluz {
 
 	// Parse an if statement
 	private function if_block($str) {
+		$ld = $this->left_delim;
+
 		// If it's a simple {if $name}Output{/if} we can save a lot of
 		// time parsing detailed rules
 		// i.e. there is no {else} or {elseif}
-		$is_simple = (strpos($str, "{else", 7) === false);
+		$is_simple = (strpos($str, $this->else_tag, strlen($ld) + 3) === false);
 
 		if ($is_simple) {
-			preg_match("/{if (.+?)}(.+){\/if}/s", $str, $m);
-			$cond     = $m[1] ?? "";
-			$payload  = $m[2] ?? "";
+			preg_match($this->if_simple_pattern, $str, $m);
+			$cond    = $m[1] ?? "";
+			$payload = $m[2] ?? "";
 
 			// This makes input -> output whitespace more correct
 			$payload  = $this->ltrim_one($payload, "\n");
 
-			$rules[0] = [$cond, $payload];
-		} else {
-			$toks  = $this->get_tokens($str);
-			$rules = $this->get_if_rules_from_tokens($toks);
+			if (!$this->peval($this->convert_variables_in_string($cond))) {
+				return "";
+			}
+
+			$blocks = $this->get_blocks($payload);
+
+			return $this->process_blocks($blocks);
 		}
 
-		// Put the tpl_vars in the current scope so if works against them
-		extract($this->tpl_vars, EXTR_PREFIX_ALL, $this->var_prefix);
+		// Complex path: walk the tokens once, evaluating each condition as soon
+		// as its payload is accumulated, and short-circuit on the first match.
+		$toks     = $this->get_tokens($str);
+		$num      = count($toks);
+		$nested   = 0;
+		$cur      = '';
+		$cur_cond = null;
+		$first    = true;
 
-		$ret = "";
-		foreach ($rules as $x) {
-			$test    = $x[0];
-			$payload = $x[1];
-			$testp   = $this->convert_variables_in_string($test);
+		// Process each token in order, tracking {if} nesting depth and accumulating
+		// the current branch's payload until a control boundary (or {/if}) is hit
+		for ($i = 0; $i < $num; $i++) {
+			$item = $toks[$i];
 
-			if ($this->peval($testp)) {
-				$blocks  = $this->get_blocks($payload);
-				$ret    .= $this->process_blocks($blocks);
+			if (str_starts_with($item, $this->if_tag)) { $nested++; }
+			if ($item === $this->close_if)             { $nested--; }
 
-				// One of the tests was true so we stop processing
-				break;
+			// Determine if this token is an if-control boundary ({if}, {elseif}, {else})
+			// at nesting level 1. Nested {if}/{/if} pairs are treated as payload content.
+			$is_ctrl   = false;
+			$next_cond = null;
+			if ($nested === 1) {
+				if ($item === $this->else_tag) {
+					$is_ctrl   = true;
+					$next_cond = true;
+				} elseif (str_starts_with($item, $this->if_space_tag)) {
+					$is_ctrl   = true;
+					$next_cond = trim(substr($item, strlen($ld) + 3, -strlen($this->right_delim)));
+				} elseif (str_starts_with($item, $this->elseif_tag)) {
+					$is_ctrl   = true;
+					$next_cond = trim(substr($item, strlen($ld) + 7, -strlen($this->right_delim)));
+				}
+			}
+
+			// The last token always acts as a control boundary so its
+			// preceding payload is captured
+			if ($i === $num - 1) {
+				$is_ctrl = true;
+			}
+
+			// At a control boundary, test the just-completed payload's condition;
+			// on the first match, process and return immediately
+			if ($is_ctrl) {
+				if (!$first) {
+					$passed = ($cur_cond === true)
+						|| (bool) $this->peval($this->convert_variables_in_string((string) $cur_cond));
+
+					if ($passed) {
+						$cur    = $this->ltrim_one($cur, "\n");
+						$blocks = $this->get_blocks($cur);
+
+						return $this->process_blocks($blocks);
+					}
+				}
+
+				$first    = false;
+				$cur      = '';
+				$cur_cond = $next_cond;
+			} else {
+				$cur .= $item;
 			}
 		}
 
-		return $ret;
+		return "";
 	}
 
 	// Parse an include block
@@ -846,26 +1014,18 @@ class sluz {
 		// Save the current values so we can restore them later
 		$save = $this->tpl_vars;
 
+		// Check to see if the block contains any of the FOREACH special vars
+		$need_meta = str_contains($payload, '$__FOREACH');
+
 		$ret  = '';
 		$idx  = 0;
 		$last = count($src) - 1;
-		// Temp set a key/val so when we process this section it's correct
 		foreach ($src as $key => $val) {
-			// Set if we're on the FIRST iteration
-			if ($idx === 0) {
-				$this->tpl_vars['__FOREACH_FIRST'] = true;
-			} else {
-				$this->tpl_vars['__FOREACH_FIRST'] = false;
+			if ($need_meta) {
+				$this->tpl_vars['__FOREACH_FIRST'] = ($idx === 0);
+				$this->tpl_vars['__FOREACH_LAST']  = ($idx === $last);
+				$this->tpl_vars['__FOREACH_INDEX'] = $idx;
 			}
-
-			// Set if we're on the LAST iteration
-			if ($idx === $last) {
-				$this->tpl_vars['__FOREACH_LAST'] = true;
-			} else {
-				$this->tpl_vars['__FOREACH_LAST'] = false;
-			}
-
-			$this->tpl_vars['__FOREACH_INDEX'] = $idx;
 
 			// This is a key/val pair: foreach $key => $val
 			if ($oval) {
@@ -887,26 +1047,31 @@ class sluz {
 		return $ret;
 	}
 
-	// Parse a simple expression block
+	// Parse a simple expression block — the catch-all for {…} blocks that
+	// aren't variables, if/foreach/include/literal. Covers math ({3 + 4}),
+	// string ops ({"hello" . " world"}), and bare variable expressions.
+	//
+	// $str is the full block e.g. "{$x + 3}", $m[1] is the inner content "$x + 3".
 	private function expression_block($str, $m) {
-		$ret = "";
+		$blk = $m[1] ?? "";
 
-		// Make sure the block has something parseble... at least a $ or "
-		if (!preg_match("/[\"\d$(]/", $str)) {
+		// Cheap pre-filter: skip eval entirely if the block contains none of
+		// the characters that could form a valid PHP expression (no quotes,
+		// digits, $, or parens). These are bare words like {foo} or stray
+		// braces — nothing evaluable.
+		if (!preg_match("/[\"\d$(]/", $blk)) {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unknown block type <code>$str</code> in <code>$file</code> on line #$line", 73467);
 		}
 
-		$err   = false;
-		$blk   = $m[1] ?? "";
+		// Convert variables in the block to their real values
 		$after = $this->convert_variables_in_string($blk);
 		$ret   = $this->peval($after, $err);
 
-		$valid_type = (is_string($ret) || is_numeric($ret));
-
-		// The evaluated block has to return SOMETHING printable (not null/false/obj)
-		// Even "" is fine
-		if ($err || !$valid_type) {
+		// peval sets $err to -1 on a ParseError; also reject non-scalar
+		// results (null, false, objects, arrays) — only strings and
+		// numbers are valid template output.
+		if ($err || !(is_string($ret) || is_numeric($ret))) {
 			list($line, $col, $file) = $this->get_char_location($this->char_pos, $this->tpl_file);
 			return $this->error_out("Unknown tag <code>$str</code> in <code>$file</code> on line #$line", 18933);
 		}
@@ -917,9 +1082,9 @@ class sluz {
 	// Find the position of the closing tag in a string. This *IS* nesting aware
 	function find_ending_tag($haystack, $open_tag, $close_tag) {
 		// Do a quick check up to the FIRST closing tag to see if we find it
-		$pos         = strpos($haystack, $close_tag);
-		$substr      = substr($haystack,0, $pos);
-		$open_count  = substr_count($substr, $open_tag);
+		$pos        = strpos($haystack, $close_tag);
+		$substr     = substr($haystack,0, $pos);
+		$open_count = substr_count($substr, $open_tag);
 
 		if ($open_count === 1) {
 			return $pos;
@@ -960,117 +1125,7 @@ class sluz {
 
 	// Break up a string into tokens: pieces of {} and the text between them
 	function get_tokens($str) {
-		$x = preg_split('/({[^}]+})/', $str, 0, PREG_SPLIT_DELIM_CAPTURE);
-		$x = array_filter($x);
-		$x = array_values($x);
-
-		return $x;
-	}
-
-	// Is the string part of an if token
-	function is_if_token($str) {
-		if ($str === '{else}') {
-			return true;
-		}
-
-		if ($str === '{/if}') {
-			return true;
-		}
-
-		// Return the conditional for this
-		if (preg_match("/({if|{elseif) (.+?)}/", $str, $m)) {
-			$ret = trim($m[2] ?? "");
-			return $ret;
-		};
-
-		return false;
-	}
-
-	// Take an array of tokens and build a list of if/else rules
-	private function get_if_rules_from_tokens($toks) {
-		$num    = count($toks);
-		$nested = 0;
-
-		// This builds an array of which tokens are pieces of the if
-		$tmp = [];
-		for ($i = 0; $i < $num; $i++) {
-			$item = $toks[$i];
-
-			if (str_starts_with($item, '{if')) { $nested++; }
-			if ($item === '{/if}')             { $nested--; }
-
-			// If we're in the middle of a nest, it's automatically NOT an if piece
-			if ($nested !== 1) {
-				$yes = false;
-			} else {
-				$yes = boolval($this->is_if_token($item));
-			}
-
-			// The last {/if} of a nested doesn't count
-			if ($nested === 1 && $item === '{/if}') {
-				$yes = false;
-			}
-
-			$tmp[$i] = $yes;
-		}
-
-		$tmp[$num - 1] = true;
-
-		////////////////////////////////////////////////////////////////////////
-
-		// Now that we know what pieces are the ifs we can pull those out
-		// because they are the test conditions
-		$conds = [];
-		for ($i = 0; $i < $num; $i++) {
-			$item = $tmp[$i];
-
-			if ($item) {
-				$test    = $this->is_if_token($toks[$i]);
-				$is_last = ($i === ($num - 1));
-
-				if (!$is_last) {
-					$conds[] = $test;
-				}
-			}
-		}
-
-		// Last one is the final {/if} and it's always true
-		$tmp[$num] = true;
-
-		////////////////////////////////////////////////////////////////////////
-
-		// Everything AFTER an {if} piece is the payload to that test condition
-		$str      = '';
-		$payloads = [];
-		$first    = true;
-		for ($i = 0; $i < $num; $i++) {
-			$item = $tmp[$i];
-
-			if (!$item) {
-				$str .= $toks[$i];
-			} else {
-				if (!$first) {
-					$payloads[] = $str;
-				}
-
-				$first = false;
-				$str   = '';
-			}
-		}
-
-		$cond_count = count($conds);
-		$payl_count = count($payloads);
-
-		if ($cond_count !== $payl_count) {
-			$this->error_out("Error parsing {if} conditions in '$str'", 95320);
-		}
-
-		$ret = [];
-		for ($i = 0; $i < count($conds); $i++) {
-			$ret[] = [$conds[$i], $payloads[$i]];
-		}
-
-		return $ret;
+		return preg_split($this->tokens_pattern, $str, 0, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 	}
 
 	// Get/Set parent tpl
@@ -1083,6 +1138,85 @@ class sluz {
 			return $this->parent_tpl;
 		}
 	}
+
+	// Escaped delimiters for use in regex patterns (cached)
+	private function dlre() { return $this->dlre_cached; }
+	private function drre() { return $this->drre_cached; }
+
+	// Rebuild all cached delimiter-dependent values
+	private function rebuild_delim_cache() {
+		$ld = $this->left_delim;
+		$rd = $this->right_delim;
+
+		$this->dlre_cached = preg_quote($ld, '/');
+		$this->drre_cached = preg_quote($rd, '/');
+
+		$ldre = $this->dlre_cached;
+		$rdre = $this->drre_cached;
+
+		$this->if_tag        = $ld . 'if';
+		$this->foreach_tag   = $ld . 'foreach';
+		$this->literal_tag   = $ld . 'literal';
+		$this->close_if      = $ld . '/if' . $rd;
+		$this->close_foreach = $ld . '/foreach' . $rd;
+		$this->else_tag      = $ld . 'else' . $rd;
+		$this->elseif_tag    = $ld . 'elseif ';
+		$this->if_space_tag  = $ld . 'if ';
+		$this->comment_open  = $ld . '*';
+		$this->comment_close = '*' . $rd;
+
+		$this->var_pattern       = '/^'  . $ldre . '\$(\w[\w\|\.\'";\\t :,!@#%^&*?_\/\\\\-]*)' . $rdre . '$/';
+		$this->foreach_pattern   = '/^'  . $ldre . 'foreach (\$\w[\w.]*) as \$(\w+)( => \$(\w+))?' . $rdre . '(.+)' . $ldre . '\/foreach' . $rdre . '$/s';
+		$this->literal_pattern   = '/^'  . $ldre . 'literal' . $rdre . '(.+)' . $ldre . '\/literal' . $rdre . '$/s';
+		$this->catchall_pattern  = '/^'  . $ldre . '(.+)' . $rdre . '$/s';
+		$this->if_simple_pattern = '/'   . $ldre . 'if (.+?)' . $rdre . '(.+)' . $ldre . '\/if' . $rdre . '/s';
+		$this->tokens_pattern    = '/('  . $ldre . '[^' . $rdre . ']+' . $rdre . ')/';
+		$this->newline_pattern   = '/\n' . $ldre . '\/\w+' . $rdre . '$/s';
+	}
+
+	// Enable/disable auto-escaping of HTML in variable output
+	public function setEscapeHtml($enable = true) {
+		$this->escape_html = (bool) $enable;
+
+		return $this;
+	}
+
+	// Set alternate single-character delimiters (default is { / })
+	// Comment delimiters are derived: left_delim + '*' and '*' + right_delim
+	public function set_delimiters($left, $right) {
+		if (strlen($left) !== 1 || strlen($right) !== 1) {
+			throw new \InvalidArgumentException("Delimiters must be single characters");
+		}
+
+		if ($left === $right) {
+			throw new \InvalidArgumentException("Left and right delimiters must be different");
+		}
+
+		$this->left_delim  = $left;
+		$this->right_delim = $right;
+
+		$this->rebuild_delim_cache();
+	}
+}
+
+// Safely encode a value to prevent XSS. Supports 'html' (default), 'url', and 'js'.
+function escape($str, $type = 'html') {
+	$str = (string) $str;
+
+	if ($type === 'html') {
+		return htmlspecialchars($str, ENT_QUOTES | ENT_SUBSTITUTE, 'UTF-8');
+	} elseif ($type === 'url') {
+		return rawurlencode($str);
+	} elseif ($type === 'js') {
+		return json_encode($str, JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP);
+	} else {
+		return "Unknown escape type '$type' #65491";
+	}
+}
+
+// Return value unchanged — used with setEscapeHtml() to opt out of auto-escaping
+function raw($str) {
+	return $str;
 }
 
 // This function is *OUTSIDE* of the class so it can be called separately without

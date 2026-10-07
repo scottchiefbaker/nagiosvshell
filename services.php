@@ -18,7 +18,7 @@ if ($host_group) {
 	$host = $v->get_hostgroup_members($host_group);
 
 	if (!$host) {
-		$v->error_out("Host group $host_group not found", 19424);
+		$v->error_out("Host group \"$host_group\" not found", 19424);
 	}
 
 	$svc_info = [];

@@ -17,7 +17,7 @@ $v->sluz->assign('js_files', ["js/service_details.js"]);
 
 $svc_info = $v->get_service_details($host_name, $svc_name);
 if (!$svc_info) {
-	$v->error_out("Service $svc_name not found", 48201);
+	$v->error_out("Service \"$svc_name\" not found", 48201);
 }
 
 // Service log items

@@ -102,3 +102,11 @@ test('increment: adds to an existing value', function () {
 	increment($x, 3);
 	assert_same(8, $x);
 });
+
+test('human_size: gigabyte boundary', function () {
+	assert_same('1GB', human_size(1024 * 1024 * 1024));
+});
+
+test('human_time: larger duration keeps years and days in order', function () {
+	assert_same('~1 year 1 day', trim(human_time(86400 * 366, 2)));
+});

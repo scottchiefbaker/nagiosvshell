@@ -1,0 +1,55 @@
+<?php
+
+// Tests for parsing Nagios status and object-cache files
+
+function parser_fixture(string $body, string $suffix): string {
+	$file = temp_file("nagios_parser_", $suffix);
+	file_put_contents($file, $body);
+	return $file;
+}
+
+test('parse_nagios_status_file: maps host and service records by name', function () {
+	$file = parser_fixture(
+		"# generated status\n" .
+		"hoststatus {\n host_name=web1\n current_state=0\n }\n" .
+		"servicestatus {\n host_name=web1\n service_description=HTTP\n current_state=1\n plugin_output=HTTP=slow\n }\n" .
+		"programstatus {\n enable_notifications=1\n }\n",
+		".dat"
+	);
+
+	$v = make_vshell();
+	$data = $v->parse_nagios_status_file($file, false);
+
+	assert_same('0', $data['hoststatus']['web1']['current_state']);
+	assert_same('1', $data['servicestatus']['web1']['HTTP']['current_state']);
+	assert_same('HTTP=slow', $data['servicestatus']['web1']['HTTP']['plugin_output']);
+	assert_same(['enable_notifications' => '1'], $data['programstatus']);
+});
+
+test('parse_nagios_status_file: collects host and service comments', function () {
+	$file = parser_fixture(
+		"hostcomment {\n host_name=web1\n comment=maintenance\n }\n" .
+		"servicecomment {\n host_name=web1\n service_description=HTTP\n comment=planned\n }\n",
+		".dat"
+	);
+
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same('maintenance', $data['hostcomment']['web1'][0]['comment']);
+	assert_same('planned', $data['servicecomment']['web1']['HTTP'][0]['comment']);
+});
+
+test('parse_nagios_objects_file: parses hosts, services, and hostgroups', function () {
+	$file = parser_fixture(
+		"# object cache\n" .
+		"define host {\n\thost_name\tweb1\n\taddress\t127.0.0.1\n}\n" .
+		"define service {\n\thost_name\tweb1\n\tservice_description\tHTTP\n\tcheck_command\tcheck_http!path=/\n}\n" .
+		"define hostgroup {\n\thostgroup_name\tweb\n\tmembers\tweb1\n}\n",
+		".cache"
+	);
+
+	$data = make_vshell()->parse_nagios_objects_file($file, false);
+	assert_same('127.0.0.1', $data['host']['web1']['address']);
+	assert_same('check_http!path=/', $data['service']['web1']['HTTP']['check_command']);
+	assert_same('web', $data['hostgroup'][0]['hostgroup_name']);
+	assert_same('web1', $data['hostgroup'][0]['members']);
+});

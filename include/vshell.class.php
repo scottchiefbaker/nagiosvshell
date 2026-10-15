@@ -6,7 +6,21 @@ require_once("$base_dir/include/krumo/class.krumo.php");
 require_once("$base_dir/include/global-functions.php");
 require_once("$base_dir/include/sluz/sluz.class.php");
 
+// Thrown by vshell::error_out() instead of rendering/exiting when
+// vshell::$throw_on_error is set (used by the test suite)
+class vshell_exception extends RuntimeException {
+	public $err_num = 0;
+
+	public function __construct($err_msg, $err_num) {
+		parent::__construct($err_msg);
+		$this->err_num = $err_num;
+	}
+}
+
 class vshell {
+
+	// When true, error_out() throws vshell_exception instead of exiting
+	public static $throw_on_error = false;
 
 	public $version        = "3.0.4";
 	public $base_dir       = "";
@@ -1066,6 +1080,10 @@ class vshell {
 	}
 
 	function error_out($err_msg, $err_num) {
+		if (self::$throw_on_error) {
+			throw new vshell_exception($err_msg, $err_num);
+		}
+
 		$tpl = $this->base_dir . "/tpls/error_out.stpl";
 
 		$this->sluz->assign("err_msg", $err_msg);

@@ -61,3 +61,15 @@ can be helpful if you want to script a specific service or host.
 ```
 curl --user nagios https://nagios.domain.com/nagios/vshell/services.php?host_filter=router&json=1
 ```
+
+## Running Tests
+
+The unit tests need only PHP. They do not need a running Nagios install or a
+config file.
+
+```
+php tests/run.php
+```
+
+Add `--simple` to print only failures and the summary. The script exits 1 if
+any test fails. New test files go in `tests/` and must end in `Test.php`.

@@ -104,3 +104,20 @@ test('filter_service_results: host filter restricts to one host', function () {
 	assert_same(['web1'], array_keys($out));
 	assert_same(['HTTP', 'Disk'], array_keys($out['web1']));
 });
+
+test('filter_service_results: missing optional fields do not match filters', function () {
+	$v = make_vshell();
+	$data = ['web1' => [['host_name' => 'web1']]];
+	assert_same([], $v->filter_service_results($data, 'CRITICAL', '', ''));
+	assert_same([], $v->filter_service_results($data, '', 'HTTP', ''));
+});
+
+test('filter_host_results: regex-special characters remain regex syntax', function () {
+	$v = make_vshell();
+	$data = [
+		['host_name' => 'web1.example', 'state_str' => 'UP'],
+		['host_name' => 'web1Xexample', 'state_str' => 'UP'],
+	];
+	$out = $v->filter_host_results($data, '', 'web1.example', '');
+	assert_same(['web1.example', 'web1Xexample'], array_column($out, 'host_name'));
+});

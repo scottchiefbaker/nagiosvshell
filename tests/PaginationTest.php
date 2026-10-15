@@ -93,3 +93,16 @@ test('record_limit: empty data gives no rows and no pages', function () {
 	assert_same(0, $page['total']);
 	assert_same(0, $page['num_pages']);
 });
+
+test('record_limit: exact page boundary and out-of-range offset', function () {
+	$v = make_vshell();
+	[$rows, $page] = $v->record_limit(pagination_fixture(), 5, 0);
+	assert_same(5, $page['shown']);
+	assert_same(1, $page['num_pages']);
+	assert_same(5, count(names_in($rows)));
+
+	[$rows, $page] = $v->record_limit(pagination_fixture(), 2, 20);
+	assert_same([], $rows);
+	assert_same(0, $page['shown']);
+	assert_same(10, $page['current_page']);
+});

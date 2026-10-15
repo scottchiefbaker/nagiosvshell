@@ -806,7 +806,7 @@ class vshell {
 		$fp    = fopen($file, 'r');
 
 		if (!$fp) {
-			$this->error_out("Unable to open '$file' for reading");
+			$this->error_out("Unable to open '$file' for reading", 47212);
 		}
 
 		// Basic memoizing to save time on repeat calls
@@ -903,7 +903,7 @@ class vshell {
 		$fp    = fopen($file, 'r');
 
 		if (!$fp) {
-			$this->error_out("Unable to open '$file' for reading");
+			$this->error_out("Unable to open '$file' for reading", 47210);
 		}
 
 		// Basic memoizing to save time on repeat calls
@@ -990,7 +990,7 @@ class vshell {
 		$fp    = fopen($file, 'r');
 
 		if (!$fp) {
-			$this->error_out("Unable to open '$file' for reading");
+			$this->error_out("Unable to open '$file' for reading", 47211);
 		}
 
 		// Basic memoizing to save time on repeat calls

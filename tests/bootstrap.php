@@ -9,13 +9,8 @@ date_default_timezone_set('UTC');
 // but set this anyway so anything reading it sees a sane value.
 $_SERVER['REMOTE_USER'] = 'testuser';
 
-// The vendored krumo library (include/krumo) triggers PHP 8.5 deprecation
-// notices at compile time. We can't fix third-party code here, so silence only
-// E_DEPRECATED while loading it. All other errors are still reported.
 $base_dir = dirname(__DIR__);
-$prev_error_reporting = error_reporting(E_ALL & ~E_DEPRECATED);
 require_once "$base_dir/include/vshell.class.php";
-error_reporting($prev_error_reporting);
 
 // Make error_out() throw vshell_exception so error paths can be asserted
 vshell::$throw_on_error = true;

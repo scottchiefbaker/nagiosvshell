@@ -46,7 +46,7 @@ if (!defined('KRUMO_NO_SORT')) {
 
 class Krumo
 {
-    const VERSION = '0.7.2';
+    const VERSION = '0.7.6';
 
     /**
      * Return Krumo version
@@ -677,7 +677,7 @@ class Krumo
      *
      * @param array $cascade Cascading information
      */
-    public static function cascade(array $cascade = null)
+    public static function cascade(?array $cascade = null)
     {
         static::$_cascade = $cascade;
     }
@@ -852,7 +852,7 @@ class Krumo
 
         // set
         if (isset($state)) {
-            $_ = (boolean) $state;
+            $_ = boolval($state);
         }
 
         // get
@@ -1070,22 +1070,16 @@ class Krumo
 
             foreach ($properties as $property) {
                 $prefix = null;
-                $setAccessible = false;
 
                 if ($property->isPrivate()) {
-                    $setAccessible = true;
                     $prefix = 'private';
                 } elseif ($property->isProtected()) {
-                    $setAccessible = true;
                     $prefix = 'protected';
                 } elseif ($property->isPublic()) {
                     $prefix = 'public';
                 }
 
                 $name = $property->getName();
-                if ($setAccessible) {
-                    $property->setAccessible(true);
-                }
 
                 if ($property->isInitialized($data)) {
                     $value = $property->getValue($data);
@@ -1094,10 +1088,6 @@ class Krumo
                     $type = $property->getType();
 
                     static::_not_initialized("<span>$prefix</span>&nbsp;$name", $type);
-                }
-
-                if ($setAccessible) {
-                    $property->setAccessible(false);
                 }
             }
         } else {

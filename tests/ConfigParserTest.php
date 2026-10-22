@@ -45,6 +45,42 @@ test('parse_nagios_config: lines without = are ignored', function () {
 	assert_same(['key' => 'value'], $cfg);
 });
 
+test('parse_nagios_config: trims whitespace around keys and values', function () {
+	$file = write_fixture("  command_file  =  /tmp/nagios.cmd  \n", ".cfg");
+
+	$v   = make_vshell();
+	$cfg = $v->parse_nagios_config($file);
+
+	assert_same(['/tmp/nagios.cmd'], array_values($cfg));
+	assert_same('command_file', array_keys($cfg)[0]);
+});
+
+test('parse_nagios_config: duplicate keys keep the last value', function () {
+	$file = write_fixture("key=old\nkey=new\n", ".cfg");
+
+	$v   = make_vshell();
+	$cfg = $v->parse_nagios_config($file);
+
+	assert_same(['key' => 'new'], $cfg);
+});
+
+test('parse_nagios_config: empty file returns empty array', function () {
+	$file = write_fixture("", ".cfg");
+
+	$v   = make_vshell();
+	$cfg = $v->parse_nagios_config($file);
+
+	assert_same([], $cfg);
+});
+
+test('parse_nagios_config: missing file returns empty array', function () {
+	$v       = make_vshell();
+	$missing = temp_file("no_config_", ".cfg");
+
+	$cfg = $v->parse_nagios_config($missing);
+	assert_same([], $cfg);
+});
+
 test('get_user_perms: user listed in an authorized_for line gets true', function () {
 	$file = write_fixture(
 		"# cgi.cfg fixture\n" .

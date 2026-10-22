@@ -53,3 +53,85 @@ test('parse_nagios_objects_file: parses hosts, services, and hostgroups', functi
 	assert_same('web', $data['hostgroup'][0]['hostgroup_name']);
 	assert_same('web1', $data['hostgroup'][0]['members']);
 });
+
+test('parse_nagios_status_file: empty file returns empty array', function () {
+	$file = parser_fixture("", ".dat");
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same([], $data);
+});
+
+test('parse_nagios_status_file: comments and blanks only return empty array', function () {
+	$file = parser_fixture("# just a comment\n\n# another\n", ".dat");
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same([], $data);
+});
+
+test('parse_nagios_status_file: truncated block without closing brace is dropped', function () {
+	$file = parser_fixture("hoststatus {\n host_name=web1\n current_state=0\n", ".dat");
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same([], $data);
+});
+
+test('parse_nagios_status_file: duplicate hoststatus keeps the last entry', function () {
+	$file = parser_fixture(
+		"hoststatus {\n host_name=web1\n current_state=0\n }\n" .
+		"hoststatus {\n host_name=web1\n current_state=1\n }\n",
+		".dat"
+	);
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same('1', $data['hoststatus']['web1']['current_state']);
+});
+
+test('parse_nagios_status_file: values keep = and ; verbatim', function () {
+	$file = parser_fixture(
+		"servicestatus {\n host_name=web1\n service_description=HTTP\n plugin_output=a=b;c=d\n }\n",
+		".dat"
+	);
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same('a=b;c=d', $data['servicestatus']['web1']['HTTP']['plugin_output']);
+});
+
+test('parse_nagios_status_file: comment without host_name groups under empty key', function () {
+	$file = parser_fixture("hostcomment {\n comment=orphan\n }\n", ".dat");
+	set_error_handler(fn() => true);
+	try {
+		$data = make_vshell()->parse_nagios_status_file($file, false);
+	} finally {
+		restore_error_handler();
+	}
+	assert_same('orphan', $data['hostcomment'][''][0]['comment']);
+});
+
+test('parse_nagios_status_file: handles CRLF line endings', function () {
+	$file = parser_fixture("hoststatus {\r\n host_name=web1\r\n current_state=0\r\n }\r\n", ".dat");
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same('0', $data['hoststatus']['web1']['current_state']);
+});
+
+test('parse_nagios_objects_file: space-separated lines are ignored (tab format only)', function () {
+	$file = parser_fixture("define host {\nhost_name web1\n}\n", ".cache");
+	$data = make_vshell()->parse_nagios_objects_file($file, false);
+	assert_same([], $data['host'][''] ?? []);
+});
+
+test('parse_nagios_objects_file: duplicate service keeps the last entry', function () {
+	$file = parser_fixture(
+		"define service {\n\thost_name\tweb1\n\tservice_description\tHTTP\n\tcheck_command\told\n}\n" .
+		"define service {\n\thost_name\tweb1\n\tservice_description\tHTTP\n\tcheck_command\tnew\n}\n",
+		".cache"
+	);
+	$data = make_vshell()->parse_nagios_objects_file($file, false);
+	assert_same('new', $data['service']['web1']['HTTP']['check_command']);
+});
+
+test('parse_nagios_objects_file: empty file returns empty array', function () {
+	$file = parser_fixture("", ".cache");
+	$data = make_vshell()->parse_nagios_objects_file($file, false);
+	assert_same([], $data);
+});
+
+test('parse_nagios_objects_file: trims extra tabs around values', function () {
+	$file = parser_fixture("define host {\n\thost_name\t\tweb1\t\n}\n", ".cache");
+	$data = make_vshell()->parse_nagios_objects_file($file, false);
+	assert_same('web1', $data['host']['web1']['host_name'] ?? null);
+});

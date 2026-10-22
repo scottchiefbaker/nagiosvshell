@@ -110,3 +110,71 @@ test('human_size: gigabyte boundary', function () {
 test('human_time: larger duration keeps years and days in order', function () {
 	assert_same('~1 year 1 day', trim(human_time(86400 * 366, 2)));
 });
+
+test('human_time: negative durations clamp to "0 seconds"', function () {
+	assert_same("0 seconds", human_time(-5));
+});
+
+test('human_time: approximate larger than segments does not warn', function () {
+	set_error_handler(fn() => true);
+	try {
+		$out = human_time(60, 5);
+	} finally {
+		restore_error_handler();
+	}
+	assert_true(str_contains($out, "1 minute"));
+});
+
+test('human_size: terabyte and petabyte boundaries', function () {
+	assert_same('1TB', human_size(1024 * 1024 * 1024 * 1024));
+	assert_same('1PB', human_size(1024 * 1024 * 1024 * 1024 * 1024));
+});
+
+test('human_size: huge sizes clamp to PB instead of warning', function () {
+	set_error_handler(fn() => true);
+	try {
+		$out = human_size(1024 * 1024 * 1024 * 1024 * 1024 * 1024);
+	} finally {
+		restore_error_handler();
+	}
+	assert_true(str_ends_with($out, 'PB'));
+});
+
+test('human_size: numeric strings work, non-numeric gives 0B', function () {
+	assert_same('1KB', human_size("1024"));
+	assert_same('1KB', human_size(1024.0));
+	assert_same('0B', human_size("abc"));
+});
+
+test('qw: splits on tabs and newlines', function () {
+	assert_same(['a', 'b', 'c'], qw("a\tb\nc"));
+});
+
+test('qw: single word in hash mode returns empty array', function () {
+	assert_same([], qw("a", true));
+});
+
+test('human_time_diff: mid-range past and future avoid boundary flake', function () {
+	// 150s -> 2 minutes; 3700s -> 1 hour; well clear of 60/3600 edges.
+	assert_same("2 minutes ago", human_time_diff(time() - 150));
+	assert_same("1 hour ago", human_time_diff(time() - 3700));
+	assert_same("In 2 minutes", human_time_diff(time() + 150));
+	assert_same("In 1 hour", human_time_diff(time() + 3700));
+});
+
+test('human_time_diff: days, months, and years use singular/plural correctly', function () {
+	assert_same("1 day ago", human_time_diff(time() - 86400 * 2 + 1));
+	assert_same("2 days ago", human_time_diff(time() - 86400 * 2 - 10));
+	assert_true(str_contains(human_time_diff(time() - 86400 * 45), "month"));
+	assert_true(str_contains(human_time_diff(time() - 86400 * 400), "year"));
+});
+
+test('v_date_format: epoch zero formats as 1970-01-01', function () {
+	assert_same("1970-01-01", v_date_format(0, "Y-m-d"));
+});
+
+test('increment: works with float and string values', function () {
+	$x = 1.5;
+	increment($x, 0.5);
+	assert_same(2.0, $x);
+});

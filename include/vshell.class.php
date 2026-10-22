@@ -249,19 +249,25 @@ class vshell {
 		// Current log file
 		$file  = $this->config['log_file'];
 		$lines = file($file);
+		if ($lines === false) {
+			$lines = [];
+		}
 		$ret   = [];
 
 		// Path to the previous Nagios logs
-		$archive = $this->config['log_archive_path'];
+		$archive = $this->config['log_archive_path'] ?? "";
 
 		// How many days to go backwards
 		$utime  = time();
 		for ($i = 0; $i <= $days; $i++) {
+			if ($archive === "") {
+				break;
+			}
 			$ut = $utime - (86400 * $i);
 
 			// Example: nagios-12-31-2023-00.log
 			$pattern  = "nagios-" . date("m-d-Y", $ut) . "*.log";
-			$files    = glob($archive . "/" . $pattern);
+			$files    = glob($archive . "/" . $pattern) ?: [];
 
 			foreach ($files as $log_file) {
 				// Warn if we can't load the log file
@@ -272,7 +278,9 @@ class vshell {
 
 				// Get lines from the prev file
 				$new   = file($log_file);
-				$lines = array_merge($lines, $new);
+				if ($new !== false) {
+					$lines = array_merge($lines, $new);
+				}
 			}
 		}
 
@@ -293,33 +301,33 @@ class vshell {
 				];
 
 				if ($action === "SERVICE ALERT") {
-					$obj['host']     = $parts[0];
-					$obj['service']  = $parts[1];
-					$obj['status']   = $parts[2];
-					$obj['severity'] = $parts[3];
-					$obj['attempt']  = $parts[4];
-					$obj['text']     = $parts[5];
+					$obj['host']     = $parts[0] ?? "";
+					$obj['service']  = $parts[1] ?? "";
+					$obj['status']   = $parts[2] ?? "";
+					$obj['severity'] = $parts[3] ?? "";
+					$obj['attempt']  = $parts[4] ?? "";
+					$obj['text']     = $parts[5] ?? "";
 				} elseif ($action === "HOST ALERT") {
-					$obj['host']     = $parts[0];
-					$obj['status']   = $parts[1];
-					$obj['severity'] = $parts[2];
-					$obj['attempt']  = $parts[3];
-					$obj['text']     = $parts[4];
+					$obj['host']     = $parts[0] ?? "";
+					$obj['status']   = $parts[1] ?? "";
+					$obj['severity'] = $parts[2] ?? "";
+					$obj['attempt']  = $parts[3] ?? "";
+					$obj['text']     = $parts[4] ?? "";
 				// [1711754256] SERVICE NOTIFICATION: user;gray;Load Average;OK;notify-by-email;OK - load average: 0.01, 0.42, 0.89
 				} elseif ($include_notifications && $action === "SERVICE NOTIFICATION") {
-					$obj['user']              = $parts[0];
-					$obj['host']              = $parts[1];
-					$obj['service']           = $parts[2];
-					$obj['severity']          = $parts[3];
-					$obj['notification_type'] = $parts[4];
-					$obj['text']              = $parts[5];
+					$obj['user']              = $parts[0] ?? "";
+					$obj['host']              = $parts[1] ?? "";
+					$obj['service']           = $parts[2] ?? "";
+					$obj['severity']          = $parts[3] ?? "";
+					$obj['notification_type'] = $parts[4] ?? "";
+					$obj['text']              = $parts[5] ?? "";
 				// [1711389267] HOST NOTIFICATION: user;gray;UP;host-notify-by-email;PING OK - Packet loss = 0%, RTA = 5.64 ms
 				} elseif ($include_notifications && $action === "HOST NOTIFICATION") {
-					$obj['user']              = $parts[0];
-					$obj['host']              = $parts[1];
-					$obj['status']            = $parts[2];
-					$obj['notification_type'] = $parts[3];
-					$obj['text']              = $parts[4];
+					$obj['user']              = $parts[0] ?? "";
+					$obj['host']              = $parts[1] ?? "";
+					$obj['status']            = $parts[2] ?? "";
+					$obj['notification_type'] = $parts[3] ?? "";
+					$obj['text']              = $parts[4] ?? "";
 				} else {
 					//print "$action<br />\n";
 				}
@@ -346,7 +354,7 @@ class vshell {
 
 				// We're getting ALL of them
 				if (!$host) {
-					$ret = $obj;
+					$ret[] = $obj;
 				}
 
 			}
@@ -360,10 +368,10 @@ class vshell {
 
 	// Sort via reverse unix datetime (newest first)
 	function log_sort($a, $b) {
-		$one = $a['datetime'] ?? 0;
-		$two = $b['datetime'] ?? 0;
+		$one = intval($a['datetime'] ?? 0);
+		$two = intval($b['datetime'] ?? 0);
 
-		$ret = $b <=> $a;
+		$ret = $two <=> $one;
 
 		return $ret;
 	}
@@ -862,8 +870,8 @@ class vshell {
 				$parts = explode("=", $line, 2);
 				//kd($line, $file);
 
-				$key = $parts[0] ?? "";
-				$val = $parts[1] ?? "";
+				$key = trim($parts[0] ?? "");
+				$val = trim($parts[1] ?? "");
 
 				$obj[$key] = $val;
 			// Start of a section: hoststatus {
@@ -885,11 +893,11 @@ class vshell {
 					$hn = $obj['host_name'] ?? "";
 					$ret[$type][$hn] = $obj;
 				} elseif ($type === "hostcomment") {
-					$hn = $obj['host_name'];
+					$hn = $obj['host_name'] ?? "";
 					$ret[$type][$hn][] = $obj;
 				} elseif ($type === "servicecomment") {
-					$hn = $obj['host_name'];
-					$sn = $obj['service_description'];
+					$hn = $obj['host_name'] ?? "";
+					$sn = $obj['service_description'] ?? "";
 					$ret[$type][$hn][$sn][] = $obj;
 				// These each have a single section only
 				} elseif (in_array($type, ["info", "programstatus"])) {
@@ -933,6 +941,7 @@ class vshell {
 		$ret  = [];
 		// Section subheader
 		$type = '';
+		$obj  = [];
 
 		/* Example:
 
@@ -958,8 +967,8 @@ class vshell {
 				$line  = trim($line);
 				$parts = explode("\t", $line, 2);
 
-				$key = $parts[0] ?? "";
-				$val = $parts[1] ?? "";
+				$key = trim($parts[0] ?? "");
+				$val = trim($parts[1] ?? "");
 
 				//kd([$line, $key, $val]);
 
@@ -975,11 +984,11 @@ class vshell {
 			} elseif ($line === "}") {
 				// Build a hash with appropriate sections
 				if ($type === "host") {
-					$hn = $obj['host_name'];
+					$hn = $obj['host_name'] ?? "";
 					$ret[$type][$hn] = $obj;
 				} elseif ($type === 'service') {
-					$hn = $obj['host_name'];
-					$sn = $obj['service_description'];
+					$hn = $obj['host_name'] ?? "";
+					$sn = $obj['service_description'] ?? "";
 					$ret[$type][$hn][$sn] = $obj;
 				} else {
 					// Store this object
@@ -1017,9 +1026,10 @@ class vshell {
 		}
 
 		// Return object
-		$ret     = [];
+		$ret  = [];
 		// Section subheader
-		$type  = '';
+		$type = '';
+		$obj  = [];
 
 		while ($line = fgets($fp)) {
 			$first_char = $line[0];
@@ -1045,18 +1055,18 @@ class vshell {
 			} elseif (str_contains("}", $line)) {
 				// Build a hash with appropriate sections
 				if (in_array($type, ["hoststatus", "host"])) {
-					$hn = $obj['host_name'];
+					$hn = $obj['host_name'] ?? "";
 					$ret[$type][$hn] = $obj;
 				} elseif ($type === "hostcomment") {
-					$hn = $obj['host_name'];
+					$hn = $obj['host_name'] ?? "";
 					$ret[$type][$hn][] = $obj;
 				} elseif ($type === "servicecomment") {
-					$hn = $obj['host_name'];
-					$sn = $obj['service_description'];
+					$hn = $obj['host_name'] ?? "";
+					$sn = $obj['service_description'] ?? "";
 					$ret[$type][$hn][$sn][] = $obj;
 				} elseif (in_array($type, ["servicestatus", "service"])) {
-					$hn = $obj['host_name'];
-					$sn = $obj['service_description'];
+					$hn = $obj['host_name'] ?? "";
+					$sn = $obj['service_description'] ?? "";
 					$ret[$type][$hn][$sn] = $obj;
 					// These each have a single section only
 				} elseif (in_array($type, ["info", "programstatus"])) {
@@ -1230,7 +1240,10 @@ class vshell {
 	}
 
 	public function parse_nagios_config($file) {
-		$lines = file($file);
+		$lines = @file($file);
+		if ($lines === false) {
+			return [];
+		}
 		$ret   = [];
 
 		foreach ($lines as $line) {
@@ -1244,8 +1257,8 @@ class vshell {
 			if (str_contains($line, '=')) {
 				$parts = explode("=", $line, 2);
 
-				$key = $parts[0] ?? "";
-				$val = $parts[1] ?? "";
+				$key = trim($parts[0] ?? "");
+				$val = trim($parts[1] ?? "");
 
 				$ret[$key] = $val;
 			}

@@ -115,7 +115,7 @@ function sw() {
 
 // Approximate is the number of output segments to have (2 is a good number)
 function human_time(int $time,$approximate = 0) {
-	if ($time === 0) {
+	if ($time <= 0) {
 		return "0 seconds";
 	}
 
@@ -158,6 +158,7 @@ function human_time(int $time,$approximate = 0) {
 	if ($approximate) {
 		$parts  = preg_split("/\s/",$ret);
 		$ret    = "~";
+		$p      = [];
 
 		for ($i = 0; $i < $approximate; $i++) {
 			$first  = $parts[$i * 2]       ?? "";
@@ -173,11 +174,15 @@ function human_time(int $time,$approximate = 0) {
 
 function human_size($size) {
 	# If the size is 0 or less, return 0 B this stops math errors from occurring
-	if ($size <= 0) {
+	if (!is_numeric($size) || $size <= 0) {
 		return '0B';
 	} else {
 		$unit=array('B','KB','MB','GB','TB','PB');
-		return @round($size/pow(1024,($i=floor(log($size,1024)))),2) . $unit[$i];
+		$i = (int)floor(log($size,1024));
+		if ($i >= count($unit)) {
+			$i = count($unit) - 1;
+		}
+		return @round($size/pow(1024,$i),2) . $unit[$i];
 	}
 }
 

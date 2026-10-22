@@ -1,9 +1,8 @@
 <?php
-
 /**
 * Krumo: Structured information display solution
 *
-* Krumo is a debugging tool (PHP 8.2+), which displays structured information
+* Krumo is a debugging tool (PHP5 only), which displays structured information
 * about any PHP variable. It is a nice replacement for print_r() or var_dump()
 * which are used by a lot of PHP developers.
 *
@@ -27,11 +26,11 @@ if (!defined('KRUMO_EXPAND_ALL')) {
 }
 
 if (!defined('KRUMO_SORT')) {
-    define('KRUMO_SORT', 'fefe1734-aa1b-4b1d-80e3-b8fddd45731a');
+    define('KRUMO_SORT','fefe1734-aa1b-4b1d-80e3-b8fddd45731a');
 }
 
 if (!defined('KRUMO_NO_SORT')) {
-    define('KRUMO_NO_SORT', 'a095a471-7734-44a4-90f1-0e8bac46dd0e');
+    define('KRUMO_NO_SORT','a095a471-7734-44a4-90f1-0e8bac46dd0e');
 }
 
 //////////////////////////////////////////////////////////////////////////////
@@ -47,7 +46,7 @@ if (!defined('KRUMO_NO_SORT')) {
 
 class Krumo
 {
-    public const VERSION = '0.7.9';
+    const VERSION = '0.7.6';
 
     /**
      * Return Krumo version
@@ -61,7 +60,7 @@ class Krumo
 
     protected static function getCharset()
     {
-        return static::_config('display', 'default_charset', 'UTF-8');
+        return self::_config('display', 'default_charset', 'UTF-8');
     }
 
     /**
@@ -95,7 +94,7 @@ class Krumo
     }
 
     /**
-     * Prints a list of all currently declared interfaces.
+     * Prints a list of all currently declared interfaces (PHP5 only).
      *
      */
     public static function interfaces()
@@ -384,7 +383,7 @@ class Krumo
         }
 
         // read it
-        if (!is_readable($ini_file) || !$_ = parse_ini_file($ini_file, true)) {
+        if (!$_ = @parse_ini_file($ini_file, 1)) {
             return false;
         }
 
@@ -437,11 +436,18 @@ class Krumo
      * Dump information about a variable
      *
      * @param mixed $data,...
-     * @return bool|string
+     * @return bool
      */
     public static function dump($data, $second = '')
     {
-        // Handle special constants first (works in both CLI and HTML mode)
+        if (static::isCli()) {
+            $args = func_get_args();
+            krumo::cli_dump($args);
+
+            return true;
+        }
+
+        // If we're capturing call dump() with just data and capture the output
         if ($second === KRUMO_RETURN) {
             ob_start();
 
@@ -450,95 +456,27 @@ class Krumo
             $str = ob_get_clean();
 
             return $str;
+        // If we were given expand all, set the global variable
         } elseif ($second === KRUMO_EXPAND_ALL) {
             static::$expand_all = true;
             static::dump($data);
 
             return true;
         } elseif ($second === KRUMO_NO_SORT) {
-            static::$sort = false;
-            static::dump($data);
+            self::$sort = false;
+            Krumo::dump($data);
 
             return true;
         } elseif ($second === KRUMO_SORT) {
-            static::$sort = true;
-            static::dump($data);
-
-            return true;
-        }
-
-        // CLI mode
-        if (static::isCli()) {
-            $clearObjectRecursionProtection = false;
-            if (static::$objectRecursionProtection === null) {
-                static::$objectRecursionProtection = [];
-                $clearObjectRecursionProtection  = true;
-            }
-
-            $_ = debug_backtrace();
-            while ($d = array_pop($_)) {
-                $class         = strtolower($d['class']    ?? '');
-                $function      = strtolower($d['function'] ?? '');
-                $is_krumo_func = in_array($function, ['krumo','k','kd']);
-
-                if ($is_krumo_func || $class == 'krumo') {
-                    break;
-                }
-            }
-
-            $showCallInfo = static::_config('display', 'show_call_info', true);
-            $showVersion  = static::_config('display', 'show_version', true);
-
-            if (func_num_args() > 1) {
-                $_args = func_get_args();
-                foreach ($_args as $d) {
-                    static::dump($d);
-                }
-                return true;
-            }
-
-            $bar = str_repeat("─", 80) . "\n";
-            print $bar;
-
-            static::$_level = 0;
-            static::_cli_dump($data, '&hellip;', '');
-
-            if ($showCallInfo || $showVersion) {
-                $parts = [];
-                if ($showCallInfo && isset($d['file']) && $d['file']) {
-                    $parts[] = "Called from {$d['file']}:{$d['line']}";
-                }
-                if ($showVersion) {
-                    $parts[] = "Krumo version " . Krumo::VERSION;
-                }
-                print "\n" . implode(' — ', $parts) . "\n";
-            }
-            print $bar;
-
-            // flee the hive
-            $_recursion_marker = static::_marker();
-            if ($hive =& static::_hive($dummy)) {
-                foreach ($hive as $i => $bee) {
-                    if (is_object($bee)) {
-                        if (($hash = spl_object_hash($bee)) && isset(static::$objectRecursionProtection[$hash])) {
-                            unset(static::$objectRecursionProtection[$hash]);
-                        }
-                    } elseif (isset($hive[$i]->$_recursion_marker)) {
-                        unset($hive[$i][$_recursion_marker]);
-                    }
-                }
-            }
-
-            if ($clearObjectRecursionProtection) {
-                static::$objectRecursionProtection = null;
-            }
+            self::$sort = true;
+            Krumo::dump($data);
 
             return true;
         }
 
         $clearObjectRecursionProtection   = false;
         if (static::$objectRecursionProtection === null) {
-            static::$objectRecursionProtection = [];
+            static::$objectRecursionProtection = array();
             $clearObjectRecursionProtection  = true;
         }
 
@@ -565,7 +503,7 @@ class Krumo
 
             $class         = strtolower($d['class']    ?? '');
             $function      = strtolower($d['function'] ?? '');
-            $is_krumo_func = in_array($function, ['krumo','k','kd']);
+            $is_krumo_func = in_array($function, array('krumo','k','kd'));
 
             if ($is_krumo_func || $class == 'krumo' || (is_callable($callback) && call_user_func($callback, $d))) {
                 break;
@@ -652,16 +590,20 @@ class Krumo
     * @param mixed $data,...
     * @return string
     */
-    public static function fetch($data)
+    static function fetch($data)
     {
         // disabled ?
         //
-        if (!static::_debug()) {
+        if (!self::_debug())
+        {
             return false;
         }
 
         ob_start();
-        Krumo::dump(...func_get_args());
+        call_user_func_array(
+            array(get_called_class(), 'dump'),
+            func_get_args()
+            );
 
         return ob_get_clean();
     }
@@ -669,7 +611,7 @@ class Krumo
     /**
       * Configuration array.
       */
-    private static $_config = [];
+    private static $_config = array();
 
     /**
      * Returns values from Krumo's configuration
@@ -680,7 +622,7 @@ class Krumo
      * @return mixed
      *
      */
-    private static function _config($group, $name, $fallback = null)
+    private static function _config($group, $name, $fallback=null)
     {
         $krumo_ini = __DIR__ . '/krumo.ini';
 
@@ -764,7 +706,7 @@ class Krumo
         $cascade = static::$_cascade;
 
         if ($cascade == null) {
-            $cascade = static::_config('display', 'cascade', []);
+            $cascade = static::_config('display', 'cascade', array());
         }
 
         if (isset($cascade[$level])) {
@@ -851,13 +793,13 @@ class Krumo
 
             // the CSS
             print "<!-- Using Krumo Skin: \"$skin\" $rel_css_file -->\n";
-            print "<style>\n";
+            print "<style type=\"text/css\">\n";
             print trim($css) . "\n";
             print "</style>\n";
             print "<!-- Krumo - CSS -->\n";
 
             // the JS
-            print "<script>\n";
+            print "<script type=\"text/javascript\">\n";
 
             $js_min_file = __DIR__ . "/js/krumo.min.js";
             $js_file     = __DIR__ . "/js/krumo.js";
@@ -973,7 +915,7 @@ class Krumo
             static::_float($data, $name);
         }
         // integer
-        elseif (is_int($data)) {
+        elseif (is_integer($data)) {
             static::_integer($data, $name);
         }
         // boolean
@@ -996,7 +938,7 @@ class Krumo
     private static function _null($name)
     {
         $html = '<li class="krumo-child">
-            <div class="krumo-element">
+            <div class="krumo-element" onMouseOver="krumo.over(this);" onMouseOut="krumo.out(this);">
             <a class="krumo-name">%s</a> %s <em class="krumo-type krumo-null">NULL</em>
             </div></li>';
 
@@ -1035,7 +977,7 @@ class Krumo
     private static $objectRecursionProtection = null;
     private static function &_hive(&$bee)
     {
-        static $_ = [];
+        static $_ = array();
 
         // new bee
         if (!is_null($bee)) {
@@ -1090,7 +1032,7 @@ class Krumo
                 $_r = null;
             }
         } else {
-            $_r = $data[$_recursion_marker] ?? null;
+            $_r = isset($data[$_recursion_marker]) ? $data[$_recursion_marker] : null;
         }
 
         // recursion detected
@@ -1138,15 +1080,14 @@ class Krumo
                 }
 
                 $name = $property->getName();
-                $escapedName = htmlspecialchars($name, ENT_QUOTES | ENT_SUBSTITUTE, static::getCharset());
 
                 if ($property->isInitialized($data)) {
                     $value = $property->getValue($data);
-                    static::_dump($value, "<span>$prefix</span>&nbsp;$escapedName");
+                    static::_dump($value, "<span>$prefix</span>&nbsp;$name");
                 } else {
                     $type = $property->getType();
 
-                    static::_not_initialized("<span>$prefix</span>&nbsp;$escapedName", $type);
+                    static::_not_initialized("<span>$prefix</span>&nbsp;$name", $type);
                 }
             }
         } else {
@@ -1164,17 +1105,17 @@ class Krumo
                 }
 
                 // skip items beyond the limit, if any
-                if ($i >= $limit && $limit > 0) {
+                if ( $i >= $limit && $limit > 0 ) {
                     $truncated++;
                     continue;
                 }
 
                 // get real value and dump
                 $v =& $data[$k];
-                static::_dump($v, htmlspecialchars((string) $k, ENT_QUOTES | ENT_SUBSTITUTE, static::getCharset()));
+                static::_dump($v, $k);
             }
 
-            if ($truncated > 0) {
+            if ( $truncated > 0 ) {
                 print "\n<li class=\"krumo-child\">";
                 print "<div class=\"krumo-element \" ";
                 print "onMouseOver=\"krumo.over(this);\" onMouseOut=\"krumo.out(this);\">";
@@ -1197,7 +1138,7 @@ class Krumo
         $html = '<div class="krumo-nest" style="display:none;">
             <ul class="krumo-node">
                 <li class="krumo-child">
-                    <div class="krumo-element">
+                    <div class="krumo-element" onMouseOver="krumo.over(this);" onMouseOut="krumo.out(this);">
                         <a class="krumo-name">&#8734;</a>
                         (<em class="krumo-type">Recursion</em>)
                     </div>
@@ -1222,17 +1163,17 @@ class Krumo
      */
     private static function _array($data, $name)
     {
-        if (static::$sort === false) {
+        if (self::$sort === false) {
             $config_sort = false;
-        } elseif (static::$sort === true) {
+        } elseif (self::$sort === true) {
             $config_sort = true;
-            // If neither of the above are set get it from the config
+        // If neither of the above are set get it from the config
         } else {
             $config_sort = static::_config('sorting', 'sort_arrays', true);
         }
 
         // If the sort is enabled in the config (default = yes) and the array is assoc (non-numeric)
-        if (count($data) > 1 && $config_sort && static::is_assoc($data)) {
+        if (sizeof($data) > 1 && $config_sort && static::is_assoc($data)) {
             // Copy the array to a temp variable and sort it
             $new = $data;
             ksort($new);
@@ -1267,7 +1208,7 @@ class Krumo
         print "<a class=\"krumo-name\">$name</a> <em class=\"krumo-type\">Array(<strong class=\"krumo-array-length\">";
         print count($data) . "</strong>)</em>";
 
-        if (count($data) > 0) {
+        if (count($data)>0) {
             print " &hellip;";
         }
 
@@ -1283,12 +1224,12 @@ class Krumo
             print " (<em class=\"krumo-type\">Callback</em>) <strong class=\"krumo-string\">";
 
             if (!is_object($_[0])) {
-                echo htmlspecialchars($_[0]);
+                echo htmlSpecialChars($_[0]);
             } else {
-                echo htmlspecialchars(get_class($_[0])) . "::";
+                echo htmlSpecialChars(get_class($_[0])) . "::";
             }
 
-            echo htmlspecialchars($_[1]) . "()</strong></span>";
+            echo htmlSpecialChars($_[1]) . "()</strong></span>";
         }
 
         print "</div>";
@@ -1334,10 +1275,22 @@ class Krumo
 
         $class_name = get_class($data);
         print "<a class=\"krumo-name\">$name</a> <em class=\"krumo-type\">Object</em> ";
-        print static::get_separator() . " <strong class=\"krumo-class\">" . htmlspecialchars($class_name, ENT_QUOTES | ENT_SUBSTITUTE, static::getCharset()) . "</strong>$empty_str</div>";
+        print static::get_separator() . " <strong class=\"krumo-class\">$class_name</strong>$empty_str</div>";
+
+        // If the object is an inherited exception, we want to print out the trace
+        // so we add a bogus trace parameter that contains the trace array
+        // Note: this is not required (will throw an error) for raw Exceptions
+        if ($data instanceof Exception && $class_name !== "Exception") {
+            $data->trace = $data->getTrace();
+        }
 
         if ($properties) {
             static::_vars($data);
+        }
+
+        // Remove the trace we added
+        if ($data instanceof Exception && $class_name !== "Exception") {
+            unset($data->trace);
         }
 
         print "</li>\n";
@@ -1353,7 +1306,7 @@ class Krumo
     private static function _resource($data, $name)
     {
         $html = '<li class="krumo-child">
-            <div class="krumo-element">
+            <div class="krumo-element" onMouseOver="krumo.over(this);" onMouseOut="krumo.out(this);">
             <a class="krumo-name">%s</a> <em class="krumo-type">Resource</em>
             %s<strong class="krumo-resource">%s</strong>
             </div></li>';
@@ -1381,7 +1334,7 @@ class Krumo
         }
 
         $html = '<li class="krumo-child">
-            <div class="krumo-element">
+            <div class="krumo-element" onMouseOver="krumo.over(this);" onMouseOut="krumo.out(this);">
             <a class="krumo-name">%s</a> <em class="krumo-type">Boolean</em>
             %s<strong class="krumo-boolean">%s</strong>
             </div></li>';
@@ -1494,8 +1447,7 @@ class Krumo
         }
     }
 
-    private static function is_datetime($name, $value)
-    {
+    private static function is_datetime($name, $value) {
         $value = intval($value);
 
         // If the name contains date or time, and the value looks like a unixtime
@@ -1532,10 +1484,17 @@ class Krumo
         $truncate_length = static::_config('display', 'truncate_string_length', 100);
         $display_cr      = static::_config('display', 'show_carriage_returns', true);
 
-        $strlen = mb_strlen($data, static::getCharset());
+        $strlen = strlen($data);
+        if (function_exists('mb_strlen')) {
+            $strlen = mb_strlen($data, static::getCharset());
+        }
 
         if ($strlen > $truncate_length) {
-            $_ = mb_substr($data, 0, $truncate_length - 1, static::getCharset());
+            if (function_exists('mb_substr')) {
+                $_ = mb_substr($data, 0, $truncate_length - 1, static::getCharset());
+            } else {
+                $_ = substr($data, 0, $truncate_length - 1);
+            }
             $_extra = true;
         } else {
             $_extra = false;
@@ -1543,7 +1502,7 @@ class Krumo
 
         $icon = '';
         // Check to see if the line has any carriage returns
-        if (str_contains($data, "\n") || str_contains($data, "\r")) {
+        if (preg_match("/\n|\r/", $data)) {
             $slash_n = substr_count($data, "\n");
             $slash_r = substr_count($data, "\r");
 
@@ -1568,10 +1527,9 @@ class Krumo
         $_ = htmlentities($_);
 
         // Check for and highlight any leading or trailing spaces/tabs
-        $has_leading  = ltrim((string) $data, " \t") !== (string) $data;
-        $has_trailing = rtrim((string) $data, " \t") !== (string) $data;
-
-        if ($has_leading || $has_trailing) {
+        if (preg_match("/^([ \t]+)|([ \t]+)$/", $data)) {
+            $has_leading  = preg_match("/^([ \t]+)/", $data);
+            $has_trailing = preg_match("/([ \t]+)$/", $data);
 
             if ($has_leading && $has_trailing) {
                 $title = "Note: String contains trailing and leading whitespace";
@@ -1584,8 +1542,8 @@ class Krumo
             }
 
             $icon = static::get_icon("information", $title);
-            $_    = preg_replace_callback("/^([ \t]+)/", "Krumo::convert_whitespace", $_);
-            $_    = preg_replace_callback("/([ \t]+)$/", "Krumo::convert_whitespace", $_);
+            $_    = preg_replace_callback( "/^([ \t]+)/", "Krumo::convert_whitespace", $_);
+            $_    = preg_replace_callback( "/([ \t]+)$/", "Krumo::convert_whitespace", $_);
         }
 
         // Convert all the \r or \n to visible paragraph markers
@@ -1622,7 +1580,7 @@ class Krumo
         // callback
         if (is_callable($data)) {
             print "<span class=\"krumo-callback\"> | ";
-            print "(<em class=\"krumo-type\">Callback</em>) <strong class=\"krumo-string\">" . htmlspecialchars($_) . "()</strong></span>";
+            print "(<em class=\"krumo-type\">Callback</em>) <strong class=\"krumo-string\">" . htmlSpecialChars($_) . "()</strong></span>";
         }
 
         print "</div>";
@@ -1640,8 +1598,7 @@ class Krumo
         print "</li>\n";
     }
 
-    public static function convert_whitespace($m)
-    {
+    public static function convert_whitespace($m) {
         $str = $m[0];
 
         $len = strlen($str);
@@ -1663,309 +1620,28 @@ class Krumo
         return $cli;
     }
 
-    private static function cliColor($code)
-    {
-        return "\033[38;5;{$code}m";
-    }
+    private static function cli_dump() {
+        $caller = debug_backtrace();  // Get all of them
+        $caller = array_pop($caller); // Get the last one
+        $file   = $caller['file'];
+        $line   = $caller['line'];
+        $bar    = str_repeat("-",80) . "\n";
 
-    private static function cliBgColor($code)
-    {
-        return "\033[48;5;{$code}m";
-    }
-
-    private static function cliReset()
-    {
-        return "\033[0m";
-    }
-
-    private static function cliSupportsColor()
-    {
-        if (getenv('NO_COLOR') !== false) {
-            return false;
-        }
-        if (function_exists('posix_isatty') && !posix_isatty(STDOUT)) {
-            return false;
-        }
-        return true;
-    }
-
-    private static function cliColorize($text, $code, $bgCode = null)
-    {
-        if (!static::cliSupportsColor()) {
-            return $text;
+        $args = func_get_args();
+        $args = array_shift($args);
+        if (sizeof($args) >= 1) {
+            print $bar;
         }
 
-        $result = static::cliColor($code);
-        if ($bgCode !== null) {
-            $result .= static::cliBgColor($bgCode);
-        }
+        foreach ($args as $i) {
+            $out = var_export($i) ?? '';
+            print trim($out);
 
-        return $result . $text . static::cliReset();
-    }
-
-    private static function _cli_dump(&$data, $name = '&hellip;', $prefix = '')
-    {
-        if (is_object($data)) {
-            static::_cli_object($data, $name, $prefix);
-        } elseif (is_array($data)) {
-            static::_cli_array($data, $name, $prefix);
-        } elseif (is_resource($data)) {
-            static::_cli_resource($data, $name, $prefix);
-        } elseif (is_string($data)) {
-            static::_cli_string($data, $name, $prefix);
-        } elseif (is_float($data)) {
-            static::_cli_float($data, $name, $prefix);
-        } elseif (is_int($data)) {
-            static::_cli_integer($data, $name, $prefix);
-        } elseif (is_bool($data)) {
-            static::_cli_boolean($data, $name, $prefix);
-        } elseif (is_null($data)) {
-            static::_cli_null($name, $prefix);
-        }
-    }
-
-    private static function _cli_null($name, $prefix)
-    {
-        $nameStr = static::_cli_render_name($name, $prefix, false);
-        print $nameStr . static::cliColorize('NULL', '9') . "\n";
-    }
-
-    private static function _cli_boolean($data, $name, $prefix)
-    {
-        $nameStr = static::_cli_render_name($name, $prefix, false);
-
-        // True
-        if ($data) {
-            print $nameStr . static::cliColorize('TRUE', '15', '28') . "\n";
-        // False
-        } else {
-            print $nameStr . static::cliColorize('FALSE', '15', '196') . "\n";
-        }
-    }
-
-    private static function _cli_integer($data, $name, $prefix)
-    {
-        $nameStr = static::_cli_render_name($name, $prefix, false);
-        print $nameStr . static::cliColorize((string) $data, '228') . "\n";
-    }
-
-    private static function _cli_float($data, $name, $prefix)
-    {
-        $nameStr = static::_cli_render_name($name, $prefix, false);
-        print $nameStr . static::cliColorize((string) $data, '48') . "\n";
-    }
-
-    private static function _cli_resource($data, $name, $prefix)
-    {
-        $nameStr = static::_cli_render_name($name, $prefix, false);
-        print $nameStr . static::cliColorize('Resource', '100') . '(' . static::cliColorize(get_resource_type($data), '36') . ")\n";
-    }
-
-    private static function _cli_string($data, $name, $prefix)
-    {
-        $truncate_length = (int) static::_config('display', 'truncate_string_length', 100);
-        $strlen = mb_strlen($data, static::getCharset());
-
-        $hasChildren = ($truncate_length > 0 && $strlen > $truncate_length);
-
-        $nameStr = static::_cli_render_name($name, $prefix, $hasChildren);
-
-        $display = $data;
-        if ($truncate_length > 0 && $strlen > $truncate_length) {
-            $display = mb_substr($data, 0, $truncate_length - 1, static::getCharset()) . '…';
-        }
-        $display = str_replace(["\n", "\r"], ['↵', ''], $display);
-        $display = addcslashes($display, "\0..\x1f");
-
-        print $nameStr . static::cliColorize('String', '166') . '(' . static::cliColorize((string) $strlen, '33') . ') => ' . static::cliColorize('"' . $display . '"', '214') . "\n";
-
-        if ($hasChildren) {
-            // Compute stem from prefix (same logic as _cli_vars)
-            if (mb_substr($prefix, -4) === '├── ') {
-                $stem = mb_substr($prefix, 0, -4) . '│   ';
-            } elseif (mb_substr($prefix, -4) === '└── ') {
-                $stem = mb_substr($prefix, 0, -4) . '    ';
-            } else {
-                $stem = $prefix;
-            }
-            print $stem . "└── " . static::cliColorize('String', '166') . '(' . static::cliColorize((string) $strlen, '33') . ") =>\n";
-            $lines = explode("\n", $data);
-            foreach ($lines as $line) {
-                print $stem . '    ' . static::cliColorize('"' . $line . '"', '214') . "\n";
+            if (sizeof($args) >= 1) {
+                $version = Krumo::VERSION;
+                print "\n\nCalled from $file, line $line  (Krumo version $version)\n$bar\n";
             }
         }
-    }
-
-    private static function _cli_array(&$data, $name, $prefix)
-    {
-        $count = count($data);
-        $filteredCount = $count;
-
-        $_recursion_marker = static::_marker();
-        if (isset($data[$_recursion_marker])) {
-            $filteredCount--;
-        }
-
-        $hasChildren = $filteredCount > 0;
-
-        if (static::$sort === false) {
-            $config_sort = false;
-        } elseif (static::$sort === true) {
-            $config_sort = true;
-        } else {
-            $config_sort = static::_config('sorting', 'sort_arrays', true);
-        }
-
-        if ($config_sort && $filteredCount > 1 && static::is_assoc($data)) {
-            $new = $data;
-            unset($new[$_recursion_marker]);
-            ksort($new);
-            if ($new !== $data) {
-                $data = $new;
-            }
-        }
-
-        $nameStr = static::_cli_render_name($name, $prefix, $hasChildren);
-        print $nameStr . static::cliColorize('Array', '45') . '(' . static::cliColorize((string) $filteredCount, '33') . ")\n";
-
-        if ($hasChildren) {
-            static::_cli_vars($data, $prefix);
-        }
-    }
-
-    private static function _cli_object(&$data, $name, $prefix)
-    {
-        $reflection = new ReflectionObject($data);
-        $properties = $reflection->getProperties();
-        $childCount = count($properties);
-        $hasChildren = $childCount > 0;
-
-        $className = get_class($data);
-        $nameStr = static::_cli_render_name($name, $prefix, $hasChildren);
-        print $nameStr . static::cliColorize('Object', '105') . '(' . static::cliColorize($className, '36') . ")\n";
-
-        if ($hasChildren) {
-            static::_cli_vars($data, $prefix);
-        }
-    }
-
-    private static function _cli_vars(&$data, $prefix)
-    {
-        $_is_object = is_object($data);
-        $_recursion_marker = static::_marker();
-
-        // Depth limit safety net
-        $maxDepth = (int) static::_config('display', 'cli_max_depth', 10);
-        static::$_level++;
-        if (static::$_level > $maxDepth) {
-            static::$_level--;
-            print $prefix . static::cliColorize("… (max depth {$maxDepth} reached)", '37') . "\n";
-            return;
-        }
-
-        if ($_is_object) {
-            $hash = spl_object_hash($data);
-            if (($hash && isset(static::$objectRecursionProtection[$hash])) && static::$objectRecursionProtection[$hash] > 1) {
-                print $prefix . static::cliColorize('∞', '31') . ' (' . static::cliColorize('Recursion', '31') . ")\n";
-                return;
-            }
-        } else {
-            $_r = $data[$_recursion_marker] ?? null;
-            if ($_r > 0) {
-                print $prefix . static::cliColorize('∞', '31') . ' (' . static::cliColorize('Recursion', '31') . ")\n";
-                return;
-            }
-        }
-
-        static::_hive($data);
-
-        // Compute the continuation stem from the prefix
-        // The prefix ends with a connector like "├── " or "└── "
-        // Replace it with the continuation character "│   " or "    "
-        if (mb_substr($prefix, -4) === '├── ') {
-            $stem = mb_substr($prefix, 0, -4) . '│   ';
-        } elseif (mb_substr($prefix, -4) === '└── ') {
-            $stem = mb_substr($prefix, 0, -4) . '    ';
-        } else {
-            $stem = $prefix;
-        }
-
-        if ($_is_object) {
-            $reflection = new ReflectionObject($data);
-            $properties = $reflection->getProperties();
-
-            $count = count($properties);
-            $i = 0;
-
-            foreach ($properties as $property) {
-                $i++;
-                $isLast = ($i === $count);
-                $connector = $isLast ? '└── ' : '├── ';
-
-                $visibility = '';
-                if ($property->isPrivate()) {
-                    $visibility = '-';
-                } elseif ($property->isProtected()) {
-                    $visibility = '#';
-                } else {
-                    $visibility = '+';
-                }
-
-                $propName = $property->getName();
-
-                if ($property->isInitialized($data)) {
-                    $value = $property->getValue($data);
-                    static::_cli_dump($value, $visibility . $propName, $stem . $connector);
-                } else {
-                    $type = $property->getType();
-                    $typeStr = $type ? $type->getName() : 'mixed';
-                    $nameStr = static::_cli_render_name($visibility . $propName, $stem . $connector, false);
-                    print $nameStr . static::cliColorize($typeStr, '36') . ' ' . static::cliColorize('[Not initialized]', '31') . "\n";
-                }
-            }
-        } else {
-            $keys = array_keys($data);
-            $limit = (int) static::_config('display', 'truncate_array_length', 0);
-            $truncated = 0;
-
-            $count = count($keys);
-            if (isset($data[$_recursion_marker])) {
-                $count--;
-            }
-            $i = 0;
-
-            foreach ($keys as $k) {
-                if ($k === $_recursion_marker) {
-                    continue;
-                }
-
-                $i++;
-                if ($limit > 0 && $i > $limit) {
-                    $truncated++;
-                    continue;
-                }
-
-                $isLast = ($i === $count - $truncated);
-                $connector = $isLast ? '└── ' : '├── ';
-
-                $v =& $data[$k];
-                static::_cli_dump($v, (string) $k, $stem . $connector);
-            }
-
-            if ($truncated > 0) {
-                print $stem . '└── ' . static::cliColorize("… ({$truncated} items not shown)", '37') . "\n";
-            }
-        }
-
-        static::$_level--;
-    }
-
-    private static function _cli_render_name($name, $prefix, $hasChildren)
-    {
-        if ($name === '' || $name === '&hellip;') {
-            return $prefix;
-        }
-        return $prefix . $name . ': ';
     }
 }
 
@@ -1981,7 +1657,7 @@ if (!function_exists("krumo")) {
     {
         $vars = func_get_args();
 
-        return Krumo::dump(...$vars);
+        return call_user_func_array(array('krumo', 'dump'), $vars);
     }
 }
 
@@ -1995,7 +1671,7 @@ if (!function_exists('k')) {
             $GLOBALS['__KRUMO_DOG'] = true;
         }
 
-        return Krumo::dump(...$vars);
+        return call_user_func_array(array('krumo', 'dump'), $vars);
     }
 }
 
@@ -2008,9 +1684,17 @@ if (!function_exists('kd')) {
         }
 
         $vars = func_get_args();
-        Krumo::dump(...$vars);
+        call_user_func_array(array('krumo', 'dump'), $vars);
 
         exit();
     }
 }
+
+// Polyfill for is_countable() from https://secure.php.net/manual/en/function.is-countable.php
+if (!function_exists('is_countable')) {
+    function is_countable($var) {
+        return (is_array($var) || $var instanceof Countable);
+    }
+}
+
 // vim: tabstop=4 shiftwidth=4 expandtab autoindent

@@ -56,7 +56,9 @@ class vshell {
 		$this->sluz->assign("cmd_api"       , CORECMD);
 		$this->sluz->assign("core_cgi"      , CORECGI);
 
-		$base_url = "https://" . $_SERVER['HTTP_HOST'] . dirname($_SERVER['PHP_SELF']) . "/";
+		$http_host = $_SERVER['HTTP_HOST'] ?? $_SERVER['SERVER_NAME'] ?? "";
+		$php_self  = $_SERVER['PHP_SELF'] ?? "";
+		$base_url  = "https://" . $http_host . dirname($php_self) . "/";
 		$this->sluz->assign("BASE_URL"      , $base_url);
 
 		$this->perms = $this->get_user_perms(CGICFG, $this->username);
@@ -192,12 +194,13 @@ class vshell {
 
 		$this->config = $nagios_cfg;
 
-		if ($_SERVER['HTTPS']) {
+		$https = $_SERVER['HTTPS'] ?? "";
+		if ($https && $https !== "off") {
 			$proto = "https";
 		} else {
 			$proto = "http";
 		}
-		$server_base = $_SERVER['SERVER_NAME'] ?? $_SERVER['SERVER_ADDR'];
+		$server_base = $_SERVER['SERVER_NAME'] ?? $_SERVER['SERVER_ADDR'] ?? "";
 		$base        = "$proto://$server_base";
 
 		// If it's a non-standard HTTP port we append that
@@ -209,15 +212,15 @@ class vshell {
 		$core_cmd = $core_cgi . "cmd.cgi";
 
 		// Nagios core locations
-		define('COREURL', $core_url); // Nagios core web URL
-		define('CORECGI', $core_cgi); // Nagios core CGI root
-		define('CORECMD', $core_cmd); // Nagios core system command cgi
-		define("CGICFG" , $ini_array["CGICFG"] ?? "");
+		defined('COREURL')  || define('COREURL', $core_url); // Nagios core web URL
+		defined('CORECGI')  || define('CORECGI', $core_cgi); // Nagios core CGI root
+		defined('CORECMD')  || define('CORECMD', $core_cmd); // Nagios core system command cgi
+		defined('CGICFG')   || define("CGICFG" , $ini_array["CGICFG"] ?? "");
 
 		// Data files for building main arrays
-		define("STATUSFILE" , $nagios_cfg['status_file']       ?? "");
-		define("OBJECTSFILE", $nagios_cfg['object_cache_file'] ?? "");
-		define("CMDFILE"    , $nagios_cfg['command_file']      ?? "");
+		defined('STATUSFILE')  || define("STATUSFILE" , $nagios_cfg['status_file']       ?? "");
+		defined('OBJECTSFILE') || define("OBJECTSFILE", $nagios_cfg['object_cache_file'] ?? "");
+		defined('CMDFILE')     || define("CMDFILE"    , $nagios_cfg['command_file']      ?? "");
 
 		//////////////////////////////////////////////////////////////
 

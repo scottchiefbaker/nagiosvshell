@@ -1,0 +1,46 @@
+<div class="statusTable">
+	<div class="row align-items-center mb-2">
+		<div class="col-lg-9 fw-bold">
+			Notifications sent in the last {$hours} hours (<span id="notification_shown">{$notification_count}</span>/{$notification_count})
+		</div>
+		<div class="col-lg-3 mb-2 mb-lg-0">
+			<input id="notification_filter" class="form-control form-control-sm" type="search" placeholder="Filter" aria-label="Filter notifications" />
+		</div>
+	</div>
+	{if $notification_count}
+	<table id="notification_table" class="statusTable resp">
+		<thead>
+			<tr>
+				<th>Time</th>
+				<th>Type</th>
+				<th class="hostname">Host</th>
+				<th>Service</th>
+				<th class="status">State</th>
+				<th>Contact</th>
+				<th>Method</th>
+				<th>Output</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach $notifications as $x}
+			<tr>
+				<td title="{$x.datetime|v_date_format}">{$x.datetime|human_time_diff}</td>
+				<td>{$x.type}</td>
+				<td class="hostname"><a href="host_details.php?host_name={$x.host|urlencode}">{$x.host}</a></td>
+				<td>{if $x.service}<a href="service_details.php?host_name={$x.host|urlencode}&amp;svc_name={$x.service|urlencode}">{$x.service}</a>{/if}</td>
+				<td class="status {$x.state|strtolower} text-center">{$x.state}</td>
+				<td>{$x.user}</td>
+				<td>{$x.method}</td>
+				<td>{$x.text}</td>
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+	{else}
+	<div class="text-center py-3">No notifications were sent in the last {$hours} hours.</div>
+	{/if}
+	<hr />
+	<div class="text-center" style="font-size: 75%;">
+		<a href="{$core_cgi}notifications.cgi?contact=all">Notifications in Nagios Core</a>
+	</div>
+</div>

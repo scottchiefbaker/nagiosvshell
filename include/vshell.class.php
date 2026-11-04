@@ -245,7 +245,7 @@ class vshell {
 		return $ret;
 	}
 
-	function get_log_items($days, $host = "", $service = "") {
+	function get_log_items($days, $host = "", $service = "", $include_notifications = false) {
 		// Current log file
 		$file  = $this->config['log_file'];
 		$lines = file($file);
@@ -283,9 +283,6 @@ class vshell {
 				}
 			}
 		}
-
-		// FIXME: For now this is disabled while we develop the feature
-		$include_notifications = false;
 
 		// [1713340687] SERVICE ALERT: directlink-probe;Hulk - Disk - C:;WARNING;SOFT;1;WARNING: Used_percent was 86.10 %
 		foreach ($lines as $line) {

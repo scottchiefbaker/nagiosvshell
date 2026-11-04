@@ -165,3 +165,19 @@ test('get_log_items: days=1 merges matching archive files', function () {
 		@rmdir($dir);
 	}
 });
+
+test('get_log_items: notifications are returned when enabled', function () {
+	$file = log_fixture(
+		"[100] SERVICE NOTIFICATION: user;web1;HTTP;OK;notify;all good\n" .
+		"[200] HOST NOTIFICATION: user;web1;UP;notify;up\n" .
+		"[300] SERVICE ALERT: web1;HTTP;OK;HARD;1;ok\n"
+	);
+	$v = make_vshell();
+	$v->config = ['log_file' => $file, 'log_archive_path' => dirname($file) . '/missing_archive'];
+
+	$items = $v->get_log_items(0, "", "", true);
+	assert_same(['300', '200', '100'], array_column($items, 'datetime'));
+	assert_same('user', $items[1]['user']);
+	assert_same('notify', $items[1]['notification_type']);
+	assert_same('HOST NOTIFICATION', $items[1]['action_raw']);
+});

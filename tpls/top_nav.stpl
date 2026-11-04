@@ -80,7 +80,7 @@
 						<a class="dropdown-item" href="{$core_cgi}history.cgi?host=all">Alert History</a>
 						<a class="dropdown-item" href="{$core_cgi}summary.cgi">Alert Summary</a>
 						<a class="dropdown-item" href="{$core_cgi}histogram.cgi">Alert Histogram</a>
-						<a class="dropdown-item" href="{$core_cgi}notifications.cgi?contact=all">Notifications</a>
+						<a class="dropdown-item" href="notifications.php">Notifications</a>
 						<a class="dropdown-item" href="{$core_cgi}showlog.cgi">Event Log</a>
 					</div>
 				</li>

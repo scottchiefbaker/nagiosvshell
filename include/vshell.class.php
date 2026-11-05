@@ -599,47 +599,20 @@ class vshell {
 		return $svcs;
 	}
 
-	function get_service_details_raw() {
-		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
-		$one = $x['service'] ?? [];
-		$y   = $this->parse_nagios_status_file(STATUSFILE);
-		$two = $y['servicestatus'] ?? [];
-
-		$ret = [];
-		foreach ($one as $host_name => $obj) {
-			foreach ($obj as $svc) {
-				$svc_name = $svc['service_description'];
-				$obj      = $one[$host_name][$svc_name] ?? [];
-				$status   = $two[$host_name][$svc_name] ?? [];
-
-				$ret[$host_name][$svc_name] = array_merge($obj, $status);
-			}
-		}
-
-		$all_comments = $y['servicecomment'] ?? [];
-
-		// Loop through each service and put in the comments
-		foreach ($ret as $host_name => $svc) {
-			foreach ($svc as $x) {
-				$svc_name     = $x['service_description'];
-				$svc_comments = $all_comments[$host_name][$svc_name] ?? [];
-
-				$ret[$host_name][$svc_name]['comments'] = $svc_comments;
-			}
-
-		}
-
-		return $ret;
-	}
-
 	function get_service_details($host_name, $svc_name) {
-		$raw = $this->get_service_details_raw();
-		$ret = $raw[$host_name][$svc_name] ?? [];
+		$x   = $this->parse_nagios_objects_file(OBJECTSFILE);
+		$obj = $x['service'][$host_name][$svc_name] ?? [];
 
 		// Nothing found, don't keep going
-		if (!$ret) {
+		if (!$obj) {
 			return [];
 		}
+
+		$y      = $this->parse_nagios_status_file(STATUSFILE);
+		$status = $y['servicestatus'][$host_name][$svc_name] ?? [];
+
+		$ret             = array_merge($obj, $status);
+		$ret['comments'] = $y['servicecomment'][$host_name][$svc_name] ?? [];
 
 		$state_id         = $ret['current_state'] ?? -1;
 		$ret['state_str'] = $this->svc_state_map[$state_id];

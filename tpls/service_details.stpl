@@ -12,7 +12,7 @@
 	{/if}
 
 	<div class="d-xl-flex mt-3">
-		<div class="flex-fill me-xl-4">
+		<div class="flex-fill w-75 me-xl-4">
 			<h5 class="alert alert-secondary p-2">Advanced details</h5>
 
 			<table class="mt-2">
@@ -43,7 +43,7 @@
 			</table>
 		</div>
 
-		<div class="flex-fill ms-xl-4 mt-3 mt-xl-0">
+		<div class="flex-fill w-25 ms-xl-4 mt-3 mt-xl-0">
 			<h5 class="alert alert-secondary p-2" style="min-width: 16em;">Service Attributes</h5>
 
 			<div class="mb-3">

@@ -22,6 +22,9 @@ class vshell {
 	// When true, error_out() throws vshell_exception instead of exiting
 	public static $throw_on_error = false;
 
+	// Seconds a parsed objects file stays in APCu (24 hours)
+	public static $objects_apcu_ttl = 86400;
+
 	public $version        = "3.0.4";
 	public $base_dir       = "";
 	public $username       = "";
@@ -908,11 +911,42 @@ class vshell {
 		return $ret;
 	}
 
+	// APCu key for a parsed objects file, or null when APCu is unavailable or the
+	// file can't be stat'd. mtime, size and inode change when Nagios rewrites it.
+	function objects_apcu_key($file) {
+		if (!function_exists('apcu_enabled') || !apcu_enabled()) {
+			return null;
+		}
+
+		$st = @stat($file);
+		if ($st === false) {
+			return null;
+		}
+
+		return "vshell:objects:$file:{$st['mtime']}:{$st['size']}:{$st['ino']}";
+	}
+
 	function parse_nagios_objects_file($file = OBJECTSFILE, $use_cache = true) {
 		// Basic memoizing to save time on repeat calls
 		static $cache;
 		if ($use_cache && !empty($cache[$file])) {
 			return $cache[$file];
+		}
+
+		// Shared across requests when APCu is available
+		if ($use_cache) {
+			$apcu_key = $this->objects_apcu_key($file);
+		} else {
+			$apcu_key = null;
+		}
+
+		// If we're doing APCu, we get the data from the cache
+		if ($apcu_key !== null) {
+			$hit = apcu_fetch($apcu_key, $found);
+			if ($found) {
+				$cache[$file] = $hit;
+				return $hit;
+			}
 		}
 
 		$lines = file($file, FILE_IGNORE_NEW_LINES);
@@ -976,7 +1010,13 @@ class vshell {
 			}
 		}
 
-		$cache[$file] = $ret;
+		// If we have apcu then we store this object for the next run
+		if ($use_cache) {
+			$cache[$file] = $ret;
+			if ($apcu_key !== null) {
+				apcu_store($apcu_key, $ret, self::$objects_apcu_ttl);
+			}
+		}
 
 		//if (!empty($_GET['debug'])) {
 		//    printf("ObjectFile: Parsed $file in %d ms<br />", (microtime(1) - $start) * 1000);

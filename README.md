@@ -35,6 +35,17 @@ If you are using V-Shell in a location *other* than your Nagios HTML directory,
 you *may* need to update your Apache configuration. You can use
 `config/vshell_apache.conf` as a starting point.
 
+## Performance (Optional)
+
+If the PHP APCu extension is installed and enabled, V-Shell automatically caches
+the parsed `objects.cache` file in shared memory. This may speed up page loads on
+larger Nagios installs, since the file doesn't need to be re-parsed on every
+request. No configuration is needed. The cache is refreshed whenever Nagios
+rewrites the file.
+
+To use APCu from the command line (for example, when running the tests), set
+`apc.enable_cli=1` in your APCu configuration.
+
 ## Getting Started
 
 Log into your Nagios V-Shell interface at

@@ -34,6 +34,15 @@
 	Parsed <code>{$nagios_file}</code> ({$nagios_size|human_size}) in {$nagios_millis|round:2} ms
 </div>
 
+<div class="mb-3">
+	APCu: {if $apcu_enabled}<span class="badge bg-success">enabled</span>{else}<span class="badge bg-danger">disabled</span>{/if}
+	{if $apcu_enabled}
+	<br />Cached (APCu) read of <code>{$object_file}</code> in {$object_cached_millis|round:2} ms
+	{else}
+	<br />Cached (APCu) read: n/a
+	{/if}
+</div>
+
 <div class="alert alert-info">
 	Total time to parse status and config files: <b>{$total_parse|round:2} ms</b> ({$query_time_ms} ms total time)
 </div>

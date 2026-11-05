@@ -819,22 +819,20 @@ class vshell {
 	}
 
 	function parse_nagios_status_file($file = STATUSFILE, $use_cache = true) {
-		$start = microtime(1);
-
 		if (!file_exists($file)) {
 			$this->error_out("Unable to read <code>$file</code>. Is Nagios running?", 47203);
-		}
-
-		$fp    = fopen($file, 'r');
-
-		if (!$fp) {
-			$this->error_out("Unable to open '$file' for reading", 47212);
 		}
 
 		// Basic memoizing to save time on repeat calls
 		static $cache;
 		if ($use_cache && !empty($cache[$file])) {
 			return $cache[$file];
+		}
+
+		$lines = file($file, FILE_IGNORE_NEW_LINES);
+
+		if ($lines === false) {
+			$this->error_out("Unable to open '$file' for reading", 47212);
 		}
 
 		// Return object
@@ -853,32 +851,22 @@ class vshell {
 
 		*/
 
-		while ($line = fgets($fp)) {
-			$first_char = $line[0];
-
+		foreach ($lines as $line) {
 			// If the line is a comment
-			if ($first_char === "#") {
+			if ($line === "" || $line[0] === "#") {
 				continue;
 			}
 
+			$line = trim($line);
+
 			// Key/value: entry_time=1689262170
-			if (str_contains($line, "=")) {
-				$line  = trim($line);
-				$parts = explode("=", $line, 2);
-				//kd($line, $file);
-
-				$key = trim($parts[0] ?? "");
-				$val = trim($parts[1] ?? "");
-
-				$obj[$key] = $val;
+			if (($eq = strpos($line, "=")) !== false) {
+				$obj[trim(substr($line, 0, $eq))] = trim(substr($line, $eq + 1));
 			// Start of a section: hoststatus {
 			} elseif (str_contains($line, "{")) {
 				$parts = explode(" {", $line, 2);
 
-				$str = $parts[0] ?? "";
-				$str = str_replace("define ", "", $str);
-
-				$type = $str;
+				$type = str_replace("define ", "", $parts[0]);
 			// End of a section
 			} elseif (str_contains($line, "}")) {
 				// Build a hash with appropriate sections
@@ -921,17 +909,16 @@ class vshell {
 	}
 
 	function parse_nagios_objects_file($file = OBJECTSFILE, $use_cache = true) {
-		$start = microtime(1);
-		$fp    = fopen($file, 'r');
-
-		if (!$fp) {
-			$this->error_out("Unable to open '$file' for reading", 47210);
-		}
-
 		// Basic memoizing to save time on repeat calls
 		static $cache;
 		if ($use_cache && !empty($cache[$file])) {
 			return $cache[$file];
+		}
+
+		$lines = file($file, FILE_IGNORE_NEW_LINES);
+
+		if ($lines === false) {
+			$this->error_out("Unable to open '$file' for reading", 47210);
 		}
 
 		// Return object
@@ -950,33 +937,23 @@ class vshell {
 
 		*/
 
-		while ($line = fgets($fp)) {
-			$line       = trim($line);
-			$first_char = $line[0] ?? "";
+		foreach ($lines as $line) {
+			$line = trim($line);
 
 			// If the line is a comment or blank skip it
-			if ($first_char === "#" || !$line) {
+			if ($line === "" || $line[0] === "#") {
 				continue;
 			}
 
 			// Key/value: low_flap_threshold  0.000000
-			if (str_contains($line, "\t")) {
-				$line  = trim($line);
-				$parts = explode("\t", $line, 2);
-
-				$key = trim($parts[0] ?? "");
-				$val = trim($parts[1] ?? "");
-
-				//kd([$line, $key, $val]);
-
-				$obj[$key] = $val;
+			if (($tab = strpos($line, "\t")) !== false) {
+				$obj[trim(substr($line, 0, $tab))] = trim(substr($line, $tab + 1));
 			// Start of a section: define hoststatus {
 			} elseif (str_contains($line, "{")) {
 				// We want the middle word of this line
-				$parts = explode(" ", $line);
-				$str   = $parts[1] ?? "";
+				$parts = explode(" ", $line, 3);
 
-				$type = $str;
+				$type = $parts[1] ?? "";
 			// End of a section
 			} elseif ($line === "}") {
 				// Build a hash with appropriate sections

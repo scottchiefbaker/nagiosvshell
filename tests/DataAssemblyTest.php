@@ -7,7 +7,6 @@ class FixtureVshell extends vshell {
 	public array $status_fixture = [];
 	public array $object_fixture = [];
 	public array $services_fixture = [];
-	public array $details_fixture = [];
 	public array $assembled_hosts_fixture = [];
 	public array $assembled_services_fixture = [];
 
@@ -40,10 +39,6 @@ class FixtureVshell extends vshell {
 			restore_error_handler();
 			vshell::$throw_on_error = $old;
 		}
-	}
-
-	function get_service_details_raw() {
-		return $this->details_fixture;
 	}
 
 	function parse_nagios_status_file($file = null, $use_cache = true) {
@@ -116,12 +111,22 @@ test('get_hostgroups: lists groups and selects exact membership', function () {
 	assert_same([], $v->get_hostgroups('web'));
 });
 
+if (!defined('OBJECTSFILE')) {
+	define('OBJECTSFILE', '/dev/null');
+}
+if (!defined('STATUSFILE')) {
+	define('STATUSFILE', '/dev/null');
+}
+
 test('get_service_details: hides command without system command permission', function () {
 	$v = fixture_vshell();
 	$v->perms = ['system_commands' => false];
-	$v->details_fixture = ['web1' => ['HTTP' => [
-		'host_name' => 'web1', 'service_description' => 'HTTP', 'current_state' => 2, 'last_check' => 10, 'check_command' => 'check_http',
-	]]];
+	$v->object_fixture = ['service' => ['web1' => ['HTTP' => [
+		'host_name' => 'web1', 'service_description' => 'HTTP', 'check_command' => 'check_http',
+	]]]];
+	$v->status_fixture = ['servicestatus' => ['web1' => ['HTTP' => [
+		'current_state' => 2, 'last_check' => 10,
+	]]]];
 
 	$details = $v->get_service_details('web1', 'HTTP');
 	assert_same('CRITICAL', $details['state_str']);
@@ -130,6 +135,23 @@ test('get_service_details: hides command without system command permission', fun
 	$v->perms['system_commands'] = true;
 	$details = $v->get_service_details('web1', 'HTTP');
 	assert_same('check_http', $details['check_command']);
+});
+
+test('get_service_details: attaches service comments and returns empty for unknown service', function () {
+	$v = fixture_vshell();
+	$v->perms = ['system_commands' => true];
+	$v->object_fixture = ['service' => ['web1' => ['HTTP' => [
+		'host_name' => 'web1', 'service_description' => 'HTTP',
+	]]]];
+	$v->status_fixture = [
+		'servicestatus'  => ['web1' => ['HTTP' => ['current_state' => 0, 'last_check' => 10]]],
+		'servicecomment' => ['web1' => ['HTTP' => [['comment' => 'scheduled']]]],
+	];
+
+	$details = $v->get_service_details('web1', 'HTTP');
+	assert_same('OK', $details['state_str']);
+	assert_same('scheduled', $details['comments'][0]['comment']);
+	assert_same([], $v->get_service_details('web1', 'Missing'));
 });
 
 test('get_tac_data: aggregates host and service states and disabled checks', function () {

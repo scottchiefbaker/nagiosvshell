@@ -135,3 +135,41 @@ test('parse_nagios_objects_file: trims extra tabs around values', function () {
 	$data = make_vshell()->parse_nagios_objects_file($file, false);
 	assert_same('web1', $data['host']['web1']['host_name'] ?? null);
 });
+
+test('parse_nagios_status_file: cached result is returned without re-reading the file', function () {
+	$file = parser_fixture("hoststatus {\n host_name=web1\n current_state=0\n }\n", ".dat");
+	$first = make_vshell()->parse_nagios_status_file($file, true);
+
+	file_put_contents($file, "hoststatus {\n host_name=web2\n current_state=2\n }\n");
+	$second = make_vshell()->parse_nagios_status_file($file, true);
+
+	assert_same($first, $second);
+	assert_same('0', $second['hoststatus']['web1']['current_state']);
+});
+
+test('parse_nagios_objects_file: cached result is returned without re-reading the file', function () {
+	$file = parser_fixture("define host {\n\thost_name\tweb1\n}\n", ".cache");
+	$first = make_vshell()->parse_nagios_objects_file($file, true);
+
+	file_put_contents($file, "define host {\n\thost_name\tweb2\n}\n");
+	$second = make_vshell()->parse_nagios_objects_file($file, true);
+
+	assert_same($first, $second);
+	assert_true(isset($second['host']['web1']));
+});
+
+test('parse_nagios_objects_file: a trailing "0" line without newline is harmless', function () {
+	$base = "define host {\n\thost_name\tweb1\n}\n";
+	$with = parser_fixture($base . "0", ".cache");
+	$without = parser_fixture($base, ".cache");
+
+	$v = make_vshell();
+	assert_same($v->parse_nagios_objects_file($without, false), $v->parse_nagios_objects_file($with, false));
+});
+
+test('parse_nagios_status_file: indented section header is recognized', function () {
+	$file = parser_fixture("  hoststatus {\n host_name=web1\n current_state=0\n }\n", ".dat");
+	$data = make_vshell()->parse_nagios_status_file($file, false);
+	assert_same('0', $data['hoststatus']['web1']['current_state']);
+	assert_false(isset($data['  hoststatus']));
+});

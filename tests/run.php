@@ -108,7 +108,7 @@ function paint(string $text, string $code, bool $on): string {
 
 // One line per test: "description  [ RESULT ]". Brackets stay white; only the
 // result word is colored. Description is clipped to 72 characters.
-const NAME_WIDTH = 72;
+const NAME_WIDTH = 92;
 
 function report(string $name, string $result, string $code, bool $on): void {
 	if (strlen($name) > NAME_WIDTH) {

@@ -69,6 +69,21 @@ $v->sluz->assign('object_counts', $count);
 $v->sluz->assign('object_file', OBJECTSFILE);
 $v->sluz->assign('object_millis', $o_ms);
 
+// Time reading the same file back out of APCu (after making sure it's stored)
+$apcu_on = function_exists('apcu_enabled') && apcu_enabled();
+$c_ms    = null;
+if ($apcu_on) {
+	$v->parse_nagios_objects_file(OBJECTSFILE);
+	$apcu_key = $v->objects_apcu_key(OBJECTSFILE);
+
+	sw();
+	apcu_fetch($apcu_key);
+	$c_ms = sw();
+}
+
+$v->sluz->assign('apcu_enabled', $apcu_on);
+$v->sluz->assign('object_cached_millis', $c_ms);
+
 ///////////////////////////////////////////////////////////////////
 
 sw();

@@ -1039,7 +1039,7 @@ class vshell {
 				//kd($line, $file);
 				$type = $m[1];
 			// End of a section
-			} elseif (str_contains("}", $line)) {
+			} elseif (str_contains($line, "}")) {
 				// Build a hash with appropriate sections
 				if (in_array($type, ["hoststatus", "host"])) {
 					$hn = $obj['host_name'] ?? "";

@@ -119,11 +119,11 @@
 				</tr>
 				<tr>
 					<td>Schedule downtime for host</td>
-					<td class="center"><a href="{$cmd_api}?cmd_typ=55&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=55&amp;host={$host_name}" data-bs-toggle="modal" data-bs-target="#downtime_modal" data-command="SCHEDULE_HOST_DOWNTIME" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule downtime and all services</td>
-					<td class="center"><a href="{$cmd_api}?cmd_typ=86&amp;host={$host_name}" title="Schedule Downtime">{$icons.calendar_add}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=86&amp;host={$host_name}" data-bs-toggle="modal" data-bs-target="#downtime_modal" data-command="SCHEDULE_AND_PROPAGATE_HOST_DOWNTIME" title="Schedule Downtime">{$icons.calendar_add}</a></td>
 				</tr>
 				<tr>
 					<td>Schedule a check for all services</td>
@@ -138,6 +138,51 @@
 					<td class="center"><a href="{$cmd_api}?cmd_typ=33&amp;host={$host_name}" data-bs-toggle="modal" data-bs-target="#host_ack_modal" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
+
+			<div class="modal fade" id="downtime_modal" tabindex="-1" aria-labelledby="downtime_modal_label" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<form id="downtime_form" class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="downtime_modal_label">Schedule Downtime</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-3"><b>Host:</b> {$host_name} <span id="downtime_scope" class="text-muted"></span></p>
+							<div class="mb-3">
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="fixed" id="downtime_flexible" value="0" checked>
+									<label class="form-check-label" for="downtime_flexible">Flexible</label>
+								</div>
+								<div class="form-check form-check-inline">
+									<input class="form-check-input" type="radio" name="fixed" id="downtime_fixed" value="1">
+									<label class="form-check-label" for="downtime_fixed">Fixed</label>
+								</div>
+							</div>
+							<div class="mb-3">
+								<label for="downtime_start" class="form-label">Start</label>
+								<input type="datetime-local" id="downtime_start" name="start" class="form-control" required>
+							</div>
+							<div id="downtime_duration_wrap" class="mb-3">
+								<label for="downtime_duration" class="form-label">Duration (minutes)</label>
+								<input type="number" min="1" id="downtime_duration" name="duration" class="form-control" value="120">
+							</div>
+							<div id="downtime_end_wrap" class="mb-3 d-none">
+								<label for="downtime_end" class="form-label">End</label>
+								<input type="datetime-local" id="downtime_end" name="end" class="form-control" disabled>
+							</div>
+							<div class="mb-3">
+								<label for="downtime_comment" class="form-label">Comment</label>
+								<textarea id="downtime_comment" name="comment" class="form-control" rows="3" required></textarea>
+							</div>
+							<div id="downtime_error" class="alert alert-danger d-none mt-3 mb-0"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-primary">Schedule</button>
+						</div>
+					</form>
+				</div>
+			</div>
 
 			<div class="modal fade" id="host_ack_modal" tabindex="-1" aria-labelledby="host_ack_modal_label" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered">

@@ -1,5 +1,33 @@
 $(document).ready(function() {
 	init_toggles();
+	init_disable_svc_notifications();
 });
+
+function init_disable_svc_notifications() {
+	$(".disable_svc_notifications").on("click", function(e) {
+		e.preventDefault();
+
+		if (!confirm("Disable notifications for all services on this host?")) {
+			return;
+		}
+
+		var host = $("#host").data("value");
+
+		$.ajax("ajax/ajax.php", {
+			data: { host: host, command: "DISABLE_HOST_SVC_NOTIFICATIONS" },
+			method: "POST",
+			success: function(e) {
+				if (parseInt(e.errors)) {
+					alert("Some error occurred");
+				} else {
+					alert("Command Succeeded");
+				}
+			},
+			error: function() {
+				alert("An error occurred");
+			}
+		});
+	});
+}
 
 // Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12

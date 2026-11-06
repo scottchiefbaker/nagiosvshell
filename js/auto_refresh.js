@@ -9,12 +9,25 @@ function init_auto_refresh() {
 		return;
 	}
 
+	var remaining = seconds;
+	var display   = $("#refresh_countdown");
+
+	display.text("Refresh in " + remaining + "s");
+
 	// Skip the reload while a modal is open so form input is not lost
 	setInterval(function() {
 		if ($(".modal.show").length) {
+			display.text("Refresh paused");
 			return;
 		}
 
-		location.reload();
-	}, seconds * 1000);
+		remaining--;
+
+		if (remaining <= 0) {
+			location.reload();
+			return;
+		}
+
+		display.text("Refresh in " + remaining + "s");
+	}, 1000);
 }

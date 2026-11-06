@@ -84,5 +84,8 @@
 			{include file="$__CHILD_TPL"}
 		</div>
 	</div>
+{if $global.html_refresh_seconds > 0}
+	<div id="refresh_countdown" class="position-fixed bottom-0 end-0 m-2 px-2 py-1 bg-body-secondary text-secondary border small rounded opacity-75" style="z-index: 1080;"></div>
+{/if}
 </body>
 </html>

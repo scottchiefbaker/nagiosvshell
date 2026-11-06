@@ -130,6 +130,10 @@
 					<td class="center"><a href="{$cmd_api}?cmd_typ=17&amp;host={$host_name}" title="Schedule Downtime">{$icons.clock}</a></td>
 				</tr>
 				<tr>
+					<td>Disable notifications for all services</td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=29&amp;host={$host_name}" title="Disable Notifications for all services on this host">{$icons.no_bell}</a></td>
+				</tr>
+				<tr>
 					<td>Acknowledge Problem</td>
 					<td class="center"><a href="{$cmd_api}?cmd_typ=33&amp;host={$host_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>

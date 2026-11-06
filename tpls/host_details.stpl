@@ -37,6 +37,7 @@
 				<tr title="{$host_info.last_check|v_date_format}"><td class="servicedetail_key">Last Check</td><td>{$host_info.last_check|human_time_diff}</td></tr>
 				<tr title="{$host_info.last_state_change|v_date_format}"><td class="servicedetail_key">Last State Change</td><td>{$host_info.last_state_change|human_time_diff}</td></tr>
 				<tr title="{$host_info.last_notification|v_date_format}"><td class="servicedetail_key">Last Notification</td><td>{if $host_info.last_notification}{$host_info.last_notification|human_time_diff}{else}Never{/if}</td></tr>
+				<tr><td class="servicedetail_key">Notification Period</td><td>{$host_info.notification_period}</td></tr>
 				<tr><td class="servicedetail_key">Check Latency</td><td>{$host_info.check_latency} seconds</td></tr>
 				<tr><td class="servicedetail_key">Execution Time</td><td>{$host_info.check_execution_time} seconds</td></tr>
 				<tr><td class="servicedetail_key">State Change</td><td>{$host_info.percent_state_change}%</td></tr>

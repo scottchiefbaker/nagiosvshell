@@ -1,7 +1,16 @@
+{if $show}
+<div class="alert alert-warning d-flex justify-content-between align-items-center py-2">
+	<span>Showing {if $filter_type === 'host'}hosts{else}services{/if} with <b>{$show_label}</b> disabled</span>
+</div>
+{/if}
+
 <form>
 	<div class="row">
 		<div class="col-12 col-lg-6 col-xl-4">
             <input type="hidden" name="type" value="services">
+			{if $show}
+			<input type="hidden" name="show" value="{$show}">
+			{/if}
             <label class="label note mb-0" for="resultfilter">Filter by State:</label>
 
 			{if $filter_type === 'host'}

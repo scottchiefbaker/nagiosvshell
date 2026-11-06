@@ -25,6 +25,15 @@ class vshell {
 	// Seconds a parsed objects file stays in APCu (24 hours)
 	public static $objects_apcu_ttl = 86400;
 
+	// Values accepted by hosts.php and services.php ?show=, mapped to the check attribute and label
+	public static $show_filters = [
+		'disable_flap_detection' => ['check' => 'flap_detection_enabled', 'label' => 'Flap detection'],
+		'disable_notifications'  => ['check' => 'notifications_enabled',  'label' => 'Notifications'],
+		'disable_event_handlers' => ['check' => 'event_handler_enabled',  'label' => 'Event handlers'],
+		'disable_active_checks'  => ['check' => 'active_checks_enabled',  'label' => 'Active checks'],
+		'disable_passive_checks' => ['check' => 'passive_checks_enabled', 'label' => 'Passive checks'],
+	];
+
 	public $version        = "3.0.4";
 	public $base_dir       = "";
 	public $username       = "";
@@ -542,6 +551,22 @@ class vshell {
 		}
 
 		return $ret;
+	}
+
+	function filter_disabled_hosts($data, $check) {
+		return array_filter($data, fn($x) => is_array($x) && empty($x[$check]));
+	}
+
+	function filter_disabled_services($data, $check) {
+		foreach ($data as $host_name => $svcs) {
+			$data[$host_name] = array_filter($svcs, fn($x) => empty($x[$check]));
+
+			if (!$data[$host_name]) {
+				unset($data[$host_name]);
+			}
+		}
+
+		return $data;
 	}
 
 	function get_all_services($state_filter = "", $name_filter = "", $host_filter = "") {

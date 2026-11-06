@@ -187,3 +187,25 @@ test('get_tac_data: counts service states and disabled service checks', function
 	assert_same(1, $result['servicesActiveChecksDisabled']);
 	assert_same(1, $result['servicesNotificationsDisabled']);
 });
+
+test('filter_disabled_hosts/services: keep only items where the check is disabled', function () {
+	$v = fixture_vshell();
+	$hosts = [
+		'h1' => ['host_name' => 'h1', 'active_checks_enabled' => 1],
+		'h2' => ['host_name' => 'h2', 'active_checks_enabled' => 0],
+	];
+	assert_same(['h2'], array_keys($v->filter_disabled_hosts($hosts, 'active_checks_enabled')));
+
+	$svcs = [
+		'web1' => [
+			'HTTP' => ['active_checks_enabled' => 1],
+			'Disk' => ['active_checks_enabled' => 0],
+		],
+		'web2' => [
+			'HTTP' => ['active_checks_enabled' => 1],
+		],
+	];
+	$filtered = $v->filter_disabled_services($svcs, 'active_checks_enabled');
+	assert_same(['web1'], array_keys($filtered));
+	assert_same(['Disk'], array_keys($filtered['web1']));
+});

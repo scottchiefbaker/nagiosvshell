@@ -9,7 +9,7 @@
 			<h5>Flap Detection</h5>
 			<div>
 				{if $tac_data.hostsFlappingDisabled}
-				<span class="red feature_warning">{$tac_data.hostsFlappingDisabled} hosts disabled</span>
+				<a class="text_shadow" href="hosts.php?show=disable_flap_detection"><span class="red feature_warning">{$tac_data.hostsFlappingDisabled} hosts disabled</span></a>
 				{else}
 				All hosts enabled
 				{/if}
@@ -17,7 +17,7 @@
 
 			<div>
 				{if $tac_data.servicesFlappingDisabled}
-				<span class="red feature_warning">{$tac_data.servicesFlappingDisabled} services disabled</span>
+				<a class="text_shadow" href="services.php?show=disable_flap_detection"><span class="red feature_warning">{$tac_data.servicesFlappingDisabled} services disabled</span></a>
 				{else}
 				All services Enabled
 				{/if}
@@ -46,14 +46,14 @@
 			<h5>Notifications</h5>
 			<div>
 				{if $tac_data.hostsNotificationsDisabled}
-				<span class="red feature_warning">{$tac_data.hostsNotificationsDisabled} hosts disabled</span>
+				<a class="text_shadow" href="hosts.php?show=disable_notifications"><span class="red feature_warning">{$tac_data.hostsNotificationsDisabled} hosts disabled</span></a>
 				{else}
 				All hosts enabled
 				{/if}
 			</div>
 			<div>
 				{if $tac_data.servicesNotificationsDisabled}
-				<span class="red feature_warning">{$tac_data.servicesNotificationsDisabled} services disabled</span>
+				<a class="text_shadow" href="services.php?show=disable_notifications"><span class="red feature_warning">{$tac_data.servicesNotificationsDisabled} services disabled</span></a>
 				{else}
 				All services enabled
 				{/if}
@@ -66,14 +66,14 @@
 			<h5>Event Handlers</h5>
 			<div>
 				{if $tac_data.hostsEventHandlerDisabled}
-				<span class="red feature_warning">{$tac_data.hostsEventHandlerDisabled} hosts disabled</span>
+				<a class="text_shadow" href="hosts.php?show=disable_event_handlers"><span class="red feature_warning">{$tac_data.hostsEventHandlerDisabled} hosts disabled</span></a>
 				{else}
 				All hosts enabled
 				{/if}
 			</div>
 			<div>
 				{if $tac_data.servicesEventHandlerDisabled}
-				<span class="red feature_warning">{$tac_data.servicesEventHandlerDisabled} services disabled</span>
+				<a class="text_shadow" href="services.php?show=disable_event_handlers"><span class="red feature_warning">{$tac_data.servicesEventHandlerDisabled} services disabled</span></a>
 				{else}
 				All services enabled
 				{/if}
@@ -86,14 +86,14 @@
 			<h5>Active Checks</h5>
 			<div>
 				{if $tac_data.hostsActiveChecksDisabled}
-				<span class="red feature_warning">{$tac_data.hostsActiveChecksDisabled} hosts disabled</span>
+				<a class="text_shadow" href="hosts.php?show=disable_active_checks"><span class="red feature_warning">{$tac_data.hostsActiveChecksDisabled} hosts disabled</span></a>
 				{else}
 				All hosts enabled
 				{/if}
 			</div>
 			<div>
 				{if $tac_data.servicesActiveChecksDisabled}
-				<span class="red feature_warning">{$tac_data.servicesActiveChecksDisabled} services disabled</span>
+				<a class="text_shadow" href="services.php?show=disable_active_checks"><span class="red feature_warning">{$tac_data.servicesActiveChecksDisabled} services disabled</span></a>
 				{else}
 				All services enabled
 				{/if}
@@ -107,14 +107,14 @@
 
 			<div>
 				{if $tac_data.hostsPassiveChecksDisabled}
-				<span class="red feature_warning">{$tac_data.hostsPassiveChecksDisabled} hosts disabled</span>
+				<a class="text_shadow" href="hosts.php?show=disable_passive_checks"><span class="red feature_warning">{$tac_data.hostsPassiveChecksDisabled} hosts disabled</span></a>
 				{else}
 				All hosts enabled
 				{/if}
 			</div>
 			<div>
 				{if $tac_data.servicesPassiveChecksDisabled}
-				<span class="red feature_warning">{$tac_data.servicesPassiveChecksDisabled} services disabled</span>
+				<a class="text_shadow" href="services.php?show=disable_passive_checks"><span class="red feature_warning">{$tac_data.servicesPassiveChecksDisabled} services disabled</span></a>
 				{else}
 				All services enabled
 				{/if}

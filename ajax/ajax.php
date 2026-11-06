@@ -37,6 +37,21 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	}
 
 	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$sticky,$notify,$persistent,$v->username,$comment);
+} elseif ($cmd === "ACKNOWLEDGE_HOST_PROBLEM") {
+	if (!$v->perms['all_host_commands']) {
+		send_json_error("You do not have permission to acknowledge host problems", 84526);
+	}
+
+	$comment    = trim(str_replace(["\r", "\n"], " ", $_POST['comment'] ?? ""));
+	$sticky     = empty($_POST['sticky'])     ? 1 : 2;
+	$notify     = empty($_POST['notify'])     ? 0 : 1;
+	$persistent = empty($_POST['persistent']) ? 0 : 1;
+
+	if (!$host || !$comment) {
+		send_json_error("Host and comment are required", 84527);
+	}
+
+	$cmd = sprintf("[%lu] %s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$sticky,$notify,$persistent,$v->username,$comment);
 } elseif ($cmd === "SCHEDULE_SVC_DOWNTIME") {
 	if (!$v->perms['all_service_commands']) {
 		send_json_error("You do not have permission to schedule service downtime", 48248);

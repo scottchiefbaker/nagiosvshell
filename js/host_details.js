@@ -1,7 +1,15 @@
 $(document).ready(function() {
 	init_toggles();
 	init_disable_svc_notifications();
+	init_ack();
 });
+
+function init_ack() {
+	$("#host_ack_form").on('submit', function(e) {
+		e.preventDefault();
+		send_modal_command($(this), "host_ack_modal", "host_ack_error", "ACKNOWLEDGE_HOST_PROBLEM", "Unable to send acknowledgement");
+	});
+}
 
 function init_disable_svc_notifications() {
 	$(".disable_svc_notifications").on("click", function(e) {

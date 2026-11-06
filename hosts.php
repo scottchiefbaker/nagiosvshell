@@ -8,6 +8,11 @@ $state_filter = $_GET['state_filter'] ?? "";
 $name_filter  = $_GET['name_filter']  ?? "";
 $host_filter  = $_GET['host_filter']  ?? "";
 $host_group   = $_GET['host_group']   ?? "";
+$show         = $_GET['show']         ?? "";
+
+if (!isset(vshell::$show_filters[$show])) {
+	$show = "";
+}
 
 // Look for a specific hostgroup to show
 if ($host_group) {
@@ -24,9 +29,15 @@ if ($host_group) {
 	$host_info = $v->get_all_hosts($state_filter, $name_filter, $host_filter);
 }
 
+if ($show) {
+	$host_info = $v->filter_disabled_hosts($host_info, vshell::$show_filters[$show]['check']);
+}
+
 $v->sluz->assign("show_host_table", true);
 $v->sluz->assign("host_info", $host_info);
 $v->sluz->assign("filter_type", "host");
+$v->sluz->assign("show", $show);
+$v->sluz->assign("show_label", vshell::$show_filters[$show]['label'] ?? "");
 $v->sluz->assign("tac_data", $v->get_tac_data());
 
 if (!empty($_GET['json'])) {

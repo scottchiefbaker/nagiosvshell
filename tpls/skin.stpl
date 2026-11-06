@@ -3,10 +3,6 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		{if $global.html_refresh_seconds > 0}
-		<meta http-equiv="refresh" content="{$global.html_refresh_seconds}">
-		{/if}
-
 		<title>{$page_title|default:"Nagios V-Shell dashboard"}</title>
 
 		<link rel="stylesheet" href="css/bootstrap5.min.css" type="text/css" media="screen" />
@@ -18,6 +14,9 @@
 		<script type="text/javascript" src="js/global.js"></script>
 
 		<script src="js/bootstrap5.bundle.min.js"></script>
+		{if $global.html_refresh_seconds > 0}
+		<script src="js/auto_refresh.js"></script>
+		{/if}
 		{if $js_files}
 			{foreach $js_files as $file}
 				<script src="{$file}"></script>
@@ -25,7 +24,7 @@
 		{/if}
 
 	</head>
-<body class="pb-2">
+<body class="pb-2" {if $global.html_refresh_seconds > 0}data-refresh-seconds="{$global.html_refresh_seconds}"{/if}>
 	{include file='tpls/top_nav.stpl'}
 
 	<div class="container-fluid mt-3 main_box">

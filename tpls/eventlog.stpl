@@ -33,12 +33,12 @@
 	<table id="eventlog_table" class="statusTable resp">
 		<thead>
 			<tr>
-				<th class="status">State</th>
-				<th class="text-nowrap">Time</th>
-				<th>Type</th>
+				<th class="status" style="min-width: 8em;">State</th>
+				<th class="text-nowrap" style="min-width: 12em;">Time</th>
+				<th style="min-width: 12em;">Type</th>
 				<th class="hostname">Host</th>
 				<th>Service</th>
-				<th>Output</th>
+				<th style="min-width: 40em;">Output</th>
 			</tr>
 		</thead>
 		<tbody>

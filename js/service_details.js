@@ -2,6 +2,7 @@ $(document).ready(function() {
 	init_toggles();
 	init_checks();
 	init_ack();
+	init_comment();
 });
 
 function init_checks() {
@@ -14,6 +15,18 @@ function init_ack() {
 	$("#ack_form").on('submit', function(e) {
 		e.preventDefault();
 		send_modal_command($(this), "ack_modal", "ack_error", "ACKNOWLEDGE_SVC_PROBLEM", "Unable to send acknowledgement");
+	});
+}
+
+function init_comment() {
+	$("#comment_modal").on('show.bs.modal', function() {
+		$("#comment_text").val("");
+		$("#comment_error").addClass("d-none");
+	});
+
+	$("#comment_form").on('submit', function(e) {
+		e.preventDefault();
+		send_modal_command($(this), "comment_modal", "comment_error", "ADD_SVC_COMMENT", "Unable to add comment");
 	});
 }
 

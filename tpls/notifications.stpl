@@ -11,13 +11,13 @@
 	<table id="notification_table" class="statusTable resp">
 		<thead>
 			<tr>
-				<th>Time</th>
-				<th>Type</th>
+				<th style="min-width: 8em;">Time</th>
+				<th style="min-width: 6em;">Type</th>
 				<th class="hostname">Host</th>
-				<th>Service</th>
+				<th style="min-width: 12em;">Service</th>
 				<th class="status">State</th>
 				<th>Contact</th>
-				<th>Method</th>
+				<th style="min-width: 10em;">Method</th>
 				<th>Output</th>
 			</tr>
 		</thead>

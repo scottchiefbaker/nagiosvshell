@@ -37,6 +37,34 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	}
 
 	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$sticky,$notify,$persistent,$v->username,$comment);
+} elseif ($cmd === "SCHEDULE_SVC_DOWNTIME") {
+	if (!$v->perms['all_service_commands']) {
+		send_json_error("You do not have permission to schedule service downtime", 48248);
+	}
+
+	$comment  = trim(str_replace(["\r", "\n"], " ", $_POST['comment'] ?? ""));
+	$fixed    = empty($_POST['fixed']) ? 0 : 1;
+	$start    = strtotime($_POST['start'] ?? "") ?: 0;
+	$end      = strtotime($_POST['end']   ?? "") ?: 0;
+	$duration = intval($_POST['duration'] ?? 0) * 60;
+
+	if (!$host || !$svc || !$comment || !$start) {
+		send_json_error("Host, service, start time and comment are required", 48249);
+	}
+
+	if ($fixed && $end <= $start) {
+		send_json_error("End time must be after start time", 48250);
+	}
+
+	if (!$fixed && $duration <= 0) {
+		send_json_error("Duration must be greater than zero", 48251);
+	}
+
+	if (!$fixed) {
+		$end = $start + $duration;
+	}
+
+	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$start,$end,$fixed,0,$fixed ? 0 : $duration,$v->username,$comment);
 } elseif ($svc && $host && $extra) {
 	$cmd = sprintf("[%lu] %s;%s;%s;%s\n",$time,$cmd,$host,$svc,$extra);
 } elseif ($svc && $host) {

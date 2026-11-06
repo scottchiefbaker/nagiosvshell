@@ -2,6 +2,7 @@ $(document).ready(function() {
 	init_toggles();
 	init_checks();
 	init_ack();
+	init_downtime();
 });
 
 function init_checks() {
@@ -13,17 +14,53 @@ function init_checks() {
 function init_ack() {
 	$("#ack_form").on('submit', function(e) {
 		e.preventDefault();
-		ack_problem($(this));
+		send_svc_command($(this), "ack_modal", "ack_error", "ACKNOWLEDGE_SVC_PROBLEM", "Unable to send acknowledgement");
 	});
 }
 
-function ack_problem(form) {
-	var error_box = $("#ack_error");
+function init_downtime() {
+	$("#downtime_modal").on('show.bs.modal', set_downtime_defaults);
+	$("input[name=fixed]").on('change', toggle_downtime_fixed);
+
+	$("#downtime_form").on('submit', function(e) {
+		e.preventDefault();
+		send_svc_command($(this), "downtime_modal", "downtime_error", "SCHEDULE_SVC_DOWNTIME", "Unable to schedule downtime");
+	});
+}
+
+function set_downtime_defaults() {
+	var start = new Date();
+	var end   = new Date(start.getTime() + 2 * 60 * 60 * 1000);
+
+	$("#downtime_start").val(local_datetime(start));
+	$("#downtime_end").val(local_datetime(end));
+	$("#downtime_flexible").prop("checked", true);
+	toggle_downtime_fixed();
+}
+
+function toggle_downtime_fixed() {
+	var fixed = $("#downtime_fixed").is(":checked");
+
+	$("#downtime_end_wrap").toggleClass("d-none", !fixed);
+	$("#downtime_duration_wrap").toggleClass("d-none", fixed);
+	$("#downtime_end").prop("disabled", !fixed).prop("required", fixed);
+	$("#downtime_duration").prop("disabled", fixed);
+}
+
+function local_datetime(d) {
+	var pad = function(n) { return String(n).padStart(2, "0"); };
+
+	return d.getFullYear() + "-" + pad(d.getMonth() + 1) + "-" + pad(d.getDate()) +
+		"T" + pad(d.getHours()) + ":" + pad(d.getMinutes());
+}
+
+function send_svc_command(form, modal_id, error_id, command, fail_msg) {
+	var error_box = $("#" + error_id);
 	var submit    = $("button[type=submit]", form);
 	var data      = form.serialize() + "&" + $.param({
 		host:    $("#host").data("value"),
 		service: $("#service").data("value"),
-		command: "ACKNOWLEDGE_SVC_PROBLEM"
+		command: command
 	});
 
 	error_box.addClass("d-none");
@@ -33,7 +70,7 @@ function ack_problem(form) {
 		data: data,
 		method: "POST",
 		success: function() {
-			var modal = bootstrap.Modal.getInstance(document.getElementById("ack_modal"));
+			var modal = bootstrap.Modal.getInstance(document.getElementById(modal_id));
 			if (modal) {
 				modal.hide();
 			}
@@ -43,7 +80,7 @@ function ack_problem(form) {
 			}, 1500);
 		},
 		error: function(xhr) {
-			var msg = (xhr.responseJSON && xhr.responseJSON.msg) || "Unable to send acknowledgement";
+			var msg = (xhr.responseJSON && xhr.responseJSON.msg) || fail_msg;
 
 			error_box.text(msg).removeClass("d-none");
 			submit.prop("disabled", false);

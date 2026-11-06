@@ -127,7 +127,7 @@
 				</tr>
 				<tr>
 					<td>Schedule a check for all services</td>
-					<td class="center"><a href="{$cmd_api}?cmd_typ=17&amp;host={$host_name}" title="Schedule Downtime">{$icons.clock}</a></td>
+					<td class="center"><a href="#" class="schedule_host_svc_checks" title="Schedule a check for all services on this host">{$icons.clock}</a></td>
 				</tr>
 				<tr>
 					<td>Disable notifications for all services</td>

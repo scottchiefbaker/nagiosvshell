@@ -206,6 +206,33 @@
 					</form>
 				</div>
 			</div>
+
+			<div class="modal fade" id="comment_modal" tabindex="-1" aria-labelledby="comment_modal_label" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+					<form id="comment_form" class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="comment_modal_label">Add a Comment</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-3"><b>Service:</b> {$svc_name} on <b>{$host_name}</b></p>
+							<div class="mb-3">
+								<label for="comment_text" class="form-label">Comment</label>
+								<textarea id="comment_text" name="comment" class="form-control" rows="3" required></textarea>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="persistent" id="comment_persistent" checked>
+								<label class="form-check-label" for="comment_persistent" title="Persistent comments survive Nagios restarts. Non-persistent comments are deleted when Nagios restarts.">Persistent comment</label>
+							</div>
+							<div id="comment_error" class="alert alert-danger d-none mt-3 mb-0"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-primary">Add Comment</button>
+						</div>
+					</form>
+				</div>
+			</div>
 			{/if}
 
 			<div class="mt-3">
@@ -245,7 +272,9 @@
 	<hr />
 
 	<div class="text-center" style="font-size: 75%;">
-		<a href="{$cmd_api}?cmd_typ=3&host={$host_name}&service={$svc_name|urlencode}">Add a comment</a>
+		{if $perms.all_service_commands}
+		<a href="{$cmd_api}?cmd_typ=3&amp;host={$host_name}&amp;service={$svc_name|urlencode}" data-bs-toggle="modal" data-bs-target="#comment_modal">Add a comment</a>
+		{/if}
 	</div>
 	<table class="table table-sm table-striped">
 		<thead class="table-dark">

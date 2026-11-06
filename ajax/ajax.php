@@ -52,6 +52,19 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	}
 
 	$cmd = sprintf("[%lu] %s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$sticky,$notify,$persistent,$v->username,$comment);
+} elseif ($cmd === "ADD_SVC_COMMENT") {
+	if (!$v->perms['all_service_commands']) {
+		send_json_error("You do not have permission to add service comments", 48252);
+	}
+
+	$comment    = trim(str_replace(["\r", "\n"], " ", $_POST['comment'] ?? ""));
+	$persistent = empty($_POST['persistent']) ? 0 : 1;
+
+	if (!$host || !$svc || !$comment) {
+		send_json_error("Host, service and comment are required", 48253);
+	}
+
+	$cmd = sprintf("[%lu] %s;%s;%s;%d;%s;%s\n",$time,$cmd,$host,$svc,$persistent,$v->username,$comment);
 } elseif (in_array($cmd, ["SCHEDULE_SVC_DOWNTIME", "SCHEDULE_HOST_DOWNTIME", "SCHEDULE_AND_PROPAGATE_HOST_DOWNTIME"], true)) {
 	$is_svc = ($cmd === "SCHEDULE_SVC_DOWNTIME");
 

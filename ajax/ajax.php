@@ -80,6 +80,16 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	}
 
 	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$start,$end,$fixed,0,$fixed ? 0 : $duration,$v->username,$comment);
+} elseif ($cmd === "SCHEDULE_HOST_SVC_CHECKS") {
+	if (!$v->perms['all_host_commands']) {
+		send_json_error("You do not have permission to schedule service checks", 84528);
+	}
+
+	if (!$host) {
+		send_json_error("Host is required", 84529);
+	}
+
+	$cmd = sprintf("[%lu] %s;%s;%lu\n",$time,$cmd,$host,$time);
 } elseif ($svc && $host && $extra) {
 	$cmd = sprintf("[%lu] %s;%s;%s;%s\n",$time,$cmd,$host,$svc,$extra);
 } elseif ($svc && $host) {

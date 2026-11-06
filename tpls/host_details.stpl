@@ -135,9 +135,44 @@
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}?cmd_typ=33&amp;host={$host_name}" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=33&amp;host={$host_name}" data-bs-toggle="modal" data-bs-target="#host_ack_modal" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
+
+			<div class="modal fade" id="host_ack_modal" tabindex="-1" aria-labelledby="host_ack_modal_label" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<form id="host_ack_form" class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="host_ack_modal_label">Acknowledge Problem</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-3"><b>Host:</b> {$host_name}</p>
+							<div class="mb-3">
+								<label for="host_ack_comment" class="form-label">Comment</label>
+								<textarea id="host_ack_comment" name="comment" class="form-control" rows="3" required></textarea>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="sticky" id="host_ack_sticky" checked>
+								<label class="form-check-label" for="host_ack_sticky">Sticky (stays until the host recovers)</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="notify" id="host_ack_notify" checked>
+								<label class="form-check-label" for="host_ack_notify">Send notification to contacts</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="persistent" id="host_ack_persistent" checked>
+								<label class="form-check-label" for="host_ack_persistent">Persistent comment</label>
+							</div>
+							<div id="host_ack_error" class="alert alert-danger d-none mt-3 mb-0"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-primary">Acknowledge</button>
+						</div>
+					</form>
+				</div>
+			</div>
 			{/if}
 
 			<div class="mt-3">

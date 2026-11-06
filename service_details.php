@@ -11,7 +11,7 @@ $host_filter  = $_GET['host_filter']  ?? "";
 $host_name    = $_GET['host_name']    ?? "";
 $svc_name     = $_GET['svc_name']     ?? "";
 
-$v->sluz->assign('js_files', ["js/service_details.js"]);
+$v->sluz->assign('js_files', ["js/modal_command.js", "js/service_details.js"]);
 
 ////////////////////////////////////////////////////////
 

@@ -3,7 +3,7 @@
 require('include/vshell.class.php');
 
 $v = new vshell;
-$v->sluz->assign('js_files', ["js/modal_command.js", "js/host_details.js"]);
+$v->sluz->assign('js_files', ["js/modal_command.js", "js/downtime_modal.js", "js/host_details.js"]);
 
 $debug        = $_GET['debug']        ?? 0;
 $state_filter = $_GET['state_filter'] ?? "";

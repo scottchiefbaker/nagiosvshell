@@ -52,9 +52,11 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	}
 
 	$cmd = sprintf("[%lu] %s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$sticky,$notify,$persistent,$v->username,$comment);
-} elseif ($cmd === "SCHEDULE_SVC_DOWNTIME") {
-	if (!$v->perms['all_service_commands']) {
-		send_json_error("You do not have permission to schedule service downtime", 48248);
+} elseif (in_array($cmd, ["SCHEDULE_SVC_DOWNTIME", "SCHEDULE_HOST_DOWNTIME", "SCHEDULE_AND_PROPAGATE_HOST_DOWNTIME"], true)) {
+	$is_svc = ($cmd === "SCHEDULE_SVC_DOWNTIME");
+
+	if (!$v->perms[$is_svc ? 'all_service_commands' : 'all_host_commands']) {
+		send_json_error("You do not have permission to schedule downtime", 48248);
 	}
 
 	$comment  = trim(str_replace(["\r", "\n"], " ", $_POST['comment'] ?? ""));
@@ -63,8 +65,8 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 	$end      = strtotime($_POST['end']   ?? "") ?: 0;
 	$duration = intval($_POST['duration'] ?? 0) * 60;
 
-	if (!$host || !$svc || !$comment || !$start) {
-		send_json_error("Host, service, start time and comment are required", 48249);
+	if (!$host || ($is_svc && !$svc) || !$comment || !$start) {
+		send_json_error("Host, service (for service downtime), start time and comment are required", 48249);
 	}
 
 	if ($fixed && $end <= $start) {
@@ -79,7 +81,8 @@ if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
 		$end = $start + $duration;
 	}
 
-	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$start,$end,$fixed,0,$fixed ? 0 : $duration,$v->username,$comment);
+	$target = $is_svc ? "$host;$svc" : $host;
+	$cmd    = sprintf("[%lu] %s;%s;%d;%d;%d;%d;%d;%s;%s\n",$time,$cmd,$target,$start,$end,$fixed,0,$fixed ? 0 : $duration,$v->username,$comment);
 } elseif ($cmd === "SCHEDULE_HOST_SVC_CHECKS") {
 	if (!$v->perms['all_host_commands']) {
 		send_json_error("You do not have permission to schedule service checks", 84528);

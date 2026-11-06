@@ -22,7 +22,22 @@ if (!is_writable(CMDFILE)) {
 
 // Nagios API commands: https://assets.nagios.com/downloads/nagioscore/docs/externalcmds/cmdinfo.php?command_id=12
 
-if ($svc && $host && $extra) {
+if ($cmd === "ACKNOWLEDGE_SVC_PROBLEM") {
+	if (!$v->perms['all_service_commands']) {
+		send_json_error("You do not have permission to acknowledge service problems", 48246);
+	}
+
+	$comment    = trim(str_replace(["\r", "\n"], " ", $_POST['comment'] ?? ""));
+	$sticky     = empty($_POST['sticky'])     ? 1 : 2;
+	$notify     = empty($_POST['notify'])     ? 0 : 1;
+	$persistent = empty($_POST['persistent']) ? 0 : 1;
+
+	if (!$host || !$svc || !$comment) {
+		send_json_error("Host, service and comment are required", 48247);
+	}
+
+	$cmd = sprintf("[%lu] %s;%s;%s;%d;%d;%d;%s;%s\n",$time,$cmd,$host,$svc,$sticky,$notify,$persistent,$v->username,$comment);
+} elseif ($svc && $host && $extra) {
 	$cmd = sprintf("[%lu] %s;%s;%s;%s\n",$time,$cmd,$host,$svc,$extra);
 } elseif ($svc && $host) {
 	$cmd = sprintf("[%lu] %s;%s;%s\n",$time,$cmd,$host,$svc);

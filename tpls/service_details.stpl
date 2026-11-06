@@ -123,9 +123,44 @@
 				</tr>
 				<tr>
 					<td>Acknowledge Problem</td>
-					<td class="center"><a href="{$cmd_api}?cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name|urlencode}" title="Acknowledge Problem">{$icons.wrench}</a></td>
+					<td class="center"><a href="{$cmd_api}?cmd_typ=34&amp;host={$host_name}&amp;service={$svc_name|urlencode}" data-bs-toggle="modal" data-bs-target="#ack_modal" title="Acknowledge Problem">{$icons.wrench}</a></td>
 				</tr>
 			</table>
+
+			<div class="modal fade" id="ack_modal" tabindex="-1" aria-labelledby="ack_modal_label" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered">
+					<form id="ack_form" class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="ack_modal_label">Acknowledge Problem</h5>
+							<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body">
+							<p class="mb-3"><b>Service:</b> {$svc_name} on <b>{$host_name}</b></p>
+							<div class="mb-3">
+								<label for="ack_comment" class="form-label">Comment</label>
+								<textarea id="ack_comment" name="comment" class="form-control" rows="3" required></textarea>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="sticky" id="ack_sticky" checked>
+								<label class="form-check-label" for="ack_sticky">Sticky (stays until the service recovers)</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="notify" id="ack_notify" checked>
+								<label class="form-check-label" for="ack_notify">Send notification to contacts</label>
+							</div>
+							<div class="form-check">
+								<input class="form-check-input" type="checkbox" name="persistent" id="ack_persistent" checked>
+								<label class="form-check-label" for="ack_persistent">Persistent comment</label>
+							</div>
+							<div id="ack_error" class="alert alert-danger d-none mt-3 mb-0"></div>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+							<button type="submit" class="btn btn-primary">Acknowledge</button>
+						</div>
+					</form>
+				</div>
+			</div>
 			{/if}
 
 			<div class="mt-3">

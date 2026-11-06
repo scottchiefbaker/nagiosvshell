@@ -15,7 +15,7 @@ target system.
 ## Prerequisites
 
 * Apache
-* PHP 7.4+
+* PHP 8.2+
 * Nagios Core
 
 ## Installation

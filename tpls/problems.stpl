@@ -1,0 +1,151 @@
+{if $number_of_problems == 0}
+<div class="alert alert-success text-center py-4 my-4">
+	<h1 class="display-4">🎉 All clear!</h1>
+	<p class="lead mb-0">No hosts or services have problems.</p>
+</div>
+{else}
+<h5 class="mt-3">Host Problems</h5>
+
+{if $host_info}
+<div class="statusTable">
+	<table class="statusTable resp">
+		<thead>
+			<tr>
+				<th class="hostname">Host Name</th>
+				<th class="status">Status</th>
+				<th class="hidden">Duration</th>
+				<th class="attempt">Attempt</th>
+				<th class="d-none">Last Check</th>
+				<th>Status Information</th>
+			</tr>
+		</thead>
+		<tbody>
+		{foreach $host_info as $x}
+			<tr>
+				<td class="hostname d-flex {$x.state_str}" column-name="Hostname"><a href="host_details.php?host_name={$x.host_name}" title="Address: {$x.address}" class="flex-fill">{$x.host_name}</a>
+					<div class="d-flex px-1">
+						{if $x.problem_has_been_acknowledged}
+						<span class="me-2" title="Host problem acknowledged">{$icons.tools}</span>
+						{/if}
+
+						{if !$x.flap_detection_enabled}
+						<span class="me-2" title="Flap detection disabled">{$icons.arrow_up_down}</span>
+						{/if}
+
+						{if !$x.active_checks_enabled}
+						<span class="me-2" title="Active checks disabled">{$icons.circle_slash}</span>
+						{/if}
+
+						{if !$x.notifications_enabled}
+						<span class="me-2" title="Notifications disabled">{$icons.no_bell}</span>
+						{/if}
+
+						{if $x.comments}
+						<span class="me-2" title="Host has comments">{$icons.speech_bubble}</span>
+						{/if}
+
+						<a href="services.php?host_filter={$x.host_name}" title="View all services for this host">
+							{$icons.list}
+						</a>
+					</div>
+				</td>
+				<td class="status {$x.state_str|strtolower} text-md-center" column-name="Status">{$x.state_str}</td>
+				<td class="hidden" column-name="Last change">{$x.last_state_change|human_time_diff}</td>
+				<td class="attempt" column-name="Attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+				<td class="d-none" column-name="Last check">{$x.last_check|v_date_format}</td>
+				<td column-name="Output">{$x.plugin_output}</td>
+			</tr>
+		{/foreach}
+		</tbody>
+	</table>
+</div>
+{else}
+<div class="alert alert-success py-2 text-center mb-3">
+	<b>No host problems.</b>
+</div>
+{/if}
+
+<h5 class="mt-4">Service Problems</h5>
+
+{if $service_info}
+<table class="statusTable servicetable resp">
+	<thead>
+		<tr>
+			<th class="hostname">Host Name</th>
+			<th class="service_description">Service</th>
+			<th class="status">Status</th>
+			<th class="d-none">Last Change</th>
+			<th class="attempt">Attempt</th>
+			<th class="last_check">Last Check</th>
+			<th class="plugin_output">Status Information</th>
+		</tr>
+	</thead>
+	<tbody>
+
+	{foreach $service_info as $w}
+		{foreach $w as $idx => $x}
+		<tr class="statustablerow">
+			{if $__FOREACH_FIRST}
+			<td column-name="Hostname" class="{$x.x_host_state_str}">
+				<div class="hostname d-flex px-md-1">
+					<a class="highlight flex-fill" href="host_details.php?host_name={$x.host_name}" title="Host address: {$x.x_host_address}">{$x.host_name}</a>
+					{if $x.x_host_problem_acknowledged}
+					<div class="me-2" title="Host problem acknowledged">
+						{$icons.tools}
+					</div>
+					{/if}
+					{if !$x.x_host_notifications_enabled}
+					<div class="pe-2" title="Host notifications disabled">
+						{$icons.no_bell}
+					</div>
+					{/if}
+					<a href="services.php?host_filter={$x.host_name}" title="See all services for this host"><span class="">{$icons.list}</span></a>
+				</div>
+			</td>
+			{else}
+			<td column-name="Hostname" class=""></td>
+			{/if}
+			<td column-name="Service" class="service_description">
+				<div class="service_description d-flex">
+					<div class="flex-fill">
+						<a href="service_details.php?host_name={$x.host_name}&amp;svc_name={$x.service_description|urlencode}">{$x.service_description}</a>
+					</div>
+					<div class="align-items-center d-flex">
+						{if !$x.flap_detection_enabled}
+						<span class="me-2" title="Flap detection disabled">{$icons.arrow_up_down}</span>
+						{/if}
+
+						{if !$x.active_checks_enabled}
+						<span class="me-2" title="Active checks disabled">{$icons.circle_slash}</span>
+						{/if}
+
+						{if !$x.notifications_enabled}
+						<span class="me-2" title="Notifications disabled">{$icons.no_bell}</span>
+						{/if}
+
+						{if $x.comments}
+						<span class="me-2" title="Service has comments">{$icons.speech_bubble}</span>
+						{/if}
+
+						{if $x.problem_has_been_acknowledged}
+						<span class="me-2" title="Problem has been acknowledged">{$icons.wrench}</span>
+						{/if}
+					</div>
+				</div>
+			</td>
+			<td column-name="Status" class="{$x.state_str} status center">{$x.state_str}</td>
+			<td column-name="Last Change" class="d-none">{$x.last_state_change|human_time_diff}</td>
+			<td column-name="Attempt" class="attempt">{$x.current_attempt} / {$x.max_attempts}</td>
+			<td column-name="Last Check" class="last_check">{$x.last_check}</td>
+			<td column-name="Output" class="plugin_output"><div class="plugin_output">{$x.plugin_output}</div></td>
+		</tr>
+		{/foreach}
+	{/foreach}
+	</tbody>
+</table>
+{else}
+<div class="alert alert-success py-2 text-center mb-3">
+	<b>No service problems.</b>
+</div>
+{/if}
+{/if}

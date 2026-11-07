@@ -15,6 +15,10 @@
 			<ul class="navbar-nav me-auto">
 
 				<li class="nav-item">
+					<a class="nav-link" title="Hosts and services that are not UP or OK" href="problems.php">Problems</a>
+				</li>
+
+				<li class="nav-item">
 					<a class="nav-link" href="hosts.php">Hosts</a>
 				</li>
 

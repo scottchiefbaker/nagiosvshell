@@ -26,24 +26,6 @@
 					<a class="nav-link" href="services.php">Services</a>
 				</li>
 
-				<li class="nav-item dropdown d-none">
-					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-						Configurations
-					</a>
-
-					<div class="dropdown-menu" aria-labelledby="navbarDropdown">
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=hosts_objs">Hosts</a>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=services_objs">Services</a>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=hostgroups_objs">Servicegroups</a>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=timeperiods">Timeperiods</a>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=contacts">Contacts</a>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=contactgroups">Contactgroups</a>
-
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="config.php?type=object&objtype_filter=commands">Commands</a>
-					</div>
-				</li>
-
 				{if $perms.system_commands}
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">

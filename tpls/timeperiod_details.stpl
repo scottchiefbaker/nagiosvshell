@@ -1,0 +1,54 @@
+<div class="detail_wrapper text-start">
+	<h3><b>Time period:</b> {$tp.timeperiod_name}</h3>
+	{if $tp.alias}
+	<h5 class="text-muted">{$tp.alias}</h5>
+	{/if}
+
+	<p class="text-muted mt-3">
+		A time period defines the windows when Nagios is allowed to act, such as sending notifications.
+		Outside these windows, notifications for objects using this period are suppressed.
+		Each day below shows the hours that fall inside the period.
+	</p>
+
+	<div class="card shadow-sm mt-3">
+		<div class="card-header fw-bold">Weekly schedule</div>
+		<div class="card-body">
+			{foreach $week as $d}
+			<div class="d-flex align-items-center mb-2">
+				<div class="w-25 fw-semibold">{$d.name}</div>
+				<div class="flex-fill position-relative bg-light border rounded" style="height: 1.6em;">
+					{foreach $d.segments as $s}
+					<div class="position-absolute top-0 h-100 bg-success rounded" style="left: {$s.left}%; width: {$s.width}%;" title="{$s.label}"></div>
+					{/foreach}
+				</div>
+				<div class="w-25 ps-3 small">{if $d.text}<code>{$d.text}</code>{else}<span class="text-muted">Not scheduled</span>{/if}</div>
+				<div class="ps-3 text-end fw-semibold" style="width: 5em;" title="Share of the day covered by this time period">{$d.coverage}%</div>
+			</div>
+			{/foreach}
+			<div class="d-flex small text-muted">
+				<div class="w-25"></div>
+				<div class="flex-fill d-flex justify-content-between">
+					<span>00:00</span><span>06:00</span><span>12:00</span><span>18:00</span><span>24:00</span>
+				</div>
+				<div class="w-25"></div>
+				<div style="width: 5em;"></div>
+			</div>
+		</div>
+	</div>
+
+	{if $exceptions}
+	<div class="card shadow-sm mt-4">
+		<div class="card-header fw-bold">Exceptions and other rules</div>
+		<table class="table table-sm mb-0">
+			<tbody>
+				{foreach $exceptions as $key => $val}
+				<tr>
+					<td class="w-25 fw-semibold ps-3">{$key}</td>
+					<td><code>{$val}</code></td>
+				</tr>
+				{/foreach}
+			</tbody>
+		</table>
+	</div>
+	{/if}
+</div>

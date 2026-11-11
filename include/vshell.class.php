@@ -34,7 +34,7 @@ class vshell {
 		'disable_passive_checks' => ['check' => 'passive_checks_enabled', 'label' => 'Passive checks'],
 	];
 
-	public $version        = "3.0.4";
+	public $version        = "3.1.0";
 	public $base_dir       = "";
 	public $username       = "";
 	public $sluz           = null;

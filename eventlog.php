@@ -13,7 +13,7 @@ $v->sluz->assign('js_files', ["js/eventlog.js"]);
 ////////////////////////////////////////////////////////////
 
 // Newest first from the helper, so flip it when asked for oldest first
-$items = $v->get_log_items($days);
+$items = $v->get_log_items($days, "", "", true);
 if ($oldest_first) {
 	$items = array_reverse($items);
 }
@@ -31,13 +31,20 @@ foreach ($items as $x) {
 		];
 	}
 
+	// Notification lines carry the state in "severity" and the contact in "user"
+	$state = $x['status'] ?? $x['severity'] ?? "";
+	$text  = $x['text'] ?? "";
+	if (isset($x['user'])) {
+		$text = "[" . $x['user'] . " via " . ($x['notification_type'] ?? "") . "] " . $text;
+	}
+
 	$groups[$key]['entries'][] = [
 		'time'    => date("m-d-Y H:i:s", $ts),
 		'type'    => $x['action_raw'],
 		'host'    => $x['host']    ?? "",
 		'service' => $x['service'] ?? "",
-		'state'   => $x['status']  ?? "",
-		'text'    => $x['text']    ?? "",
+		'state'   => $state,
+		'text'    => $text,
 	];
 }
 

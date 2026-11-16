@@ -18,6 +18,18 @@ if ($oldest_first) {
 	$items = array_reverse($items);
 }
 
+// Only show one page of entries at a time
+$per_page    = 500;
+$total       = count($items);
+$total_pages = max(1, (int)ceil($total / $per_page));
+$page        = max(1, min($total_pages, intval($_GET['page'] ?? 1)));
+$items       = array_slice($items, ($page - 1) * $per_page, $per_page);
+
+$query = ['days' => $days, 'oldestfirst' => $oldest_first ? 1 : 0];
+$page_url = function ($n) use ($query) {
+	return "eventlog.php?" . http_build_query($query + ['page' => $n]);
+};
+
 // Group entries by the hour they were logged in
 $groups = [];
 foreach ($items as $x) {
@@ -50,6 +62,13 @@ foreach ($items as $x) {
 
 $v->sluz->assign("groups"        , $groups);
 $v->sluz->assign("entry_count"   , count($items));
+$v->sluz->assign("total_entries" , $total);
+$v->sluz->assign("first_entry"   , $total ? ($page - 1) * $per_page + 1 : 0);
+$v->sluz->assign("last_entry"    , ($page - 1) * $per_page + count($items));
+$v->sluz->assign("page"          , $page);
+$v->sluz->assign("total_pages"   , $total_pages);
+$v->sluz->assign("prev_url"      , $page > 1 ? $page_url($page - 1) : "");
+$v->sluz->assign("next_url"      , $page < $total_pages ? $page_url($page + 1) : "");
 $v->sluz->assign("days"          , $days);
 $v->sluz->assign("oldest_first"  , $oldest_first);
 $v->sluz->assign("last_updated"  , date("D M j H:i:s T Y"));

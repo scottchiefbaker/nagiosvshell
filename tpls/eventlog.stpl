@@ -1,7 +1,7 @@
 <div class="statusTable">
 	<div class="row align-items-center mb-2">
 		<div class="col-lg-6 fw-bold">
-			Event Log: today{if $days} and the last {$days} day{if $days > 1}s{/if}{/if} (<span id="eventlog_shown">{$entry_count}</span>/{$entry_count} entries)
+			Event Log: today{if $days} and the last {$days} day{if $days > 1}s{/if}{/if} ({$first_entry}-{$last_entry} of {$total_entries} entries, <span id="eventlog_shown">{$entry_count}</span> shown)
 			<div class="fw-normal" style="font-size: 75%;">Last updated: {$last_updated}</div>
 		</div>
 		<div class="col-lg-6">
@@ -59,6 +59,11 @@
 		{/foreach}
 		</tbody>
 	</table>
+	<nav class="d-flex justify-content-center align-items-center gap-3 my-2" aria-label="Event log pages">
+		{if $prev_url}<a href="{$prev_url}" class="btn btn-sm btn-outline-primary">&laquo; Newer</a>{/if}
+		<span>Page {$page} of {$total_pages}</span>
+		{if $next_url}<a href="{$next_url}" class="btn btn-sm btn-outline-primary">Older &raquo;</a>{/if}
+	</nav>
 	{else}
 	<div class="text-center py-3">No events were logged for this period.</div>
 	{/if}
